@@ -60,7 +60,7 @@ const COLUMNS: Column[] = [
   { key: 'empresa', label: 'Empresa', sort: 'empresa' },
   { key: 'titulo', label: 'Título' },
   { key: 'provincia', label: 'Provincia', width: 'w-24' },
-  { key: 'instrumento', label: 'Instrumento', width: 'w-28' },
+  { key: 'instrumento', label: 'Instrumento', width: 'w-48' },
   { key: 'presupuesto', label: 'Presupuesto', sort: 'presupuesto', align: 'right', width: 'w-28' },
   { key: 'aportacion', label: 'Aportación', sort: 'aportacion', align: 'right', width: 'w-28' },
   { key: 'pct', label: '% CDTI', sort: 'pct', align: 'right', width: 'w-24' },
@@ -158,19 +158,19 @@ export function ProjectsTable() {
               : (data?.items ?? []).map((item) => (
                   <tr
                     key={item.id}
-                    className="border-b border-line transition-colors hover:bg-surface-2/50"
+                    className="border-b border-line transition-[background-color] duration-500 hover:bg-accent-soft hover:duration-100"
                   >
                     <td className="px-3.5 py-2.5 font-mono whitespace-nowrap">
                       {formatDate(item.fechaAprobacion)}
                     </td>
                     <td
-                      className="max-w-44 truncate px-3.5 py-2.5 font-medium"
+                      className="max-w-32 truncate px-3.5 py-2.5 font-medium"
                       title={item.razonSocial}
                     >
                       {item.razonSocial}
                     </td>
                     <td
-                      className="max-w-80 truncate px-3.5 py-2.5 text-ink-soft"
+                      className="max-w-56 truncate px-3.5 py-2.5 text-ink-soft"
                       title={item.titulo}
                     >
                       {item.titulo}
@@ -182,7 +182,7 @@ export function ProjectsTable() {
                       {item.provincia}
                     </td>
                     <td
-                      className="max-w-28 truncate px-3.5 py-2.5 text-ink-soft"
+                      className="max-w-48 truncate px-3.5 py-2.5 text-ink-soft"
                       title={item.instrumento ?? undefined}
                     >
                       {item.instrumento ?? '—'}
