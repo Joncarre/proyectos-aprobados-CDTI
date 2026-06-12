@@ -9,8 +9,6 @@ type Dim = 'area' | 'ccaa';
 type Metrica = 'aportacion' | 'proyectos';
 
 const MAX_ROWS = 14;
-const truncate = (value: string, length: number): string =>
-  value.length > length ? `${value.slice(0, length - 1)}…` : value;
 
 export function HeatmapCard() {
   const [dim, setDim] = useState<Dim>('area');
@@ -56,7 +54,9 @@ export function HeatmapCard() {
             ].join('<br/>');
           },
         },
-        grid: { left: 8, right: 60, top: 8, bottom: 28, containLabel: true },
+        // Fixed margins (no containLabel): the plot and axis areas keep exactly
+        // the same size whichever dimension is selected
+        grid: { left: 172, right: 24, top: 8, bottom: 64 },
         xAxis: {
           type: 'category' as const,
           data: anios.map(String),
@@ -71,7 +71,8 @@ export function HeatmapCard() {
           axisLabel: {
             ...AXIS_LABEL,
             fontSize: 10,
-            formatter: (value: string) => truncate(value, 28),
+            width: 158,
+            overflow: 'truncate' as const,
           },
           axisTick: { show: false },
           axisLine: { show: false },
@@ -81,14 +82,14 @@ export function HeatmapCard() {
           min: 0,
           max: maxValue,
           inRange: { color: SEQUENTIAL_RAMP },
-          orient: 'vertical' as const,
-          right: 0,
-          top: 'center',
+          orient: 'horizontal' as const,
+          left: 'center',
+          bottom: 0,
           itemWidth: 10,
-          itemHeight: 110,
+          itemHeight: 300,
           formatter: (value: number) =>
             metrica === 'aportacion' ? formatMoneyCompact(value) : formatInt(Math.round(value)),
-          textStyle: { color: '#55555e', fontSize: 9, fontFamily: MONO_FONT },
+          textStyle: { color: '#71717a', fontSize: 9, fontFamily: MONO_FONT },
         },
         series: [
           {

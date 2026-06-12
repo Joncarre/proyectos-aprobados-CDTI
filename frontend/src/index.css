@@ -19,10 +19,11 @@
   --color-line: #e8e8ea; /* default borders */
   --color-line-strong: #d9d9dc; /* interactive borders */
 
-  /* Text */
-  --color-ink: #1a1a1e; /* primary */
-  --color-ink-soft: #55555e; /* secondary */
-  --color-ink-faint: #9b9ba3; /* placeholders, disabled */
+  /* Text: dark grey by default; near-black reserved for titles and key data */
+  --color-ink-strong: #18181b; /* titles, highlighted values */
+  --color-ink: #3f3f46; /* primary body text */
+  --color-ink-soft: #71717a; /* secondary */
+  --color-ink-faint: #a1a1aa; /* placeholders, disabled */
 
   /* Accent — single indigo family, used with intent (no rainbow) */
   --color-accent: #4f46e5;

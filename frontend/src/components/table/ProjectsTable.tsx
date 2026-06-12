@@ -59,11 +59,11 @@ const COLUMNS: Column[] = [
   { key: 'fecha', label: 'Fecha', sort: 'fecha', width: 'w-20' },
   { key: 'empresa', label: 'Empresa', sort: 'empresa' },
   { key: 'titulo', label: 'Título' },
-  { key: 'provincia', label: 'Provincia' },
-  { key: 'instrumento', label: 'Instrumento' },
-  { key: 'presupuesto', label: 'Presupuesto', sort: 'presupuesto', align: 'right' },
-  { key: 'aportacion', label: 'Aportación', sort: 'aportacion', align: 'right' },
-  { key: 'pct', label: '% CDTI', sort: 'pct', align: 'right', width: 'w-16' },
+  { key: 'provincia', label: 'Provincia', width: 'w-24' },
+  { key: 'instrumento', label: 'Instrumento', width: 'w-28' },
+  { key: 'presupuesto', label: 'Presupuesto', sort: 'presupuesto', align: 'right', width: 'w-28' },
+  { key: 'aportacion', label: 'Aportación', sort: 'aportacion', align: 'right', width: 'w-28' },
+  { key: 'pct', label: '% CDTI', sort: 'pct', align: 'right', width: 'w-24' },
 ];
 
 const PAGE_SIZES = [25, 50, 100] as const;
@@ -109,15 +109,15 @@ export function ProjectsTable() {
       isUpdating={isPlaceholderData}
       className="overflow-hidden"
     >
-      <div className="-mx-4 overflow-x-auto">
-        <table className="w-full min-w-[64rem] border-collapse text-xs">
+      <div className="overflow-x-auto rounded-lg border border-line">
+        <table className="w-full min-w-[60rem] border-collapse text-xs">
           <thead>
-            <tr className="border-y border-line bg-surface-2/60 text-left">
+            <tr className="border-b border-line bg-surface-2/60 text-left">
               {COLUMNS.map((column) => (
                 <th
                   key={column.key}
                   className={cn(
-                    'px-3 py-2 font-medium text-ink-soft select-none',
+                    'px-3.5 py-2.5 font-medium text-ink-soft select-none',
                     column.width,
                     column.align === 'right' && 'text-right',
                   )}
@@ -160,37 +160,40 @@ export function ProjectsTable() {
                     key={item.id}
                     className="border-b border-line transition-colors hover:bg-surface-2/50"
                   >
-                    <td className="px-3 py-2 font-mono whitespace-nowrap">
+                    <td className="px-3.5 py-2.5 font-mono whitespace-nowrap">
                       {formatDate(item.fechaAprobacion)}
                     </td>
                     <td
-                      className="max-w-44 truncate px-3 py-2 font-medium"
+                      className="max-w-44 truncate px-3.5 py-2.5 font-medium"
                       title={item.razonSocial}
                     >
                       {item.razonSocial}
                     </td>
-                    <td className="max-w-72 truncate px-3 py-2 text-ink-soft" title={item.titulo}>
+                    <td
+                      className="max-w-80 truncate px-3.5 py-2.5 text-ink-soft"
+                      title={item.titulo}
+                    >
                       {item.titulo}
                     </td>
                     <td
-                      className="max-w-28 truncate px-3 py-2 text-ink-soft"
+                      className="max-w-24 truncate px-3.5 py-2.5 text-ink-soft"
                       title={`${item.provincia} · ${item.ccaa}`}
                     >
                       {item.provincia}
                     </td>
                     <td
-                      className="max-w-40 truncate px-3 py-2 text-ink-soft"
+                      className="max-w-28 truncate px-3.5 py-2.5 text-ink-soft"
                       title={item.instrumento ?? undefined}
                     >
                       {item.instrumento ?? '—'}
                     </td>
-                    <td className="px-3 py-2 text-right font-mono whitespace-nowrap">
+                    <td className="px-3.5 py-2.5 text-right font-mono whitespace-nowrap">
                       {item.presupuesto !== null ? formatMoney(item.presupuesto) : '—'}
                     </td>
-                    <td className="px-3 py-2 text-right font-mono whitespace-nowrap">
+                    <td className="px-3.5 py-2.5 text-right font-mono whitespace-nowrap">
                       {item.aportacionCdti !== null ? formatMoney(item.aportacionCdti) : '—'}
                     </td>
-                    <td className="px-3 py-2 text-right font-mono">
+                    <td className="px-3.5 py-2.5 text-right font-mono">
                       {formatPct(item.porcentajeAportacion)}
                     </td>
                   </tr>

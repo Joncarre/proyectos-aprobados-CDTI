@@ -137,13 +137,7 @@ export function TimeSeriesCard() {
         itemWidth: 9,
         itemHeight: 9,
       },
-      grid: {
-        left: 8,
-        right: 16,
-        top: 18,
-        bottom: granularidad === 'mes' ? 64 : 30,
-        containLabel: true,
-      },
+      grid: { left: 8, right: 16, top: 18, bottom: 30, containLabel: true },
       xAxis: {
         type: 'category' as const,
         data: periods,
@@ -161,10 +155,6 @@ export function TimeSeriesCard() {
         splitLine: SPLIT_LINE,
         max: metrica === 'pct' ? 100 : undefined,
       },
-      dataZoom:
-        granularidad === 'mes'
-          ? [{ type: 'slider' as const, height: 16, bottom: 26, borderColor: '#e8e8ea' }]
-          : [],
       series: series.map((spec) => ({
         name: spec.name,
         type: 'line' as const,

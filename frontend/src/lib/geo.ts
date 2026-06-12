@@ -50,7 +50,7 @@ function resolveName(atlasName: string, canonicalByKey: Map<string, string>): st
  * the peninsula (inset style, distance not to scale).
  */
 const CANARY_REGIONS = new Set(['Canarias', 'PALMAS, LAS', 'STA. C. DE TENERIFE']);
-const CANARY_OFFSET: [number, number] = [7.4, 6.2]; // degrees lon/lat
+const CANARY_OFFSET: [number, number] = [5.6, 6.2]; // degrees lon/lat
 
 type CoordinateTree = number | CoordinateTree[];
 

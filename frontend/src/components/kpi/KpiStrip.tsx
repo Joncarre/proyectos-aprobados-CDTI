@@ -12,17 +12,19 @@ interface KpiCardProps {
 
 function KpiCard({ label, value, detail, dimmed }: KpiCardProps) {
   return (
-    <div className="shadow-card rounded-xl border border-line bg-surface p-4">
-      <p className="text-xs font-medium text-ink-soft">{label}</p>
+    <div className="shadow-card min-w-0 rounded-xl border border-line bg-surface px-3 py-2.5">
+      <p className="truncate text-[0.68rem] font-medium text-ink-soft">{label}</p>
       <p
         className={cn(
-          'mt-1.5 font-mono text-2xl font-semibold tracking-tight transition-opacity duration-200',
+          'mt-1 truncate font-mono text-base font-semibold tracking-tight text-ink-strong transition-opacity duration-200 lg:text-lg',
           dimmed && 'opacity-50',
         )}
       >
         {value}
       </p>
-      {detail !== undefined && <p className="mt-0.5 font-mono text-xs text-ink-faint">{detail}</p>}
+      {detail !== undefined && (
+        <p className="mt-0.5 truncate font-mono text-[0.65rem] text-ink-faint">{detail}</p>
+      )}
     </div>
   );
 }
@@ -33,11 +35,14 @@ export function KpiStrip() {
 
   if (isPending || !data) {
     return (
-      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5" aria-busy="true">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-5" aria-busy="true">
         {Array.from({ length: 5 }, (_, index) => (
-          <div key={index} className="shadow-card rounded-xl border border-line bg-surface p-4">
-            <Skeleton className="h-3 w-20" />
-            <Skeleton className="mt-2.5 h-7 w-28" />
+          <div
+            key={index}
+            className="shadow-card rounded-xl border border-line bg-surface px-3 py-2.5"
+          >
+            <Skeleton className="h-2.5 w-16" />
+            <Skeleton className="mt-2 h-5 w-20" />
           </div>
         ))}
       </div>
@@ -45,7 +50,7 @@ export function KpiStrip() {
   }
 
   return (
-    <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
+    <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
       <KpiCard
         label="Proyectos"
         value={formatInt(data.proyectos)}

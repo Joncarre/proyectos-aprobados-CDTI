@@ -32,18 +32,18 @@ export function Header({ filtersOpen, onToggleFilters }: HeaderProps) {
           )}
         </button>
         <div className="flex items-baseline gap-2.5">
-          <span className="flex items-center gap-2 text-[0.95rem] font-semibold tracking-tight">
+          <span className="flex items-center gap-2 text-sm font-semibold tracking-tight text-ink-strong">
             <span className="grid size-6 place-items-center rounded-md bg-accent text-xs font-bold text-white">
               C
             </span>
-            Proyectos CDTI
+            PROYECTOS APROBADOS POR EL CDTI
           </span>
-          <span className="hidden text-xs text-ink-faint sm:block">Explorador de datos</span>
+          <span className="hidden text-xs text-ink-faint sm:block">Datos abiertos</span>
         </div>
       </div>
       {meta && (
         <p className="font-mono text-xs text-ink-soft">
-          {formatInt(meta.ingest.nProjects)} proyectos · datos del{' '}
+          {formatInt(meta.ingest.nProjects)} proyectos · Última actualización el día{' '}
           {formatIngestDate(meta.ingest.ingestedAt)}
         </p>
       )}

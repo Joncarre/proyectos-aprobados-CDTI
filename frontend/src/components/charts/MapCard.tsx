@@ -87,10 +87,10 @@ export function MapCard({ meta }: { meta: MetaResponse }) {
         max: maxValue,
         inRange: { color: SEQUENTIAL_RAMP },
         orient: 'horizontal' as const,
-        left: 8,
+        left: 'center',
         bottom: 0,
-        itemWidth: 10,
-        itemHeight: 90,
+        itemWidth: 12,
+        itemHeight: 360,
         text: ['', ''],
         formatter: (value: number) =>
           metric === 'pctMedio'

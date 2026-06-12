@@ -49,7 +49,7 @@ export function FilterPanel() {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-sm font-semibold">
+        <h2 className="flex items-center gap-2 text-sm font-semibold text-ink-strong">
           Filtros
           {activeCount > 0 && (
             <span className="rounded-full bg-accent-soft px-1.5 py-0.5 font-mono text-xs font-semibold text-accent-strong">
