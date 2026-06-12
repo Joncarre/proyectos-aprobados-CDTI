@@ -133,5 +133,5 @@ npm run dev:web
 | **FASE 1** | Ingesta y base de datos             | ✅     |
 | **FASE 2** | API de consulta                     | ✅     |
 | **FASE 3** | Layout, sistema de diseño y filtros | ✅     |
-| FASE 4     | Visualizaciones                     | ⏳     |
+| **FASE 4** | Visualizaciones                     | ✅     |
 | FASE 5     | Pulido, rendimiento y seguridad     | ⏳     |

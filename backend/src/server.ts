@@ -20,6 +20,8 @@ import { heatmapRoutes } from './routes/heatmap.js';
 import { rankingsRoutes } from './routes/rankings.js';
 import { distributionRoutes } from './routes/distribution.js';
 import { companiesRoutes } from './routes/companies.js';
+import { treemapRoutes } from './routes/treemap.js';
+import { exportRoutes } from './routes/export.js';
 
 const app = Fastify({ logger: true });
 
@@ -68,6 +70,8 @@ await app.register(
     await api.register(rankingsRoutes);
     await api.register(distributionRoutes);
     await api.register(companiesRoutes);
+    await api.register(treemapRoutes);
+    await api.register(exportRoutes);
   },
   { prefix: '/api' },
 );

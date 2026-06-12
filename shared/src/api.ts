@@ -94,6 +94,13 @@ export interface CompanyRow {
   ultimoAnio: number;
 }
 
+export interface TreemapRow {
+  area: string;
+  instrumento: string;
+  proyectos: number;
+  aportacion: number;
+}
+
 export interface ProvinciaOption {
   ccaa: string;
   provincia: string;

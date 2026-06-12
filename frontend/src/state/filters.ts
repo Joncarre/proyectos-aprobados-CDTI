@@ -22,6 +22,7 @@ interface FiltersStore {
   setRange: (pair: MinMaxPair, range: [number | undefined, number | undefined]) => void;
   setPyme: (value: 'si' | 'no' | undefined) => void;
   setQ: (value: string | undefined) => void;
+  setNif: (value: string | undefined) => void;
   /** Drops selected provinces that no longer belong to an active CCAA. */
   pruneProvincias: (allowed: ReadonlySet<string>) => void;
   clearKey: (key: keyof ProjectFilters) => void;
@@ -60,6 +61,8 @@ export const useFiltersStore = create<FiltersStore>((set) => ({
     set((state) => ({
       filters: { ...state.filters, q: value === '' ? undefined : value },
     })),
+
+  setNif: (value) => set((state) => ({ filters: { ...state.filters, nif: value } })),
 
   pruneProvincias: (allowed) =>
     set((state) => {
