@@ -23,7 +23,9 @@ import { companiesRoutes } from './routes/companies.js';
 
 const app = Fastify({ logger: true });
 
-await app.register(helmet);
+// CORP must allow cross-origin reads: the SPA lives on another origin (5173)
+// and CORS already restricts who can actually consume the API.
+await app.register(helmet, { crossOriginResourcePolicy: { policy: 'cross-origin' } });
 await app.register(cors, { origin: config.corsOrigin, methods: ['GET'] });
 await app.register(rateLimit, { max: config.rateLimitMax, timeWindow: '1 minute' });
 

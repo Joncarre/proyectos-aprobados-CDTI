@@ -1,0 +1,179 @@
+import { AnimatePresence, motion } from 'motion/react';
+import { X } from 'lucide-react';
+import type { ProjectFilters } from '@cdti/shared';
+import { formatMoneyCompact, MONTH_LABELS } from '../../lib/format';
+import { useFiltersStore, type MinMaxPair } from '../../state/filters';
+
+interface ChipSpec {
+  id: string;
+  label: string;
+  remove: () => void;
+}
+
+const listLabel = (prefix: string, values: ReadonlyArray<string | number>): string => {
+  const [first, ...rest] = values;
+  return rest.length === 0 ? `${prefix}: ${first}` : `${prefix}: ${first} +${rest.length}`;
+};
+
+function buildChips(
+  filters: ProjectFilters,
+  clearKey: (key: keyof ProjectFilters) => void,
+  setRange: (pair: MinMaxPair, range: [number | undefined, number | undefined]) => void,
+): ChipSpec[] {
+  const chips: ChipSpec[] = [];
+
+  if (filters.anios?.length) {
+    const sorted = [...filters.anios].sort((a, b) => a - b);
+    chips.push({
+      id: 'anios',
+      label: sorted.length <= 3 ? `Años: ${sorted.join(' · ')}` : listLabel('Años', sorted),
+      remove: () => clearKey('anios'),
+    });
+  }
+  if (filters.meses?.length) {
+    const names = [...filters.meses]
+      .sort((a, b) => a - b)
+      .map((m) => MONTH_LABELS[m - 1] ?? String(m));
+    chips.push({
+      id: 'meses',
+      label: names.length <= 4 ? `Meses: ${names.join(' · ')}` : listLabel('Meses', names),
+      remove: () => clearKey('meses'),
+    });
+  }
+
+  const ranges: Array<{
+    id: string;
+    label: string;
+    pair: MinMaxPair;
+    min?: number;
+    max?: number;
+    money: boolean;
+  }> = [
+    {
+      id: 'presupuesto',
+      label: 'Presupuesto',
+      pair: ['presupuestoMin', 'presupuestoMax'],
+      min: filters.presupuestoMin,
+      max: filters.presupuestoMax,
+      money: true,
+    },
+    {
+      id: 'aportacion',
+      label: 'Aportación',
+      pair: ['aportacionMin', 'aportacionMax'],
+      min: filters.aportacionMin,
+      max: filters.aportacionMax,
+      money: true,
+    },
+    {
+      id: 'pct',
+      label: '% CDTI',
+      pair: ['pctMin', 'pctMax'],
+      min: filters.pctMin,
+      max: filters.pctMax,
+      money: false,
+    },
+  ];
+  for (const range of ranges) {
+    if (range.min === undefined && range.max === undefined) continue;
+    const fmt = (value: number): string => (range.money ? formatMoneyCompact(value) : `${value} %`);
+    const parts = [
+      range.min !== undefined ? `≥ ${fmt(range.min)}` : null,
+      range.max !== undefined ? `≤ ${fmt(range.max)}` : null,
+    ].filter(Boolean);
+    chips.push({
+      id: range.id,
+      label: `${range.label}: ${parts.join(' · ')}`,
+      remove: () => setRange(range.pair, [undefined, undefined]),
+    });
+  }
+
+  const lists: Array<{ id: keyof ProjectFilters; prefix: string; values: string[] | undefined }> = [
+    { id: 'ccaa', prefix: 'CCAA', values: filters.ccaa },
+    { id: 'provincias', prefix: 'Provincia', values: filters.provincias },
+    { id: 'instrumentos', prefix: 'Instrumento', values: filters.instrumentos },
+    { id: 'areas', prefix: 'Área', values: filters.areas },
+    { id: 'origenes', prefix: 'Origen', values: filters.origenes },
+    { id: 'tiposAyuda', prefix: 'Ayuda', values: filters.tiposAyuda },
+  ];
+  for (const list of lists) {
+    if (!list.values?.length) continue;
+    chips.push({
+      id: list.id,
+      label: listLabel(list.prefix, list.values),
+      remove: () => clearKey(list.id),
+    });
+  }
+
+  if (filters.pyme !== undefined) {
+    chips.push({
+      id: 'pyme',
+      label: filters.pyme === 'si' ? 'Solo PYME' : 'Solo no PYME',
+      remove: () => clearKey('pyme'),
+    });
+  }
+  if (filters.q !== undefined) {
+    chips.push({ id: 'q', label: `Texto: «${filters.q}»`, remove: () => clearKey('q') });
+  }
+  if (filters.nif !== undefined) {
+    chips.push({ id: 'nif', label: `NIF: ${filters.nif}`, remove: () => clearKey('nif') });
+  }
+
+  return chips;
+}
+
+export function ActiveFilterChips() {
+  const filters = useFiltersStore((state) => state.filters);
+  const clearKey = useFiltersStore((state) => state.clearKey);
+  const setRange = useFiltersStore((state) => state.setRange);
+  const clearAll = useFiltersStore((state) => state.clearAll);
+
+  const chips = buildChips(filters, clearKey, setRange);
+
+  return (
+    <div className="flex min-h-7 flex-wrap items-center gap-1.5" aria-live="polite">
+      <AnimatePresence initial={false}>
+        {chips.map((chip) => (
+          <motion.span
+            key={chip.id}
+            layout
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.92 }}
+            transition={{ duration: 0.15 }}
+            className="inline-flex items-center gap-1 rounded-full border border-accent-line bg-accent-soft py-1 pr-1.5 pl-2.5 text-xs font-medium text-accent-strong"
+          >
+            {chip.label}
+            <button
+              type="button"
+              onClick={chip.remove}
+              aria-label={`Quitar filtro ${chip.label}`}
+              className="rounded-full p-0.5 transition-colors hover:bg-accent-line/60"
+            >
+              <X className="size-3" />
+            </button>
+          </motion.span>
+        ))}
+        {chips.length > 1 && (
+          <motion.button
+            key="_clear"
+            layout
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            type="button"
+            onClick={clearAll}
+            className="text-xs font-medium text-ink-soft transition-colors hover:text-ink"
+          >
+            Limpiar todo
+          </motion.button>
+        )}
+      </AnimatePresence>
+      {chips.length === 0 && (
+        <span className="text-xs text-ink-faint">
+          Sin filtros activos — mostrando todo el histórico
+        </span>
+      )}
+    </div>
+  );
+}

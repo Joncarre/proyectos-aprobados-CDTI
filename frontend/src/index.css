@@ -1,1 +1,70 @@
+@import '@fontsource-variable/inter';
 @import 'tailwindcss';
+
+/*
+ * Design tokens — light palette.
+ * Semantic names (page/surface/line/ink/accent) so components never hardcode
+ * raw colors; a future dark mode only needs to remap these variables.
+ */
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
+
+  /* Neutral layers (slightly warm, Linear-like) */
+  --color-page: #f7f7f8; /* app background */
+  --color-surface: #ffffff; /* cards, panels, popovers */
+  --color-surface-2: #f4f4f5; /* hover, nested surfaces */
+  --color-line: #e8e8ea; /* default borders */
+  --color-line-strong: #d9d9dc; /* interactive borders */
+
+  /* Text */
+  --color-ink: #1a1a1e; /* primary */
+  --color-ink-soft: #55555e; /* secondary */
+  --color-ink-faint: #9b9ba3; /* placeholders, disabled */
+
+  /* Accent — single indigo family, used with intent (no rainbow) */
+  --color-accent: #4f46e5;
+  --color-accent-strong: #4338ca;
+  --color-accent-soft: #eef2ff; /* selected backgrounds */
+  --color-accent-line: #c7d2fe; /* selected borders */
+
+  /* Data series (FASE 4): presupuesto vs aportación */
+  --color-series-budget: #94a3b8;
+  --color-series-grant: #4f46e5;
+
+  /* Elevation: layered, low-opacity (premium feel, no harsh drops) */
+  --shadow-card: 0 1px 2px rgb(26 26 30 / 0.04), 0 2px 6px rgb(26 26 30 / 0.04);
+  --shadow-pop:
+    0 0 0 1px rgb(26 26 30 / 0.05), 0 4px 12px rgb(26 26 30 / 0.08), 0 12px 32px rgb(26 26 30 / 0.1);
+
+  --animate-shimmer: shimmer 1.8s ease-in-out infinite;
+
+  @keyframes shimmer {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.45;
+    }
+  }
+}
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-page text-ink font-sans text-[0.875rem] leading-normal;
+    font-feature-settings: 'cv11'; /* Inter: single-storey a alternates off, keep defaults legible */
+  }
+
+  /* Keyboard-visible focus ring, consistent everywhere */
+  :focus-visible {
+    @apply outline-accent outline-2 outline-offset-2;
+  }
+
+  ::selection {
+    @apply bg-accent-soft text-accent-strong;
+  }
+}
