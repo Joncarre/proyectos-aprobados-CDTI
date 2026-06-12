@@ -1,22 +1,77 @@
-// CDTI read-only analytics API (FASE 2).
-// FASE 0 skeleton: a Fastify instance with a health endpoint to verify the toolchain.
+// CDTI read-only analytics API.
+// Security baseline: helmet headers, CORS restricted to the frontend origin,
+// rate limiting, parameterised SQL only, and no write endpoint whatsoever
+// (the database is opened in READ_ONLY mode; ingest runs solely via CLI).
 
 import Fastify from 'fastify';
-import { config } from 'dotenv';
-import { resolve } from 'node:path';
-
-// .env lives at the repository root, one level above this workspace
-config({ path: resolve(import.meta.dirname, '../../.env') });
-
-const host = process.env.API_HOST ?? '127.0.0.1';
-const port = Number(process.env.API_PORT ?? 3001);
+import cors from '@fastify/cors';
+import helmet from '@fastify/helmet';
+import rateLimit from '@fastify/rate-limit';
+import { config } from './config.js';
+import { initDb } from './db.js';
+import { loadWhitelists } from './whitelists.js';
+import { ApiValidationError } from './validation.js';
+import { metaRoutes } from './routes/meta.js';
+import { projectsRoutes } from './routes/projects.js';
+import { statsRoutes } from './routes/stats.js';
+import { timeseriesRoutes } from './routes/timeseries.js';
+import { geoRoutes } from './routes/geo.js';
+import { heatmapRoutes } from './routes/heatmap.js';
+import { rankingsRoutes } from './routes/rankings.js';
+import { distributionRoutes } from './routes/distribution.js';
+import { companiesRoutes } from './routes/companies.js';
 
 const app = Fastify({ logger: true });
 
+await app.register(helmet);
+await app.register(cors, { origin: config.corsOrigin, methods: ['GET'] });
+await app.register(rateLimit, { max: config.rateLimitMax, timeWindow: '1 minute' });
+
+// Authentication extension point (disabled). When the CDTI deployment requires
+// it, set AUTH_ENABLED=true and implement the verification below.
+if (config.authEnabled) {
+  app.addHook('onRequest', async () => {
+    throw Object.assign(new Error('Autenticación no implementada'), { statusCode: 501 });
+  });
+}
+
+app.setErrorHandler((error: unknown, request, reply) => {
+  if (error instanceof ApiValidationError) {
+    return reply.code(400).send({ error: error.message, details: error.details });
+  }
+  if (error instanceof Error) {
+    const statusCode =
+      'statusCode' in error && typeof error.statusCode === 'number' ? error.statusCode : undefined;
+    if (statusCode !== undefined && statusCode < 500) {
+      return reply.code(statusCode).send({ error: error.message });
+    }
+  }
+  request.log.error(error);
+  return reply.code(500).send({ error: 'Error interno' });
+});
+
 app.get('/health', () => ({ status: 'ok' }));
 
+await initDb(config.dbPath);
+await loadWhitelists();
+
+await app.register(
+  async (api) => {
+    await api.register(metaRoutes);
+    await api.register(projectsRoutes);
+    await api.register(statsRoutes);
+    await api.register(timeseriesRoutes);
+    await api.register(geoRoutes);
+    await api.register(heatmapRoutes);
+    await api.register(rankingsRoutes);
+    await api.register(distributionRoutes);
+    await api.register(companiesRoutes);
+  },
+  { prefix: '/api' },
+);
+
 try {
-  await app.listen({ host, port });
+  await app.listen({ host: config.host, port: config.port });
 } catch (err) {
   app.log.error(err);
   process.exit(1);

@@ -41,7 +41,7 @@ Principios rectores, en orden: **rendimiento** (filtros con respuesta < 200 ms p
 - **`data/`** — los JSON crudos (en `data/raw/`, fuera de git) y la base `cdti.duckdb`
   generada por la ingesta (también fuera de git).
 - **`docs/`** — documentación: [decisiones](docs/decisions.md), [modelo de datos](docs/database.md),
-  [informe de calidad de datos](docs/data-quality.md) (regenerado en cada ingesta).
+  [API](docs/api.md), [informe de calidad de datos](docs/data-quality.md) (regenerado en cada ingesta).
 
 ## Decisiones técnicas
 
@@ -130,7 +130,7 @@ npm run dev:web
 | ---------- | ----------------------------------- | ------ |
 | **FASE 0** | Arquitectura, esqueleto, tooling    | ✅     |
 | **FASE 1** | Ingesta y base de datos             | ✅     |
-| FASE 2     | API de consulta                     | ⏳     |
+| **FASE 2** | API de consulta                     | ✅     |
 | FASE 3     | Layout, sistema de diseño y filtros | ⏳     |
 | FASE 4     | Visualizaciones                     | ⏳     |
 | FASE 5     | Pulido, rendimiento y seguridad     | ⏳     |
