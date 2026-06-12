@@ -2,7 +2,8 @@
 
 Aplicación web interna para **consultar, filtrar, cruzar y extraer estadísticas** de los proyectos
 aprobados por el CDTI (Centro para el Desarrollo Tecnológico y la Innovación). Pensada para
-empleados del CDTI que necesitan respuestas rápidas y visuales sobre cientos de miles de registros.
+empleados del CDTI que necesitan respuestas rápidas y visuales sobre ~20.000 proyectos (2014–2026)
+de más de 10.000 empresas.
 
 Principios rectores, en orden: **rendimiento** (filtros con respuesta < 200 ms percibidos),
 **arquitectura limpia y sencilla**, y **diseño UX/UI de nivel premium**.
@@ -39,7 +40,8 @@ Principios rectores, en orden: **rendimiento** (filtros con respuesta < 200 ms p
   DTOs de la API, enums de categorías). Una sola fuente de verdad para los tipos.
 - **`data/`** — los JSON crudos (en `data/raw/`, fuera de git) y la base `cdti.duckdb`
   generada por la ingesta (también fuera de git).
-- **`docs/`** — documentación: decisiones, informe de calidad de datos, guía de la API.
+- **`docs/`** — documentación: [decisiones](docs/decisions.md), [modelo de datos](docs/database.md),
+  [informe de calidad de datos](docs/data-quality.md) (regenerado en cada ingesta).
 
 ## Decisiones técnicas
 
@@ -48,11 +50,11 @@ Principios rectores, en orden: **rendimiento** (filtros con respuesta < 200 ms p
 Se evaluaron tres opciones para la prioridad nº 1 (consultas analíticas con filtros combinados
 sobre cientos de miles de filas, en < 200 ms):
 
-| Opción | Veredicto |
-|---|---|
+| Opción        | Veredicto                                                                                                                                                                                                                                                                                                                                              |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **DuckDB** ✅ | Motor **columnar y vectorizado**, diseñado exactamente para este patrón: `GROUP BY` y agregaciones sobre cientos de miles de filas en milisegundos sin afinado. Embebido (cero operaciones, un solo fichero), con modo `READ_ONLY` que permite múltiples lectores concurrentes — encaja con una API de solo lectura cuya ingesta corre aparte por CLI. |
-| SQLite | Orientado a filas (OLTP). Los índices aceleran búsquedas puntuales, pero las agregaciones con filtros combinados degeneran en escaneos de tabla notablemente más lentos que un motor columnar. Descartado para carga analítica. |
-| PostgreSQL | Excelente si hubiera escrituras concurrentes o despliegue multiusuario con necesidades transaccionales. Aquí solo añade coste operativo (servidor, credenciales, despliegue). El SQL es estándar: migrar más adelante sigue siendo viable si el despliegue lo exige. |
+| SQLite        | Orientado a filas (OLTP). Los índices aceleran búsquedas puntuales, pero las agregaciones con filtros combinados degeneran en escaneos de tabla notablemente más lentos que un motor columnar. Descartado para carga analítica.                                                                                                                        |
+| PostgreSQL    | Excelente si hubiera escrituras concurrentes o despliegue multiusuario con necesidades transaccionales. Aquí solo añade coste operativo (servidor, credenciales, despliegue). El SQL es estándar: migrar más adelante sigue siendo viable si el despliegue lo exige.                                                                                   |
 
 ### Backend: Node + Fastify (TypeScript)
 
@@ -112,23 +114,23 @@ npm run dev:web
 
 ### Scripts disponibles (raíz)
 
-| Script | Descripción |
-|---|---|
-| `npm run ingest` | Ejecuta el pipeline de ingesta (CLI, única vía de escritura en la BD) |
-| `npm run dev:api` | API en modo desarrollo con recarga (`tsx watch`) |
-| `npm run dev:web` | Frontend en modo desarrollo (Vite) |
-| `npm run build` | Build de producción de todos los workspaces |
-| `npm run typecheck` | Comprobación de tipos en todos los workspaces |
-| `npm run lint` / `lint:fix` | ESLint sobre todo el repo |
-| `npm run format` / `format:check` | Prettier sobre todo el repo |
+| Script                            | Descripción                                                           |
+| --------------------------------- | --------------------------------------------------------------------- |
+| `npm run ingest`                  | Ejecuta el pipeline de ingesta (CLI, única vía de escritura en la BD) |
+| `npm run dev:api`                 | API en modo desarrollo con recarga (`tsx watch`)                      |
+| `npm run dev:web`                 | Frontend en modo desarrollo (Vite)                                    |
+| `npm run build`                   | Build de producción de todos los workspaces                           |
+| `npm run typecheck`               | Comprobación de tipos en todos los workspaces                         |
+| `npm run lint` / `lint:fix`       | ESLint sobre todo el repo                                             |
+| `npm run format` / `format:check` | Prettier sobre todo el repo                                           |
 
 ## Estado del proyecto
 
-| Fase | Contenido | Estado |
-|---|---|---|
-| **FASE 0** | Arquitectura, esqueleto, tooling | ✅ |
-| FASE 1 | Ingesta y base de datos | ⏳ |
-| FASE 2 | API de consulta | ⏳ |
-| FASE 3 | Layout, sistema de diseño y filtros | ⏳ |
-| FASE 4 | Visualizaciones | ⏳ |
-| FASE 5 | Pulido, rendimiento y seguridad | ⏳ |
+| Fase       | Contenido                           | Estado |
+| ---------- | ----------------------------------- | ------ |
+| **FASE 0** | Arquitectura, esqueleto, tooling    | ✅     |
+| **FASE 1** | Ingesta y base de datos             | ✅     |
+| FASE 2     | API de consulta                     | ⏳     |
+| FASE 3     | Layout, sistema de diseño y filtros | ⏳     |
+| FASE 4     | Visualizaciones                     | ⏳     |
+| FASE 5     | Pulido, rendimiento y seguridad     | ⏳     |

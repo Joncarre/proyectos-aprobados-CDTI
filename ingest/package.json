@@ -8,7 +8,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@cdti/shared": "*"
+    "@cdti/shared": "*",
+    "@duckdb/node-api": "^1.5.3-r.3",
+    "dotenv": "^17.4.2"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
