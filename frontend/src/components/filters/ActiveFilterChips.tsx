@@ -24,11 +24,16 @@ function buildChips(
 
   if (filters.anios?.length) {
     const sorted = [...filters.anios].sort((a, b) => a - b);
-    chips.push({
-      id: 'anios',
-      label: sorted.length <= 3 ? `Años: ${sorted.join(' · ')}` : listLabel('Años', sorted),
-      remove: () => clearKey('anios'),
-    });
+    const contiguous = sorted.every(
+      (year, index) => index === 0 || year === sorted[index - 1]! + 1,
+    );
+    const label =
+      sorted.length === 1
+        ? `Año: ${sorted[0]}`
+        : contiguous
+          ? `Años: ${sorted[0]}–${sorted[sorted.length - 1]}`
+          : listLabel('Años', sorted);
+    chips.push({ id: 'anios', label, remove: () => clearKey('anios') });
   }
   if (filters.meses?.length) {
     const names = [...filters.meses]

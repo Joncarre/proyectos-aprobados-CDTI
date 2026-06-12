@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useHeatmap } from '../../api/queries';
-import { AXIS_LABEL, baseTooltip, SEQUENTIAL_RAMP } from '../../lib/echarts';
+import { AXIS_LABEL, baseTooltip, MONO_FONT, monoNum, SEQUENTIAL_RAMP } from '../../lib/echarts';
 import { formatInt, formatMoney, formatMoneyCompact, formatPct } from '../../lib/format';
 import { Card, ControlGroup } from '../ui/Card';
 import { EChart } from './EChart';
@@ -50,9 +50,9 @@ export function HeatmapCard() {
             if (!cell) return '';
             return [
               `<b>${cell.categoria}</b> · ${cell.anio}`,
-              `Proyectos: <b>${formatInt(cell.proyectos)}</b>`,
-              `Aportación CDTI: ${formatMoney(cell.aportacion)}`,
-              `% medio: ${formatPct(cell.pctMedio)}`,
+              `Proyectos: <b>${monoNum(formatInt(cell.proyectos))}</b>`,
+              `Aportación CDTI: ${monoNum(formatMoney(cell.aportacion))}`,
+              `% medio: ${monoNum(formatPct(cell.pctMedio))}`,
             ].join('<br/>');
           },
         },
@@ -88,7 +88,7 @@ export function HeatmapCard() {
           itemHeight: 110,
           formatter: (value: number) =>
             metrica === 'aportacion' ? formatMoneyCompact(value) : formatInt(Math.round(value)),
-          textStyle: { color: '#55555e', fontSize: 9 },
+          textStyle: { color: '#55555e', fontSize: 9, fontFamily: MONO_FONT },
         },
         series: [
           {

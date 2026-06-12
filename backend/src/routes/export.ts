@@ -1,107 +1,96 @@
-import type { FastifyPluginAsync } from 'fastify';
+import type { FastifyPluginAsync, FastifyReply } from 'fastify';
+import { z } from 'zod';
+import type { ProjectItem } from '@cdti/shared';
 import { query } from '../db.js';
-import { parseFilters } from '../validation.js';
+import { parseFilters, parseQuery } from '../validation.js';
 import { buildWhere } from '../where.js';
+import { ITEM_COLUMNS } from './projects.js';
 
-interface ExportRow {
-  fecha: string | null;
-  empresa: string;
-  nif: string;
-  titulo: string;
-  pyme: boolean | null;
-  tipo_entidad: string | null;
-  ccaa: string;
-  provincia: string;
-  localidad: string | null;
-  codigo_postal: string | null;
-  tipo_ayuda: string | null;
-  instrumento: string | null;
-  area_sectorial: string | null;
-  cnae: string | null;
-  origen_fondos: string | null;
-  presupuesto: number | null;
-  aportacion: number | null;
-  pct: number | null;
-}
+const exportParamsSchema = z.object({
+  fmt: z.enum(['csv', 'json', 'xml']).default('csv'),
+});
 
-const HEADER = [
-  'Fecha aprobación',
-  'Empresa',
-  'NIF',
-  'Título',
-  'PYME',
-  'Tipo entidad',
-  'CCAA',
-  'Provincia',
-  'Localidad',
-  'Código postal',
-  'Tipo de ayuda',
-  'Instrumento financiero',
-  'Área sectorial',
-  'CNAE',
-  'Origen de fondos',
-  'Presupuesto (€)',
-  'Aportación CDTI (€)',
-  '% aportación',
+/** CSV column order: header label + ProjectItem key. */
+const CSV_COLUMNS: Array<[string, keyof ProjectItem]> = [
+  ['Fecha aprobación', 'fechaAprobacion'],
+  ['Empresa', 'razonSocial'],
+  ['NIF', 'nif'],
+  ['Título', 'titulo'],
+  ['PYME', 'pyme'],
+  ['Tipo entidad', 'tipoEntidad'],
+  ['CCAA', 'ccaa'],
+  ['Provincia', 'provincia'],
+  ['Localidad', 'localidad'],
+  ['Código postal', 'codigoPostal'],
+  ['Tipo de ayuda', 'tipoAyuda'],
+  ['Instrumento financiero', 'instrumento'],
+  ['Área sectorial', 'areaSectorial'],
+  ['CNAE', 'cnae'],
+  ['Origen de fondos', 'origenFondos'],
+  ['Presupuesto (€)', 'presupuesto'],
+  ['Aportación CDTI (€)', 'aportacionCdti'],
+  ['% aportación', 'porcentajeAportacion'],
 ];
 
-/** Spanish-Excel-friendly CSV: semicolon separator, decimal comma, UTF-8 BOM. */
-const csvField = (value: string | number | boolean | null): string => {
-  if (value === null) return '';
+/** Spanish-Excel-friendly CSV field: decimal comma, quoted when needed. */
+const csvField = (value: ProjectItem[keyof ProjectItem]): string => {
+  if (value === null || value === undefined) return '';
   if (typeof value === 'number') return String(value).replace('.', ',');
   if (typeof value === 'boolean') return value ? 'Sí' : 'No';
-  return /[;"\n\r]/.test(value) ? `"${value.replaceAll('"', '""')}"` : value;
+  const text = String(value);
+  return /[;"\n\r]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
 };
 
-/** GET /api/projects/export — full filtered result set as CSV download. */
+const xmlEscape = (value: string): string =>
+  value
+    .replaceAll('&', '&amp;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;')
+    .replaceAll('"', '&quot;');
+
+function toCsv(rows: ProjectItem[]): string {
+  const bom = String.fromCharCode(0xfeff); // lets Excel detect UTF-8
+  const header = CSV_COLUMNS.map(([label]) => label).join(';');
+  const lines = rows.map((row) => CSV_COLUMNS.map(([, key]) => csvField(row[key])).join(';'));
+  return bom + [header, ...lines].join('\r\n');
+}
+
+function toXml(rows: ProjectItem[]): string {
+  const items = rows.map((row) => {
+    const fields = Object.entries(row)
+      .filter(([, value]) => value !== null && value !== undefined)
+      .map(([key, value]) => `    <${key}>${xmlEscape(String(value))}</${key}>`)
+      .join('\n');
+    return `  <proyecto>\n${fields}\n  </proyecto>`;
+  });
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<proyectos total="${rows.length}">\n${items.join('\n')}\n</proyectos>\n`;
+}
+
+const send = (reply: FastifyReply, body: string, contentType: string, ext: string) =>
+  reply
+    .header('content-type', `${contentType}; charset=utf-8`)
+    .header('content-disposition', `attachment; filename="proyectos-cdti.${ext}"`)
+    .send(body);
+
+/** GET /api/projects/export?fmt=csv|json|xml — full filtered result set as a download. */
 export const exportRoutes: FastifyPluginAsync = async (app) => {
   app.get('/projects/export', async (request, reply) => {
     const filters = parseFilters(request.query);
+    const { fmt } = parseQuery(exportParamsSchema, request.query);
     const clause = buildWhere(filters);
 
-    const rows = await query<ExportRow>(
-      `
-      SELECT
-        fecha_aprobacion::VARCHAR AS fecha, razon_social AS empresa, nif, titulo, pyme,
-        tipo_entidad, ccaa, provincia, localidad, codigo_postal, tipo_ayuda, instrumento,
-        area_sectorial, cnae, origen_fondos,
-        presupuesto::DOUBLE AS presupuesto, aportacion_cdti::DOUBLE AS aportacion,
-        porcentaje_aportacion::DOUBLE AS pct
-      FROM projects ${clause.where}
-      ORDER BY fecha_aprobacion, id`,
+    const rows = await query<ProjectItem>(
+      `SELECT ${ITEM_COLUMNS} FROM projects ${clause.where} ORDER BY fecha_aprobacion, id`,
       clause.params,
     );
 
-    const lines = rows.map((row) =>
-      [
-        row.fecha,
-        row.empresa,
-        row.nif,
-        row.titulo,
-        row.pyme,
-        row.tipo_entidad,
-        row.ccaa,
-        row.provincia,
-        row.localidad,
-        row.codigo_postal,
-        row.tipo_ayuda,
-        row.instrumento,
-        row.area_sectorial,
-        row.cnae,
-        row.origen_fondos,
-        row.presupuesto,
-        row.aportacion,
-        row.pct,
-      ]
-        .map(csvField)
-        .join(';'),
-    );
-    const bom = String.fromCharCode(0xfeff); // lets Excel detect UTF-8
-    const csv = bom + [HEADER.join(';'), ...lines].join('\r\n');
-
-    return reply
-      .header('content-type', 'text/csv; charset=utf-8')
-      .header('content-disposition', 'attachment; filename="proyectos-cdti.csv"')
-      .send(csv);
+    switch (fmt) {
+      case 'json':
+        return send(reply, JSON.stringify(rows, null, 1), 'application/json', 'json');
+      case 'xml':
+        return send(reply, toXml(rows), 'application/xml', 'xml');
+      default:
+        return send(reply, toCsv(rows), 'text/csv', 'csv');
+    }
   });
 };

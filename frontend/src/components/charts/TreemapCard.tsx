@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTreemap } from '../../api/queries';
-import { baseTooltip, SERIES_PALETTE } from '../../lib/echarts';
+import { baseTooltip, MONO_FONT, monoNum, SERIES_PALETTE } from '../../lib/echarts';
 import { formatInt, formatMoney, formatMoneyCompact } from '../../lib/format';
 import { Card } from '../ui/Card';
 import { EChart } from './EChart';
@@ -43,8 +43,8 @@ export function TreemapCard() {
           const proyectos = params.data?.proyectos;
           return [
             `<b>${params.name}</b>`,
-            `Aportación CDTI: <b>${formatMoney(Number(params.value))}</b>`,
-            proyectos !== undefined ? `Proyectos: ${formatInt(proyectos)}` : null,
+            `Aportación CDTI: <b>${monoNum(formatMoney(Number(params.value)))}</b>`,
+            proyectos !== undefined ? `Proyectos: ${monoNum(formatInt(proyectos))}` : null,
           ]
             .filter(Boolean)
             .join('<br/>');
@@ -70,7 +70,8 @@ export function TreemapCard() {
             fontSize: 11,
             fontFamily: "'Inter Variable', system-ui, sans-serif",
             formatter: (params: { name: string; value: unknown }) =>
-              `${params.name}\n${formatMoneyCompact(Number(params.value))}`,
+              `${params.name}\n{num|${formatMoneyCompact(Number(params.value))}}`,
+            rich: { num: { fontFamily: MONO_FONT, fontSize: 10, color: 'inherit' } },
           },
           itemStyle: { borderColor: '#ffffff', borderWidth: 2, gapWidth: 2, borderRadius: 4 },
           colorSaturation: [0.45, 0.7] as [number, number],

@@ -1,7 +1,13 @@
 import { useMemo, useState } from 'react';
 import type { TimeseriesPoint } from '@cdti/shared';
 import { useTimeseries } from '../../api/queries';
-import { AXIS_LABEL, baseTooltip, SERIES_PALETTE, SPLIT_LINE } from '../../lib/echarts';
+import {
+  AXIS_LABEL,
+  baseTooltip,
+  monoNum,
+  SPLIT_LINE,
+  TIMESERIES_PALETTE,
+} from '../../lib/echarts';
 import { formatMoneyCompact, formatPct } from '../../lib/format';
 import { Card, ControlGroup } from '../ui/Card';
 import { EChart } from './EChart';
@@ -45,10 +51,10 @@ function buildSeries(
       pct[index] = point.pctMedio;
     }
     return metrica === 'pct'
-      ? [{ name: '% medio de aportación', data: pct, color: SERIES_PALETTE[0] }]
+      ? [{ name: '% medio de aportación', data: pct, color: TIMESERIES_PALETTE[0] }]
       : [
           { name: 'Presupuesto', data: presupuesto, color: '#94a3b8' },
-          { name: 'Aportación CDTI', data: aportacion, color: SERIES_PALETTE[0] },
+          { name: 'Aportación CDTI', data: aportacion, color: TIMESERIES_PALETTE[0] },
         ];
   }
 
@@ -75,7 +81,7 @@ function buildSeries(
   return top.map((group, position) => ({
     name: group,
     data: series.get(group)!,
-    color: SERIES_PALETTE[position % SERIES_PALETTE.length],
+    color: TIMESERIES_PALETTE[position % TIMESERIES_PALETTE.length],
   }));
 }
 
@@ -94,17 +100,34 @@ export function TimeSeriesCard() {
     const periods = [...new Set(points.map((point) => point.periodo))].sort();
     const series = buildSeries(points, periods, agrupar, metrica);
 
+    const formatValue = (value: unknown): string =>
+      typeof value !== 'number'
+        ? '—'
+        : metrica === 'pct'
+          ? formatPct(value)
+          : formatMoneyCompact(value);
+
+    interface AxisItem {
+      axisValueLabel?: string;
+      marker?: string;
+      seriesName?: string;
+      value?: unknown;
+    }
+
     return {
-      color: SERIES_PALETTE,
+      color: TIMESERIES_PALETTE,
       tooltip: {
         ...baseTooltip,
         trigger: 'axis' as const,
-        valueFormatter: (value: unknown) =>
-          typeof value !== 'number'
-            ? '—'
-            : metrica === 'pct'
-              ? formatPct(value)
-              : formatMoneyCompact(value),
+        formatter: (items: AxisItem[]) => {
+          const list = Array.isArray(items) ? items : [items];
+          const header = `<b>${list[0]?.axisValueLabel ?? ''}</b>`;
+          const lines = list.map(
+            (item) =>
+              `${item.marker ?? ''} ${item.seriesName}: ${monoNum(formatValue(item.value))}`,
+          );
+          return [header, ...lines].join('<br/>');
+        },
       },
       legend: {
         type: 'scroll' as const,

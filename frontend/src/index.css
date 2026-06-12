@@ -1,4 +1,5 @@
 @import '@fontsource-variable/inter';
+@import '@fontsource-variable/jetbrains-mono';
 @import 'tailwindcss';
 
 /*
@@ -8,6 +9,8 @@
  */
 @theme {
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  /* All numeric data (KPIs, table cells, filter values, chart axes) renders in mono */
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Code', monospace;
 
   /* Neutral layers (slightly warm, Linear-like) */
   --color-page: #f7f7f8; /* app background */

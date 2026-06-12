@@ -1,12 +1,14 @@
 import * as SliderPrimitive from '@radix-ui/react-slider';
 
 interface RangeSliderProps {
-  /** Normalised positions 0–1000 (the parent maps them to real values). */
   value: [number, number];
   onValueChange: (value: [number, number]) => void;
   onValueCommit: (value: [number, number]) => void;
   ariaLabelMin: string;
   ariaLabelMax: string;
+  min?: number;
+  max?: number;
+  step?: number;
 }
 
 const thumbClass =
@@ -18,17 +20,20 @@ export function RangeSlider({
   onValueCommit,
   ariaLabelMin,
   ariaLabelMax,
+  min = 0,
+  max = 1000,
+  step = 1,
 }: RangeSliderProps) {
   return (
     <SliderPrimitive.Root
       className="relative flex h-5 w-full touch-none items-center select-none"
-      min={0}
-      max={1000}
-      step={1}
+      min={min}
+      max={max}
+      step={step}
       value={value}
       onValueChange={(v) => onValueChange(v as [number, number])}
       onValueCommit={(v) => onValueCommit(v as [number, number])}
-      minStepsBetweenThumbs={1}
+      minStepsBetweenThumbs={0}
     >
       <SliderPrimitive.Track className="relative h-1 grow rounded-full bg-line">
         <SliderPrimitive.Range className="absolute h-full rounded-full bg-accent" />

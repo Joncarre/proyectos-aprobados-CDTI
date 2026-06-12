@@ -45,20 +45,20 @@ export function CompaniesCard() {
                     : 'border-transparent hover:bg-surface-2',
                 )}
               >
-                <span className="w-5 shrink-0 text-xs font-semibold text-ink-faint tabular-nums">
+                <span className="w-5 shrink-0 font-mono text-xs font-semibold text-ink-faint">
                   {index + 1}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-xs font-medium">{company.razonSocial}</span>
-                  <span className="block text-[0.65rem] text-ink-faint tabular-nums">
+                  <span className="block font-mono text-[0.65rem] text-ink-faint">
                     {company.nif} · {company.primerAnio}–{company.ultimoAnio} · % medio{' '}
                     {formatPct(company.pctMedio)}
                   </span>
                 </span>
-                <span className="shrink-0 rounded-full bg-accent-soft px-2 py-0.5 text-[0.65rem] font-semibold text-accent-strong tabular-nums">
+                <span className="shrink-0 rounded-full bg-accent-soft px-2 py-0.5 font-mono text-[0.65rem] font-semibold text-accent-strong">
                   {formatInt(company.proyectos)} proy.
                 </span>
-                <span className="w-16 shrink-0 text-right text-xs font-medium tabular-nums">
+                <span className="w-16 shrink-0 text-right font-mono text-xs font-medium">
                   {formatMoneyCompact(company.aportacion)}
                 </span>
               </button>

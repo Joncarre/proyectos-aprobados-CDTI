@@ -52,7 +52,7 @@ export function FilterPanel() {
         <h2 className="flex items-center gap-2 text-sm font-semibold">
           Filtros
           {activeCount > 0 && (
-            <span className="rounded-full bg-accent-soft px-1.5 py-0.5 text-xs font-semibold text-accent-strong">
+            <span className="rounded-full bg-accent-soft px-1.5 py-0.5 font-mono text-xs font-semibold text-accent-strong">
               {activeCount}
             </span>
           )}

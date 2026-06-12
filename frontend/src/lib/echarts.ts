@@ -38,12 +38,30 @@ export const SERIES_PALETTE = [
   '#dc2626',
 ];
 
+/** Teal-first palette for the time series card (user preference: turquoise/blue-green). */
+export const TIMESERIES_PALETTE = [
+  '#0d9488',
+  '#2dd4bf',
+  '#0ea5e9',
+  '#6366f1',
+  '#d97706',
+  '#db2777',
+  '#65a30d',
+  '#7c3aed',
+];
+
 /** Sequential ramp for choropleth/heatmap intensity (accent family). */
 export const SEQUENTIAL_RAMP = ['#eef2ff', '#c7d2fe', '#818cf8', '#4f46e5', '#312e81'];
 
 export const CHART_FONT = {
   fontFamily: "'Inter Variable', system-ui, sans-serif",
 };
+
+export const MONO_FONT = "'JetBrains Mono Variable', ui-monospace, monospace";
+
+/** Numeric values inside HTML tooltips render in the mono font. */
+export const monoNum = (value: string): string =>
+  `<span style="font-family: ${MONO_FONT}; font-size: 11px">${value}</span>`;
 
 /** Base tooltip style shared by all charts. */
 export const baseTooltip = {
@@ -55,6 +73,6 @@ export const baseTooltip = {
   extraCssText: 'box-shadow: 0 4px 12px rgb(26 26 30 / 0.08); border-radius: 8px;',
 };
 
-export const AXIS_LABEL = { color: '#55555e', fontSize: 11, ...CHART_FONT };
+export const AXIS_LABEL = { color: '#55555e', fontSize: 10, fontFamily: MONO_FONT };
 export const AXIS_LINE = { lineStyle: { color: '#e8e8ea' } };
 export const SPLIT_LINE = { lineStyle: { color: '#f0f0f1' } };

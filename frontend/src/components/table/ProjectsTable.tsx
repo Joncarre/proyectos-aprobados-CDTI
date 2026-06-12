@@ -1,12 +1,51 @@
 import { useEffect, useState } from 'react';
-import { ArrowDown, ArrowUp, ChevronLeft, ChevronRight, Download } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChevronDown, ChevronLeft, ChevronRight, Download } from 'lucide-react';
 import type { SortField } from '@cdti/shared';
 import { useExportUrl, useProjects } from '../../api/queries';
 import { cn } from '../../lib/cn';
 import { formatInt, formatMoney, formatPct } from '../../lib/format';
 import { useFiltersStore } from '../../state/filters';
 import { Card } from '../ui/Card';
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
 import { Skeleton } from '../ui/Skeleton';
+
+const EXPORT_FORMATS = [
+  { fmt: 'csv', label: 'CSV', hint: 'Excel español (separador ;)' },
+  { fmt: 'json', label: 'JSON', hint: 'Datos estructurados' },
+  { fmt: 'xml', label: 'XML', hint: 'Intercambio entre sistemas' },
+] as const;
+
+function ExportMenu() {
+  const exportUrl = useExportUrl();
+  const urlFor = (fmt: string): string =>
+    `${exportUrl}${exportUrl.includes('?') ? '&' : '?'}fmt=${fmt}`;
+
+  return (
+    <Popover>
+      <PopoverTrigger asChild>
+        <button
+          type="button"
+          className="flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink-soft transition-colors hover:border-line-strong hover:text-ink"
+        >
+          <Download className="size-3.5" /> Exportar <ChevronDown className="size-3" />
+        </button>
+      </PopoverTrigger>
+      <PopoverContent matchTriggerWidth={false}>
+        {EXPORT_FORMATS.map(({ fmt, label, hint }) => (
+          <a
+            key={fmt}
+            href={urlFor(fmt)}
+            download
+            className="block rounded-md px-2 py-1.5 transition-colors hover:bg-surface-2"
+          >
+            <span className="block text-xs font-medium">{label}</span>
+            <span className="block text-[0.65rem] text-ink-faint">{hint}</span>
+          </a>
+        ))}
+      </PopoverContent>
+    </Popover>
+  );
+}
 
 interface Column {
   key: string;
@@ -47,7 +86,6 @@ export function ProjectsTable() {
   }, [filters]);
 
   const { data, isPending, isPlaceholderData } = useProjects(page, pageSize, sort, order);
-  const exportUrl = useExportUrl();
 
   const total = data?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
@@ -66,15 +104,7 @@ export function ProjectsTable() {
     <Card
       title="Detalle de proyectos"
       subtitle={`${formatInt(total)} resultados con los filtros activos`}
-      controls={
-        <a
-          href={exportUrl}
-          download
-          className="flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink-soft transition-colors hover:border-line-strong hover:text-ink"
-        >
-          <Download className="size-3.5" /> Exportar CSV
-        </a>
-      }
+      controls={<ExportMenu />}
       isPending={false}
       isUpdating={isPlaceholderData}
       className="overflow-hidden"
@@ -130,7 +160,7 @@ export function ProjectsTable() {
                     key={item.id}
                     className="border-b border-line transition-colors hover:bg-surface-2/50"
                   >
-                    <td className="px-3 py-2 whitespace-nowrap tabular-nums">
+                    <td className="px-3 py-2 font-mono whitespace-nowrap">
                       {formatDate(item.fechaAprobacion)}
                     </td>
                     <td
@@ -154,13 +184,13 @@ export function ProjectsTable() {
                     >
                       {item.instrumento ?? '—'}
                     </td>
-                    <td className="px-3 py-2 text-right whitespace-nowrap tabular-nums">
+                    <td className="px-3 py-2 text-right font-mono whitespace-nowrap">
                       {item.presupuesto !== null ? formatMoney(item.presupuesto) : '—'}
                     </td>
-                    <td className="px-3 py-2 text-right whitespace-nowrap tabular-nums">
+                    <td className="px-3 py-2 text-right font-mono whitespace-nowrap">
                       {item.aportacionCdti !== null ? formatMoney(item.aportacionCdti) : '—'}
                     </td>
-                    <td className="px-3 py-2 text-right tabular-nums">
+                    <td className="px-3 py-2 text-right font-mono">
                       {formatPct(item.porcentajeAportacion)}
                     </td>
                   </tr>
@@ -196,7 +226,7 @@ export function ProjectsTable() {
         </label>
 
         <div className="flex items-center gap-2">
-          <span className="text-xs text-ink-soft tabular-nums">
+          <span className="font-mono text-xs text-ink-soft">
             Página {formatInt(page)} de {formatInt(totalPages)}
           </span>
           <button

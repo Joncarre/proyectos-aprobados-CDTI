@@ -1,137 +1,108 @@
-# Proyectos CDTI — Plataforma de visualización de datos
+# Proyectos CDTI — Explorador de datos
 
-Aplicación web interna para **consultar, filtrar, cruzar y extraer estadísticas** de los proyectos
-aprobados por el CDTI (Centro para el Desarrollo Tecnológico y la Innovación). Pensada para
-empleados del CDTI que necesitan respuestas rápidas y visuales sobre ~20.000 proyectos (2014–2026)
-de más de 10.000 empresas.
-
-Principios rectores, en orden: **rendimiento** (filtros con respuesta < 200 ms percibidos),
-**arquitectura limpia y sencilla**, y **diseño UX/UI de nivel premium**.
-
----
-
-## Arquitectura
-
-```
-13 JSON crudos          CLI (solo local)           API solo lectura          SPA
-┌─────────────┐   ┌──────────────────────┐   ┌────────────────────┐   ┌──────────────────┐
-│  data/raw/  │ → │  ingest/             │ → │  backend/          │ → │  frontend/       │
-│  *.json     │   │  normaliza, deriva,  │   │  Fastify + DuckDB  │   │  React + Vite +  │
-│             │   │  carga en DuckDB     │   │  (READ_ONLY)       │   │  Tailwind        │
-└─────────────┘   └──────────┬───────────┘   └─────────┬──────────┘   └──────────────────┘
-                             ▼                         │
-                      data/cdti.duckdb  ◄──────────────┘
-```
-
-- **`ingest/`** — pipeline CLI idempotente: lee los JSON, normaliza importes (formato español
-  → numérico), fechas (`DD/MM/YYYY` → fecha + año/mes/trimestre derivados), booleanos
-  (`S`/`N`), limpia categorías inconsistentes y calcula `porcentaje_aportacion`
-  (AportaciónCDTI / Presupuesto). Genera un informe de calidad de datos. **Toda** la
-  información original se persiste, también los campos aún sin uso en la UI.
-- **`backend/`** — API Fastify de **solo lectura** que abre DuckDB en modo `READ_ONLY`.
-  Recibe filtros validados y devuelve agregaciones ya calculadas; nunca vuelca filas crudas
-  salvo en la tabla paginada. Parámetros validados contra listas blancas; SQL siempre
-  parametrizado; CORS restringido, cabeceras de seguridad y rate limiting.
-- **`frontend/`** — SPA React 19 + TypeScript + Vite + Tailwind 4. Estado de filtros global
-  ligero (Zustand) sincronizado con la URL para que cualquier vista sea compartible por enlace.
-  Visualización: ECharts (gráficas, heatmaps), MapLibre GL + GeoJSON oficial (mapas
-  coropléticos de CCAA/provincias), Framer Motion (transiciones).
-- **`shared/`** — contratos TypeScript compartidos entre backend y frontend (tipos de filtros,
-  DTOs de la API, enums de categorías). Una sola fuente de verdad para los tipos.
-- **`data/`** — los JSON crudos (en `data/raw/`, fuera de git) y la base `cdti.duckdb`
-  generada por la ingesta (también fuera de git).
-- **`docs/`** — documentación: [decisiones](docs/decisions.md), [modelo de datos](docs/database.md),
-  [API](docs/api.md), [sistema de diseño](docs/design-system.md),
-  [informe de calidad de datos](docs/data-quality.md) (regenerado en cada ingesta).
-
-## Decisiones técnicas
-
-### Base de datos: DuckDB
-
-Se evaluaron tres opciones para la prioridad nº 1 (consultas analíticas con filtros combinados
-sobre cientos de miles de filas, en < 200 ms):
-
-| Opción        | Veredicto                                                                                                                                                                                                                                                                                                                                              |
-| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **DuckDB** ✅ | Motor **columnar y vectorizado**, diseñado exactamente para este patrón: `GROUP BY` y agregaciones sobre cientos de miles de filas en milisegundos sin afinado. Embebido (cero operaciones, un solo fichero), con modo `READ_ONLY` que permite múltiples lectores concurrentes — encaja con una API de solo lectura cuya ingesta corre aparte por CLI. |
-| SQLite        | Orientado a filas (OLTP). Los índices aceleran búsquedas puntuales, pero las agregaciones con filtros combinados degeneran en escaneos de tabla notablemente más lentos que un motor columnar. Descartado para carga analítica.                                                                                                                        |
-| PostgreSQL    | Excelente si hubiera escrituras concurrentes o despliegue multiusuario con necesidades transaccionales. Aquí solo añade coste operativo (servidor, credenciales, despliegue). El SQL es estándar: migrar más adelante sigue siendo viable si el despliegue lo exige.                                                                                   |
-
-### Backend: Node + Fastify (TypeScript)
-
-Frente a Python/FastAPI: **un solo lenguaje en todo el monorepo**. Los tipos de filtros y DTOs
-viven en `shared/` y los consumen backend y frontend — imposible que diverjan. Un único
-toolchain (npm), cliente oficial de DuckDB para Node (`@duckdb/node-api`) y plugins de primera
-parte para los requisitos de seguridad (`@fastify/cors`, `@fastify/helmet`, `@fastify/rate-limit`).
-
-### Otras decisiones
-
-- **Monorepo con npm workspaces** — un `npm install` en la raíz instala todo; sin herramientas
-  extra de monorepo (sin sobre-ingeniería).
-- **ESLint 9 (flat config) + Prettier** compartidos en la raíz; TypeScript `strict` en todos los
-  workspaces vía `tsconfig.base.json`.
-- **Sin secretos en el repo**: configuración por `.env` (con `.env.example` versionado);
-  lockfile (`package-lock.json`) versionado para fijar dependencias.
-- La autenticación queda **prevista pero desactivada**: el backend dejará un punto de extensión
-  (hook de Fastify) para incorporarla si se despliega para el CDTI.
-
-## Estructura del repositorio
-
-```
-├── ingest/          # Pipeline de ingesta (CLI) — FASE 1
-├── backend/         # API de solo lectura (Fastify + DuckDB) — FASE 2
-├── frontend/        # SPA (React + Vite + Tailwind) — FASES 3–4
-├── shared/          # Tipos y contratos compartidos
-├── data/
-│   └── raw/         # ← copiar aquí los 13 JSON (gitignorado)
-├── docs/            # Documentación del proyecto
-├── .env.example     # Plantilla de configuración (copiar a .env)
-└── package.json     # Raíz del monorepo (npm workspaces)
-```
+Aplicación web para **explorar los proyectos de I+D+i aprobados por el CDTI** (Centro para el
+Desarrollo Tecnológico y la Innovación): ~20.000 proyectos entre 2014 y 2026, de más de
+10.000 empresas. Permite filtrar, cruzar, visualizar y exportar la información de forma
+rápida y visual, sin necesidad de conocimientos técnicos.
 
 ## Puesta en marcha
 
-Requisitos: **Node.js ≥ 22** (npm incluido).
+Requisitos: [Node.js](https://nodejs.org) 22 o superior.
 
 ```bash
-# 1. Instalar todas las dependencias (todos los workspaces)
-npm install
-
-# 2. Configuración
-#    Copia .env.example a .env (los valores por defecto sirven en desarrollo)
-#    Copia frontend/.env.example a frontend/.env
-
-# 3. Datos: copia los 13 ficheros JSON en data/raw/
-
-# 4. Ingesta (FASE 1): genera data/cdti.duckdb
-npm run ingest
-
-# 5. Arrancar la API (http://localhost:3001)
-npm run dev:api
-
-# 6. Arrancar el frontend (http://localhost:5173) en otra terminal
-npm run dev:web
+npm install              # 1. instalar dependencias
+# 2. copiar los 13 ficheros JSON en data/raw/
+npm run ingest           # 3. construir la base de datos
+npm run dev:api          # 4. arrancar la API        (terminal 1)
+npm run dev:web          # 5. arrancar la web        (terminal 2)
 ```
 
-### Scripts disponibles (raíz)
+Abre **http://localhost:5173** y listo. Los detalles técnicos (arquitectura, API, modelo de
+datos) están en [docs/arquitectura.md](docs/arquitectura.md).
 
-| Script                            | Descripción                                                           |
-| --------------------------------- | --------------------------------------------------------------------- |
-| `npm run ingest`                  | Ejecuta el pipeline de ingesta (CLI, única vía de escritura en la BD) |
-| `npm run dev:api`                 | API en modo desarrollo con recarga (`tsx watch`)                      |
-| `npm run dev:web`                 | Frontend en modo desarrollo (Vite)                                    |
-| `npm run build`                   | Build de producción de todos los workspaces                           |
-| `npm run typecheck`               | Comprobación de tipos en todos los workspaces                         |
-| `npm run lint` / `lint:fix`       | ESLint sobre todo el repo                                             |
-| `npm run format` / `format:check` | Prettier sobre todo el repo                                           |
+## Cómo se usa
 
-## Estado del proyecto
+### Los filtros
 
-| Fase       | Contenido                           | Estado |
-| ---------- | ----------------------------------- | ------ |
-| **FASE 0** | Arquitectura, esqueleto, tooling    | ✅     |
-| **FASE 1** | Ingesta y base de datos             | ✅     |
-| **FASE 2** | API de consulta                     | ✅     |
-| **FASE 3** | Layout, sistema de diseño y filtros | ✅     |
-| **FASE 4** | Visualizaciones                     | ✅     |
-| FASE 5     | Pulido, rendimiento y seguridad     | ⏳     |
+El panel izquierdo (se puede ocultar con el botón ☰ del encabezado) concentra todos los
+filtros, **combinables entre sí**: periodo (años con barra deslizante, meses con atajos por
+trimestre T1–T4), rangos de presupuesto, de aportación CDTI y de % de aportación, comunidad
+autónoma y provincia (la lista de provincias se adapta a las comunidades elegidas),
+instrumento financiero, área sectorial, origen de fondos, tipo de ayuda, condición de PYME y
+búsqueda libre por título o empresa (encuentra «HIDRÓGENO» aunque escribas «hidrogeno»).
+
+Cada filtro activo aparece como una **etiqueta** sobre el panel principal: puedes quitarlos de
+uno en uno con su ✕ o todos con «Limpiar todo». Los indicadores de cabecera (nº de proyectos,
+presupuesto, aportación, % medio, % de PYMEs) se recalculan al instante con cada cambio.
+
+**La URL guarda siempre los filtros activos**: copia el enlace del navegador y cualquier
+persona verá exactamente la misma vista.
+
+### Las visualizaciones
+
+- **Mapa de España** — colorea comunidades por proyectos, aportación o % medio. Clic en una
+  comunidad para bajar a sus provincias (aplica el filtro a toda la página); clic en una
+  provincia para filtrar por ella. Las Canarias se muestran junto a la península (distancia
+  no a escala).
+- **Evolución temporal** — presupuesto frente a aportación CDTI, por años o por meses. Puedes
+  desglosar la serie por CCAA, área, instrumento u origen para **comparar evoluciones**, en
+  euros o en % medio de aportación.
+- **Heatmap** — intensidad por año × área sectorial (o año × CCAA): de un vistazo, qué
+  sectores concentran la ayuda y cómo se mueve en el tiempo.
+- **Ranking** — top de instrumentos, áreas, orígenes de fondos o tipos de ayuda.
+- **Distribución del % de aportación** — histograma del peso real de la ayuda CDTI en los
+  proyectos (la mayoría de proyectos recibe entre el 60 % y el 85 %).
+- **Áreas → instrumentos** — treemap: clic en un área para ver con qué instrumentos se
+  financia; vuelve con la miga de pan inferior.
+- **Empresas recurrentes** — quiénes repiten más. Clic en una empresa para ver **solo sus
+  proyectos** en toda la página; vuelve a hacer clic para soltarla.
+- **Tabla de detalle** — todos los proyectos del filtro activo, ordenable y paginada.
+
+### Exportar
+
+El botón **Exportar** de la tabla descarga el conjunto filtrado completo (no solo la página
+visible) en tres formatos: **CSV** (se abre directamente en Excel en español), **JSON** y
+**XML**.
+
+## Preguntas que puedes responder en segundos
+
+1. **«¿Qué % medio de aportación puso el CDTI en el primer trimestre de 2020 en Madrid, en
+   Tecnologías Informáticas?»** — Años: 2020 · pulsa T1 · CCAA: Comunidad de Madrid · Área:
+   Tecnologías Informáticas. El KPI «% medio de aportación» da la respuesta (75,2 %).
+2. **«¿Crece o decae la ayuda a un sector?»** — En _Evolución temporal_, desglosa por «Área»
+   y compara las líneas; cambia a «%» para ver si el porcentaje de apoyo también cambia.
+3. **«¿Qué provincias andaluzas concentran la ayuda?»** — Clic en Andalucía en el mapa: el
+   mapa baja a provincias y todo (KPIs, gráficas, tabla) se restringe a Andalucía.
+4. **«¿Quién recibe las mayores ayudas individuales?»** — En la tabla, ordena por
+   «Aportación» descendente.
+5. **«¿Qué proyectos de hidrógeno han hecho las PYMEs?»** — Escribe «hidrogeno» en el
+   buscador y pon el conmutador en «PYME». Exporta el resultado a CSV si lo necesitas.
+6. **«¿Toda la trayectoria de una empresa concreta?»** — Búscala en _Empresas recurrentes_ y
+   haz clic: verás sus proyectos, importes y evolución a lo largo de los años.
+
+## Sobre los datos
+
+Datos públicos de proyectos aprobados por el CDTI (2014–2026). En la ingesta se normalizan
+importes, fechas y categorías; el detalle de esa limpieza y las métricas de calidad están en
+[docs/data-quality.md](docs/data-quality.md). Los registros sin dato en algún campo (p. ej.
+272 proyectos sin instrumento) se conservan y simplemente no aparecen al filtrar por ese
+campo.
+
+## Documentación técnica
+
+| Documento                                      | Contenido                                 |
+| ---------------------------------------------- | ----------------------------------------- |
+| [docs/arquitectura.md](docs/arquitectura.md)   | Arquitectura, stack, estructura y scripts |
+| [docs/api.md](docs/api.md)                     | Endpoints y filtros de la API             |
+| [docs/database.md](docs/database.md)           | Modelo de datos (DuckDB)                  |
+| [docs/design-system.md](docs/design-system.md) | Sistema de diseño                         |
+| [docs/decisions.md](docs/decisions.md)         | Registro de decisiones técnicas           |
+
+| Fase   | Contenido                             | Estado |
+| ------ | ------------------------------------- | ------ |
+| FASE 0 | Arquitectura, esqueleto, tooling      | ✅     |
+| FASE 1 | Ingesta y base de datos               | ✅     |
+| FASE 2 | API de consulta                       | ✅     |
+| FASE 3 | Layout, sistema de diseño y filtros   | ✅     |
+| FASE 4 | Visualizaciones (+ ajustes de diseño) | ✅     |
+| FASE 5 | Pulido, rendimiento y seguridad       | ⏳     |

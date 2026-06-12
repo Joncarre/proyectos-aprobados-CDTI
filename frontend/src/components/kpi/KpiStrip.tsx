@@ -16,13 +16,13 @@ function KpiCard({ label, value, detail, dimmed }: KpiCardProps) {
       <p className="text-xs font-medium text-ink-soft">{label}</p>
       <p
         className={cn(
-          'mt-1.5 text-2xl font-semibold tracking-tight tabular-nums transition-opacity duration-200',
+          'mt-1.5 font-mono text-2xl font-semibold tracking-tight transition-opacity duration-200',
           dimmed && 'opacity-50',
         )}
       >
         {value}
       </p>
-      {detail !== undefined && <p className="mt-0.5 text-xs text-ink-faint">{detail}</p>}
+      {detail !== undefined && <p className="mt-0.5 font-mono text-xs text-ink-faint">{detail}</p>}
     </div>
   );
 }

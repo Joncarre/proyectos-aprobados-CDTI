@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useDistribution, useStats } from '../../api/queries';
-import { AXIS_LABEL, baseTooltip, SPLIT_LINE } from '../../lib/echarts';
+import { AXIS_LABEL, baseTooltip, monoNum, SPLIT_LINE } from '../../lib/echarts';
 import { formatInt, formatPct } from '../../lib/format';
 import { Card, ControlGroup } from '../ui/Card';
 import { EChart } from './EChart';
@@ -18,7 +18,7 @@ export function DistributionCard() {
         formatter: (params: { dataIndex: number }) => {
           const bin = bins[params.dataIndex];
           if (!bin) return '';
-          return `Aportación del <b>${bin.desde}–${bin.hasta} %</b><br/>Proyectos: <b>${formatInt(bin.proyectos)}</b>`;
+          return `Aportación del <b>${monoNum(`${bin.desde}–${bin.hasta} %`)}</b><br/>Proyectos: <b>${monoNum(formatInt(bin.proyectos))}</b>`;
         },
       },
       grid: { left: 8, right: 16, top: 12, bottom: 4, containLabel: true },

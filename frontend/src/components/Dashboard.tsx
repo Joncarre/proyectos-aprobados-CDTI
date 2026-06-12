@@ -12,13 +12,13 @@ import { ProjectsTable } from './table/ProjectsTable';
 export default function Dashboard({ meta }: { meta: MetaResponse }) {
   return (
     <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
-      <MapCard meta={meta} />
+      <div className="xl:col-span-2">
+        <MapCard meta={meta} />
+      </div>
       <TimeSeriesCard />
       <HeatmapCard />
-      <div className="grid grid-cols-1 gap-3">
-        <RankingsCard />
-        <DistributionCard />
-      </div>
+      <RankingsCard />
+      <DistributionCard />
       <TreemapCard />
       <CompaniesCard />
       <div className="xl:col-span-2">

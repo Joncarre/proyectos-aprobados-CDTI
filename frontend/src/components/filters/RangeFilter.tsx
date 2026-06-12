@@ -87,7 +87,7 @@ export function RangeFilter({ pair, max, scale, unit, label }: RangeFilterProps)
           parse={parseInput}
         />
       </div>
-      <p className="text-center text-xs text-ink-soft tabular-nums">
+      <p className="text-center font-mono text-xs text-ink-soft">
         {display(low)} — {display(high)}
       </p>
     </div>
@@ -118,7 +118,7 @@ function RangeInput({ defaultValue, ariaLabel, onCommit, parse }: RangeInputProp
       onKeyDown={(event) => {
         if (event.key === 'Enter') commit(event.currentTarget.value);
       }}
-      className="w-full rounded-md border border-line bg-surface px-2 py-1 text-xs tabular-nums transition-colors outline-none hover:border-line-strong focus:border-accent"
+      className="w-full rounded-md border border-line bg-surface px-2 py-1 font-mono text-xs transition-colors outline-none hover:border-line-strong focus:border-accent"
     />
   );
 }

@@ -44,6 +44,35 @@ function resolveName(atlasName: string, canonicalByKey: Map<string, string>): st
   return atlasName.split('/')[0] ?? atlasName;
 }
 
+/**
+ * The Canary Islands sit ~1.100 km southwest of the mainland; drawing them to
+ * scale shrinks the peninsula. Like official Spanish maps, we move them next to
+ * the peninsula (inset style, distance not to scale).
+ */
+const CANARY_REGIONS = new Set(['Canarias', 'PALMAS, LAS', 'STA. C. DE TENERIFE']);
+const CANARY_OFFSET: [number, number] = [7.4, 6.2]; // degrees lon/lat
+
+type CoordinateTree = number | CoordinateTree[];
+
+function translate(coords: CoordinateTree, [dx, dy]: [number, number]): CoordinateTree {
+  if (typeof coords === 'number') return coords;
+  if (coords.length === 2 && typeof coords[0] === 'number' && typeof coords[1] === 'number') {
+    return [(coords[0] as number) + dx, (coords[1] as number) + dy];
+  }
+  return coords.map((child) => translate(child, [dx, dy]));
+}
+
+function moveCanaryIslands(geometry: Geometry): Geometry {
+  if (geometry.type !== 'Polygon' && geometry.type !== 'MultiPolygon') return geometry;
+  return {
+    ...geometry,
+    coordinates: translate(
+      geometry.coordinates as CoordinateTree,
+      CANARY_OFFSET,
+    ) as typeof geometry.coordinates,
+  } as Geometry;
+}
+
 function toGeoJson(
   topology: unknown,
   objectName: string,
@@ -59,7 +88,10 @@ function toGeoJson(
   const features = collection.features.flatMap((item) => {
     const resolved = resolveName(item.properties.name, canonicalByKey);
     if (resolved === null) return [];
-    return [{ ...item, properties: { name: resolved } }];
+    const geometry = CANARY_REGIONS.has(resolved)
+      ? moveCanaryIslands(item.geometry)
+      : item.geometry;
+    return [{ ...item, geometry, properties: { name: resolved } }];
   });
   return { type: 'FeatureCollection', features };
 }

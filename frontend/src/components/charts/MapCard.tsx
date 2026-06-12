@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import type { GeoRow, MetaResponse } from '@cdti/shared';
 import { useGeo } from '../../api/queries';
-import { baseTooltip, SEQUENTIAL_RAMP } from '../../lib/echarts';
+import { baseTooltip, MONO_FONT, monoNum, SEQUENTIAL_RAMP } from '../../lib/echarts';
 import { CCAA_MAP, PROVINCIAS_MAP, registerSpainMaps } from '../../lib/geo';
 import { formatInt, formatMoney, formatPct } from '../../lib/format';
 import { useFiltersStore } from '../../state/filters';
@@ -74,10 +74,10 @@ export function MapCard({ meta }: { meta: MetaResponse }) {
           if (!region) return `<b>${params.name}</b><br/>Sin proyectos con los filtros activos`;
           return [
             `<b>${region.name}</b>`,
-            `Proyectos: <b>${formatInt(region.proyectos)}</b>`,
-            `Presupuesto: ${formatMoney(region.presupuesto)}`,
-            `Aportación CDTI: ${formatMoney(region.aportacion)}`,
-            `% medio de aportación: ${formatPct(region.pctMedio)}`,
+            `Proyectos: <b>${monoNum(formatInt(region.proyectos))}</b>`,
+            `Presupuesto: ${monoNum(formatMoney(region.presupuesto))}`,
+            `Aportación CDTI: ${monoNum(formatMoney(region.aportacion))}`,
+            `% medio de aportación: ${monoNum(formatPct(region.pctMedio))}`,
           ].join('<br/>');
         },
       },
@@ -98,7 +98,7 @@ export function MapCard({ meta }: { meta: MetaResponse }) {
             : metric === 'aportacion'
               ? `${Math.round(value / 1e6)} M€`
               : formatInt(Math.round(value)),
-        textStyle: { color: '#55555e', fontSize: 10 },
+        textStyle: { color: '#55555e', fontSize: 10, fontFamily: MONO_FONT },
       },
       series: [
         {
@@ -165,9 +165,9 @@ export function MapCard({ meta }: { meta: MetaResponse }) {
       }
       isPending={isPending}
       isUpdating={isPlaceholderData}
-      bodyHeight="h-[26rem]"
+      bodyHeight="h-[34rem]"
     >
-      <EChart option={option} className="h-[26rem] w-full" onClick={handleClick} />
+      <EChart option={option} className="h-[34rem] w-full" onClick={handleClick} />
     </Card>
   );
 }

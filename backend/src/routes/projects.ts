@@ -20,7 +20,7 @@ const SORT_COLUMNS: Record<SortField, string> = {
   anio: 'anio',
 };
 
-const ITEM_COLUMNS = `
+export const ITEM_COLUMNS = `
   id::INT AS id,
   razon_social AS "razonSocial",
   nif,

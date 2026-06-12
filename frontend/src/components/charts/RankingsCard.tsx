@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useRankings } from '../../api/queries';
-import { AXIS_LABEL, baseTooltip, SPLIT_LINE } from '../../lib/echarts';
+import { AXIS_LABEL, baseTooltip, MONO_FONT, monoNum, SPLIT_LINE } from '../../lib/echarts';
 import { formatInt, formatMoney, formatMoneyCompact, formatPct } from '../../lib/format';
 import { Card, ControlGroup } from '../ui/Card';
 import { EChart } from './EChart';
@@ -32,9 +32,9 @@ export function RankingsCard() {
           if (!row) return '';
           return [
             `<b>${row.categoria}</b>`,
-            `Aportación CDTI: <b>${formatMoney(row.aportacion)}</b>`,
-            `Proyectos: ${formatInt(row.proyectos)}`,
-            `% medio: ${formatPct(row.pctMedio)}`,
+            `Aportación CDTI: <b>${monoNum(formatMoney(row.aportacion))}</b>`,
+            `Proyectos: ${monoNum(formatInt(row.proyectos))}`,
+            `% medio: ${monoNum(formatPct(row.pctMedio))}`,
           ].join('<br/>');
         },
       },
@@ -68,6 +68,7 @@ export function RankingsCard() {
             formatter: (params: { value: unknown }) => formatMoneyCompact(Number(params.value)),
             color: '#55555e',
             fontSize: 10,
+            fontFamily: MONO_FONT,
           },
         },
       ],
