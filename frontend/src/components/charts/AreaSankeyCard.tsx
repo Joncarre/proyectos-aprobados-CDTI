@@ -103,31 +103,54 @@ export function AreaSankeyCard() {
       ribbons.set(k, entry);
     }
 
+    // A node's thickness must equal the sum of the ribbons actually drawn from
+    // it, so derive each node's value/proyectos from those ribbons — not from
+    // the grand totals, which also include flows to counterparts not shown.
+    const drawnTotals = (pick: (link: SankeyLink) => string) => {
+      const totals = new Map<string, { aportacion: number; proyectos: number }>();
+      for (const link of ribbons.values()) {
+        const key = pick(link);
+        const entry = totals.get(key) ?? { aportacion: 0, proyectos: 0 };
+        entry.aportacion += link.value;
+        entry.proyectos += link.proyectos;
+        totals.set(key, entry);
+      }
+      return totals;
+    };
+    const areaTotals = drawnTotals((link) => link.source);
+    const instrTotals = drawnTotals((link) => link.target);
+
     const areaColor = rampFor(
-      topAreas.map((a) => a.aportacion),
+      topAreas.map((a) => areaTotals.get(a.name)?.aportacion ?? 0),
       AREA_RAMP,
     );
     const instrColor = rampFor(
-      topInstr.map((i) => i.aportacion),
+      topInstr.map((i) => instrTotals.get(i.name + ZWS)?.aportacion ?? 0),
       INSTR_RAMP,
     );
 
     const sankeyNodes: SankeyNode[] = [
-      ...topAreas.map((area) => ({
-        name: area.name,
-        value: area.aportacion,
-        proyectos: area.proyectos,
-        depth: 0,
-        itemStyle: { color: areaColor(area.aportacion), borderWidth: 0 },
-      })),
-      ...topInstr.map((instr) => ({
-        name: instr.name + ZWS,
-        value: instr.aportacion,
-        proyectos: instr.proyectos,
-        depth: 1,
-        itemStyle: { color: instrColor(instr.aportacion), borderWidth: 0 },
-      })),
-    ];
+      ...topAreas.map((area) => {
+        const total = areaTotals.get(area.name) ?? { aportacion: 0, proyectos: 0 };
+        return {
+          name: area.name,
+          value: total.aportacion,
+          proyectos: total.proyectos,
+          depth: 0,
+          itemStyle: { color: areaColor(total.aportacion), borderWidth: 0 },
+        };
+      }),
+      ...topInstr.map((instr) => {
+        const total = instrTotals.get(instr.name + ZWS) ?? { aportacion: 0, proyectos: 0 };
+        return {
+          name: instr.name + ZWS,
+          value: total.aportacion,
+          proyectos: total.proyectos,
+          depth: 1,
+          itemStyle: { color: instrColor(total.aportacion), borderWidth: 0 },
+        };
+      }),
+    ].filter((node) => node.value > 0);
 
     return { nodes: sankeyNodes, links: [...ribbons.values()] };
   }, [data]);
@@ -181,14 +204,15 @@ export function AreaSankeyCard() {
           ],
           lineStyle: { color: 'gradient' as const, opacity: 0.24, curveness: 0.5 },
           emphasis: {
-            focus: 'adjacency' as const,
-            lineStyle: { opacity: 0.6 },
+            // Hovering a single ribbon (or node) lights only its own flow path
+            focus: 'trajectory' as const,
+            lineStyle: { opacity: 0.85 },
             label: { color: '#18181b', fontWeight: 'bold' as const },
           },
           blur: {
-            lineStyle: { opacity: 0.06 },
+            lineStyle: { opacity: 0.1 },
             itemStyle: { opacity: 0.25 },
-            label: { opacity: 0.25 },
+            label: { opacity: 0.3 },
           },
           animationDuration: 800,
           animationEasingUpdate: 'quinticInOut' as const,
