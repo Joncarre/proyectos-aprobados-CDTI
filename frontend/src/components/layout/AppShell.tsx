@@ -15,7 +15,7 @@ const PANEL_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
 
 function DashboardSkeleton() {
   return (
-    <div className="grid grid-cols-1 gap-3 xl:grid-cols-2" aria-busy="true">
+    <div className="grid grid-cols-1 gap-3 min-[1700px]:grid-cols-2" aria-busy="true">
       {Array.from({ length: 4 }, (_, index) => (
         <Skeleton key={index} className="h-[26rem] w-full rounded-xl" />
       ))}

@@ -11,8 +11,8 @@ import { ProjectsTable } from './table/ProjectsTable';
 /** Lazy-loaded: pulls ECharts + the geo atlas only when the dashboard mounts. */
 export default function Dashboard({ meta }: { meta: MetaResponse }) {
   return (
-    <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
-      <div className="xl:col-span-2">
+    <div className="grid grid-cols-1 gap-3 min-[1700px]:grid-cols-2">
+      <div className="min-[1700px]:col-span-2">
         <MapCard meta={meta} />
       </div>
       <TimeSeriesCard />
@@ -21,7 +21,7 @@ export default function Dashboard({ meta }: { meta: MetaResponse }) {
       <DistributionCard />
       <TreemapCard />
       <CompaniesCard />
-      <div className="xl:col-span-2">
+      <div className="min-[1700px]:col-span-2">
         <ProjectsTable />
       </div>
     </div>
