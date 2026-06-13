@@ -59,6 +59,8 @@ export function EChart({
     chart.on('mouseout', (params) =>
       outRef.current?.(params as unknown as EChartHoverParams, chart),
     );
+    // Pointer left the chart entirely: clear any lingering manual highlight
+    chart.on('globalout', () => outRef.current?.({ name: '', dataIndex: -1 }, chart));
 
     const observer = new ResizeObserver(() => chart.resize());
     observer.observe(containerRef.current!);

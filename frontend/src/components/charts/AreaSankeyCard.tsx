@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import type { ECharts } from 'echarts/core';
 import type { TreemapRow } from '@cdti/shared';
 import { useTreemap } from '../../api/queries';
@@ -225,20 +225,37 @@ export function AreaSankeyCard() {
 
   // A single ribbon emphasises itself natively, but hovering a node leaves its
   // ribbons in the normal (transparent) state — so on node hover we manually
-  // highlight its connected ribbons so they light up just as strongly.
+  // highlight its connected ribbons so they light up just as strongly. We track
+  // exactly which ribbons we lit so we can downplay precisely those on leave
+  // (a generic downplay leaves the manual edge highlight stuck on).
+  const highlightedRef = useRef<number[]>([]);
+
+  const clearHighlight = (chart: ECharts): void => {
+    if (highlightedRef.current.length === 0) return;
+    chart.dispatchAction({
+      type: 'downplay',
+      seriesIndex: 0,
+      dataType: 'edge',
+      dataIndex: highlightedRef.current,
+    });
+    highlightedRef.current = [];
+  };
+
   const handleMouseOver = (params: EChartHoverParams, chart: ECharts): void => {
     if (params.dataType !== 'node') return;
+    clearHighlight(chart);
     const dataIndex = links.reduce<number[]>((acc, link, index) => {
       if (link.source === params.name || link.target === params.name) acc.push(index);
       return acc;
     }, []);
     if (dataIndex.length > 0) {
       chart.dispatchAction({ type: 'highlight', seriesIndex: 0, dataType: 'edge', dataIndex });
+      highlightedRef.current = dataIndex;
     }
   };
 
   const handleMouseOut = (_params: EChartHoverParams, chart: ECharts): void => {
-    chart.dispatchAction({ type: 'downplay', seriesIndex: 0 });
+    clearHighlight(chart);
   };
 
   return (
