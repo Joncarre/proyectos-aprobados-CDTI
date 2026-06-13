@@ -203,16 +203,20 @@ export function AreaSankeyCard() {
             { depth: 0, label: { position: 'left' as const } },
             { depth: 1, label: { position: 'right' as const } },
           ],
-          lineStyle: { color: 'gradient' as const, opacity: 0.24, curveness: 0.5 },
+          // Ribbons rest fairly lit so that hovering a node — whose connected
+          // ribbons stay in the normal (non-emphasis) state — lights them just
+          // as strongly as hovering a single ribbon. The blur state then fades
+          // everything else away for the focus contrast.
+          lineStyle: { color: 'gradient' as const, opacity: 0.82, curveness: 0.5 },
           emphasis: {
-            // Hovering a single ribbon (or node) lights only its own flow path
+            // Hovering a single ribbon (or node) keeps its own flow path lit
             focus: 'trajectory' as const,
-            lineStyle: { opacity: 0.85 },
+            lineStyle: { opacity: 0.92 },
             label: { color: '#18181b', fontWeight: 'bold' as const },
           },
           blur: {
-            lineStyle: { opacity: 0.1 },
-            itemStyle: { opacity: 0.25 },
+            lineStyle: { opacity: 0.07 },
+            itemStyle: { opacity: 0.22 },
             label: { opacity: 0.3 },
           },
           animationDuration: 800,
