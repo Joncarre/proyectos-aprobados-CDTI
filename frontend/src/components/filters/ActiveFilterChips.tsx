@@ -173,11 +173,6 @@ export function ActiveFilterChips() {
           );
         })}
       </AnimatePresence>
-      {chips.length === 0 && (
-        <span className="text-xs text-ink-faint">
-          Sin filtros activos — mostrando todo el histórico
-        </span>
-      )}
     </div>
   );
 }
