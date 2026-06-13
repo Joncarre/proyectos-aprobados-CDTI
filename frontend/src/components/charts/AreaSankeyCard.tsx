@@ -225,7 +225,7 @@ export function AreaSankeyCard() {
   return (
     <Card
       title="Áreas sectoriales → instrumentos"
-      subtitle="Flujo de aportación entre las principales áreas y sus instrumentos · pasa el cursor para resaltar"
+      subtitle="Flujo de aportación entre las principales áreas y sus instrumentos"
       isPending={isPending}
       isUpdating={isPlaceholderData}
       bodyHeight="h-[34rem]"
