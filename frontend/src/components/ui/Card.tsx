@@ -28,7 +28,12 @@ export function Card({
   className,
 }: CardProps) {
   return (
-    <section className={cn('shadow-card rounded-xl border border-line bg-surface p-4', className)}>
+    <section
+      className={cn(
+        'shadow-card rounded-xl border border-line bg-surface p-4 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:border-line-strong hover:shadow-[0_6px_20px_rgb(26_26_30/0.07)]',
+        className,
+      )}
+    >
       <header className="mb-3 flex items-start justify-between gap-3">
         <div className="min-w-0">
           <h3 className="truncate text-sm font-semibold tracking-tight text-ink-strong">{title}</h3>

@@ -1,4 +1,7 @@
+import type { ReactNode } from 'react';
+import { motion } from 'motion/react';
 import type { MetaResponse } from '@cdti/shared';
+import { cn } from '../lib/cn';
 import { MapCard } from './charts/MapCard';
 import { TimeSeriesCard } from './charts/TimeSeriesCard';
 import { SeasonalityCard } from './charts/SeasonalityCard';
@@ -11,27 +14,67 @@ import { AreaGraphCard } from './charts/AreaGraphCard';
 import { CompaniesCard } from './charts/CompaniesCard';
 import { ProjectsTable } from './table/ProjectsTable';
 
+const container = {
+  hidden: {},
+  show: { transition: { staggerChildren: 0.05 } },
+};
+
+const item = {
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.22, 1, 0.36, 1] as const } },
+};
+
+/** Grid cell that fades and slides up in sequence on first render. */
+function Cell({ children, wide = false }: { children: ReactNode; wide?: boolean }) {
+  return (
+    <motion.div variants={item} className={cn(wide && 'min-[1700px]:col-span-2')}>
+      {children}
+    </motion.div>
+  );
+}
+
 /** Lazy-loaded: pulls ECharts + the geo atlas only when the dashboard mounts. */
 export default function Dashboard({ meta }: { meta: MetaResponse }) {
   return (
-    <div className="grid grid-cols-1 gap-3 min-[1700px]:grid-cols-2">
-      <div className="min-[1700px]:col-span-2">
+    <motion.div
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="grid grid-cols-1 gap-3 min-[1700px]:grid-cols-2"
+    >
+      <Cell wide>
         <MapCard meta={meta} />
-      </div>
-      <TimeSeriesCard />
-      <SeasonalityCard />
-      <CohortsCard />
-      <CompaniesCard />
-      <div className="min-[1700px]:col-span-2">
+      </Cell>
+      <Cell>
+        <TimeSeriesCard />
+      </Cell>
+      <Cell>
+        <SeasonalityCard />
+      </Cell>
+      <Cell>
+        <CohortsCard />
+      </Cell>
+      <Cell>
+        <CompaniesCard />
+      </Cell>
+      <Cell wide>
         <AreaGraphCard />
-      </div>
-      <HeatmapCard />
-      <RankingsCard />
-      <DistributionCard />
-      <PymeComparisonCard />
-      <div className="min-[1700px]:col-span-2">
+      </Cell>
+      <Cell>
+        <HeatmapCard />
+      </Cell>
+      <Cell>
+        <RankingsCard />
+      </Cell>
+      <Cell>
+        <DistributionCard />
+      </Cell>
+      <Cell>
+        <PymeComparisonCard />
+      </Cell>
+      <Cell wide>
         <ProjectsTable />
-      </div>
-    </div>
+      </Cell>
+    </motion.div>
   );
 }

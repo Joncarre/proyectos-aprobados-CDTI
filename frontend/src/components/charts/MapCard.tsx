@@ -110,6 +110,9 @@ export function MapCard({ meta }: { meta: MetaResponse }) {
           map: nivel === 'ccaa' ? CCAA_MAP : PROVINCIAS_MAP,
           roam: false,
           selectedMode: false,
+          // Tween region colours when the metric changes
+          animationDurationUpdate: 700,
+          animationEasingUpdate: 'cubicInOut' as const,
           itemStyle: { areaColor: '#f4f4f5', borderColor: '#d9d9dc', borderWidth: 0.6 },
           emphasis: {
             label: { show: false },
@@ -172,7 +175,7 @@ export function MapCard({ meta }: { meta: MetaResponse }) {
       isUpdating={isPlaceholderData}
       bodyHeight="h-[34rem]"
     >
-      <EChart option={option} className="h-[34rem] w-full" onClick={handleClick} />
+      <EChart option={option} className="h-[34rem] w-full" onClick={handleClick} mergeSeries />
     </Card>
   );
 }

@@ -91,6 +91,16 @@ export interface DistributionResponse {
   series: DistributionSeries[];
 }
 
+/** Per-year value of each header KPI, for the sparklines and year-over-year deltas. */
+export interface KpiTrendPoint {
+  anio: number;
+  proyectos: number;
+  presupuesto: number;
+  aportacion: number;
+  pctMedio: number | null;
+  pctPymes: number | null;
+}
+
 export interface CohortRow {
   anio: number;
   nuevas: number; // companies receiving CDTI aid for the first time ever this year

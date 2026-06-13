@@ -1,37 +1,111 @@
+import { motion } from 'motion/react';
+import type { KpiTrendPoint } from '@cdti/shared';
+import { useKpiTrends, useStats } from '../../api/queries';
 import { cn } from '../../lib/cn';
 import { formatInt, formatMoneyCompact, formatPct } from '../../lib/format';
-import { useStats } from '../../api/queries';
+import { useCountUp } from '../../lib/useCountUp';
 import { Skeleton } from '../ui/Skeleton';
+import { Sparkline } from '../ui/Sparkline';
+
+interface Delta {
+  dir: number;
+  text: string;
+  year: number;
+}
+
+/** Year-over-year delta from the last two complete years (excludes the in-progress year). */
+function computeDelta(series: Array<number | null>, years: number[], isPct: boolean): Delta | null {
+  const pairs = years
+    .map((anio, index) => ({ anio, value: series[index] }))
+    .filter((p): p is { anio: number; value: number } => p.value !== null && p.value !== undefined);
+  if (pairs.length < 2) return null;
+  const last = pairs[pairs.length - 1]!;
+  const prev = pairs[pairs.length - 2]!;
+
+  if (isPct) {
+    const diff = last.value - prev.value;
+    return {
+      dir: Math.sign(diff),
+      text: `${diff >= 0 ? '+' : ''}${diff.toLocaleString('es-ES', { maximumFractionDigits: 1 })} pp`,
+      year: prev.anio,
+    };
+  }
+  if (prev.value === 0) return null;
+  const rel = ((last.value - prev.value) / prev.value) * 100;
+  return {
+    dir: Math.sign(rel),
+    text: `${rel >= 0 ? '+' : ''}${rel.toLocaleString('es-ES', { maximumFractionDigits: 0 })} %`,
+    year: prev.anio,
+  };
+}
 
 interface KpiCardProps {
   label: string;
-  value: string;
+  value: number | null;
+  format: (value: number) => string;
+  series: number[];
+  delta: Delta | null;
   detail?: string;
   dimmed: boolean;
 }
 
-function KpiCard({ label, value, detail, dimmed }: KpiCardProps) {
+function KpiCard({ label, value, format, series, delta, detail, dimmed }: KpiCardProps) {
+  const animated = useCountUp(value ?? 0);
+  const display = value === null ? '—' : format(animated);
+
+  const deltaColor =
+    delta && delta.dir > 0 ? '#0d9488' : delta && delta.dir < 0 ? '#e11d48' : '#a1a1aa';
+
   return (
-    <div className="shadow-card min-w-0 rounded-xl border border-line bg-surface px-3 py-2.5">
-      <p className="truncate text-[0.68rem] font-medium text-ink-soft">{label}</p>
-      <p
-        className={cn(
-          'mt-1 truncate font-mono text-base font-semibold tracking-tight text-ink-strong transition-opacity duration-200 lg:text-lg',
-          dimmed && 'opacity-50',
-        )}
-      >
-        {value}
-      </p>
-      {detail !== undefined && (
-        <p className="mt-0.5 truncate font-mono text-[0.65rem] text-ink-faint">{detail}</p>
-      )}
+    <div className="shadow-card relative min-w-0 overflow-hidden rounded-xl border border-line bg-surface px-3 py-2.5">
+      {/* Soft accent flash whenever the value changes */}
+      <motion.span
+        key={value ?? 'na'}
+        initial={{ opacity: 0.32 }}
+        animate={{ opacity: 0 }}
+        transition={{ duration: 0.6, ease: 'easeOut' }}
+        className="pointer-events-none absolute inset-0 bg-accent-soft"
+        aria-hidden
+      />
+      <div className="relative">
+        <p className="truncate text-[0.68rem] font-medium text-ink-soft">{label}</p>
+        <div className="mt-1 flex items-end justify-between gap-2">
+          <p
+            className={cn(
+              'truncate font-mono text-base font-semibold tracking-tight text-ink-strong transition-opacity lg:text-lg',
+              dimmed && 'opacity-60',
+            )}
+          >
+            {display}
+          </p>
+          {series.length >= 2 && <Sparkline values={series} className="mb-1 shrink-0" />}
+        </div>
+        <div className="mt-1 flex items-center justify-between gap-2 text-[0.65rem]">
+          {delta ? (
+            <span
+              className="font-mono whitespace-nowrap"
+              style={{ color: deltaColor }}
+              title={`frente a ${delta.year}`}
+            >
+              {delta.dir > 0 ? '▲' : delta.dir < 0 ? '▼' : '–'} {delta.text}{' '}
+              <span className="text-ink-faint">vs {delta.year}</span>
+            </span>
+          ) : (
+            <span />
+          )}
+          {detail && <span className="truncate font-mono text-ink-faint">{detail}</span>}
+        </div>
+      </div>
     </div>
   );
 }
 
-/** Header KPIs, live-updated on every filter change (smooth: keeps previous data while fetching). */
+const CURRENT_YEAR = new Date().getFullYear();
+
+/** Header KPIs: live count-up, yearly sparkline, year-over-year delta, change pulse. */
 export function KpiStrip() {
   const { data, isPending, isPlaceholderData } = useStats();
+  const { data: trends } = useKpiTrends();
 
   if (isPending || !data) {
     return (
@@ -43,36 +117,88 @@ export function KpiStrip() {
           >
             <Skeleton className="h-2.5 w-16" />
             <Skeleton className="mt-2 h-5 w-20" />
+            <Skeleton className="mt-2 h-2 w-24" />
           </div>
         ))}
       </div>
     );
   }
 
+  // Only complete years feed the sparkline and the delta
+  const complete: KpiTrendPoint[] = (trends ?? []).filter((point) => point.anio < CURRENT_YEAR);
+  const years = complete.map((point) => point.anio);
+  const seriesOf = (key: keyof KpiTrendPoint): number[] =>
+    complete.map((point) => point[key]).filter((value): value is number => value !== null);
+
+  const cards: KpiCardProps[] = [
+    {
+      label: 'Proyectos',
+      value: data.proyectos,
+      format: formatInt,
+      series: seriesOf('proyectos'),
+      delta: computeDelta(
+        complete.map((p) => p.proyectos),
+        years,
+        false,
+      ),
+      detail: `${formatInt(data.empresas)} empresas`,
+      dimmed: isPlaceholderData,
+    },
+    {
+      label: 'Presupuesto total',
+      value: data.presupuestoTotal,
+      format: formatMoneyCompact,
+      series: seriesOf('presupuesto'),
+      delta: computeDelta(
+        complete.map((p) => p.presupuesto),
+        years,
+        false,
+      ),
+      dimmed: isPlaceholderData,
+    },
+    {
+      label: 'Aportación CDTI',
+      value: data.aportacionTotal,
+      format: formatMoneyCompact,
+      series: seriesOf('aportacion'),
+      delta: computeDelta(
+        complete.map((p) => p.aportacion),
+        years,
+        false,
+      ),
+      dimmed: isPlaceholderData,
+    },
+    {
+      label: '% medio de aportación',
+      value: data.pctMedio,
+      format: formatPct,
+      series: seriesOf('pctMedio'),
+      delta: computeDelta(
+        complete.map((p) => p.pctMedio),
+        years,
+        true,
+      ),
+      dimmed: isPlaceholderData,
+    },
+    {
+      label: 'PYMEs',
+      value: data.pctPymes,
+      format: formatPct,
+      series: seriesOf('pctPymes'),
+      delta: computeDelta(
+        complete.map((p) => p.pctPymes),
+        years,
+        true,
+      ),
+      dimmed: isPlaceholderData,
+    },
+  ];
+
   return (
     <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
-      <KpiCard
-        label="Proyectos"
-        value={formatInt(data.proyectos)}
-        detail={`${formatInt(data.empresas)} empresas`}
-        dimmed={isPlaceholderData}
-      />
-      <KpiCard
-        label="Presupuesto total"
-        value={formatMoneyCompact(data.presupuestoTotal)}
-        dimmed={isPlaceholderData}
-      />
-      <KpiCard
-        label="Aportación CDTI"
-        value={formatMoneyCompact(data.aportacionTotal)}
-        dimmed={isPlaceholderData}
-      />
-      <KpiCard
-        label="% medio de aportación"
-        value={formatPct(data.pctMedio)}
-        dimmed={isPlaceholderData}
-      />
-      <KpiCard label="PYMEs" value={formatPct(data.pctPymes)} dimmed={isPlaceholderData} />
+      {cards.map((card) => (
+        <KpiCard key={card.label} {...card} />
+      ))}
     </div>
   );
 }

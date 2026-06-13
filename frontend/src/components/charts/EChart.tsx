@@ -12,14 +12,18 @@ interface EChartProps {
   option: EChartsCoreOption;
   className?: string;
   onClick?: (params: EChartClickParams) => void;
+  /**
+   * Merge the series instead of replacing it, so ECharts can tween values and
+   * colours between updates (used by the choropleth). Default replaces the
+   * series, which is needed by charts whose series count varies.
+   */
+  mergeSeries?: boolean;
 }
 
 /**
  * Thin React wrapper: init once, resize with the container, dispose on unmount.
- * Options are applied with replaceMerge so data updates animate smoothly and
- * removed series don't linger.
  */
-export function EChart({ option, className, onClick }: EChartProps) {
+export function EChart({ option, className, onClick, mergeSeries = false }: EChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<ECharts | null>(null);
   const clickRef = useRef(onClick);
@@ -40,8 +44,8 @@ export function EChart({ option, className, onClick }: EChartProps) {
   }, []);
 
   useEffect(() => {
-    chartRef.current?.setOption(option, { replaceMerge: ['series'] });
-  }, [option]);
+    chartRef.current?.setOption(option, mergeSeries ? {} : { replaceMerge: ['series'] });
+  }, [option, mergeSeries]);
 
   return <div ref={containerRef} className={className} />;
 }

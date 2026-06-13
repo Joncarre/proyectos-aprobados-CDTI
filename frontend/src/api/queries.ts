@@ -6,6 +6,7 @@ import type {
   DistributionResponse,
   GeoRow,
   HeatmapCell,
+  KpiTrendPoint,
   MetaResponse,
   ProjectsResponse,
   PymeGroup,
@@ -47,6 +48,21 @@ export function useMeta() {
 }
 
 export const useStats = () => useApiQuery<Aggregates>('/api/stats');
+
+/**
+ * Per-year KPI series for the header sparklines. The year/month filters are
+ * stripped so the trend always shows the full multi-year evolution of the
+ * current segment (the big KPI number still reflects every active filter).
+ */
+export function useKpiTrends() {
+  const filters = useFiltersStore((state) => state.filters);
+  const params = filtersToSearchParams({ ...filters, anios: undefined, meses: undefined });
+  return useQuery({
+    queryKey: ['kpi-trends', params.toString()],
+    queryFn: () => getJson<KpiTrendPoint[]>('/api/kpi-trends', params),
+    placeholderData: keepPreviousData,
+  });
+}
 
 export const useTimeseries = (granularidad: 'anio' | 'mes', agrupar?: string) =>
   useApiQuery<TimeseriesPoint[]>('/api/timeseries', { granularidad, agrupar });
