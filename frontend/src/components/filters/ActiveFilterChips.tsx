@@ -151,26 +151,25 @@ export function ActiveFilterChips() {
             <motion.span
               key={chip.id}
               layout
-              initial={{ opacity: 0, scale: 0.9, y: -2 }}
+              initial={{ opacity: 0, scale: 0.92, y: -3 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9 }}
+              exit={{ opacity: 0, scale: 0.92 }}
               transition={{ type: 'spring', stiffness: 500, damping: 32 }}
-              className="group shadow-card inline-flex items-center gap-2 rounded-full border border-line bg-surface py-1 pr-1 pl-2.5 text-xs transition-colors hover:border-accent-line"
+              className="shadow-card inline-flex h-7 items-stretch overflow-hidden rounded-lg border border-line bg-surface text-xs transition-[border-color,box-shadow] duration-200 hover:border-accent-line hover:shadow-pop"
             >
-              <span className="size-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
-              <span>
-                {prefix !== null && (
-                  <span className="text-[0.6rem] font-semibold tracking-wider text-ink-faint uppercase">
-                    {prefix}{' '}
-                  </span>
-                )}
-                <span className="font-semibold text-ink-strong">{value}</span>
+              {prefix !== null && (
+                <span className="flex items-center bg-accent-soft px-2 text-[0.6rem] font-semibold tracking-wider text-accent-strong uppercase">
+                  {prefix}
+                </span>
+              )}
+              <span className="flex items-center px-2.5 font-semibold text-ink-strong">
+                {value}
               </span>
               <button
                 type="button"
                 onClick={chip.remove}
                 aria-label={`Quitar filtro ${chip.label}`}
-                className="grid size-4 place-items-center rounded-full text-ink-faint transition-colors hover:bg-accent hover:text-white"
+                className="flex items-center border-l border-line px-1.5 text-ink-faint transition-colors hover:bg-accent hover:text-white"
               >
                 <X className="size-3" />
               </button>

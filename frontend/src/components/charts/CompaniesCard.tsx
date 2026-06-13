@@ -55,7 +55,7 @@ export function CompaniesCard() {
                     {formatPct(company.pctMedio)}
                   </span>
                 </span>
-                <span className="w-24 shrink-0 rounded-full bg-accent-soft px-2 py-0.5 text-center font-mono text-[0.65rem] font-semibold text-accent-strong">
+                <span className="text-select-strong w-24 shrink-0 text-center font-mono text-[0.65rem] font-semibold">
                   {formatInt(company.proyectos)} Proyectos
                 </span>
                 <span className="w-16 shrink-0 text-right font-mono text-xs font-medium">

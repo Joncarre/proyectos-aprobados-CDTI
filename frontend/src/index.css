@@ -34,9 +34,10 @@
   /* Row hover — celeste, a touch darker than accent-soft */
   --color-hover-row: #dbeafe;
 
-  /* List selection — light turquoise */
-  --color-select-soft: #ccfbf1;
-  --color-select-line: #5eead4;
+  /* List selection — light, slightly blue turquoise */
+  --color-select-soft: #d8f6fa;
+  --color-select-line: #a3e4ee;
+  --color-select-strong: #0e7490; /* darker turquoise text */
 
   /* Data series (FASE 4): presupuesto vs aportación */
   --color-series-budget: #94a3b8;

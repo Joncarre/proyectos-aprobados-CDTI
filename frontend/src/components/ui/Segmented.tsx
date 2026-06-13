@@ -35,18 +35,18 @@ export function Segmented<T extends string>({
             role="radio"
             aria-checked={selected}
             onClick={() => onChange(option.value)}
-            className="relative flex-1 rounded-lg px-2 py-1.5 text-[0.7rem] font-medium transition-transform duration-150 active:scale-95"
+            className="relative flex-1 rounded-lg px-2 py-1.5 text-[0.7rem] font-medium"
           >
             {selected && (
               <motion.span
                 layoutId={layoutId}
-                transition={{ type: 'spring', stiffness: 460, damping: 34 }}
+                transition={{ type: 'tween', duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
                 className="shadow-card absolute inset-0 rounded-lg bg-surface ring-1 ring-black/[0.03]"
               />
             )}
             <span
               className={cn(
-                'relative z-10 transition-colors',
+                'relative z-10 transition-colors duration-200',
                 selected ? 'text-accent-strong' : 'text-ink-soft hover:text-ink',
               )}
             >
