@@ -13,12 +13,17 @@ export function Header() {
     <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-line bg-surface/85 px-5 backdrop-blur">
       <div className="flex items-baseline gap-2.5">
         <span className="flex items-center gap-2 text-sm font-semibold tracking-tight text-ink-strong">
-          <span className="grid size-6 place-items-center rounded-md bg-accent text-xs font-bold text-white">
-            C
-          </span>
+          <svg viewBox="0 0 32 32" fill="none" aria-hidden className="size-6 text-accent">
+            <path
+              d="M21.8 9.1 A9 9 0 1 0 21.8 22.9"
+              stroke="currentColor"
+              strokeWidth="4"
+              strokeLinecap="round"
+            />
+          </svg>
           PROYECTOS APROBADOS POR EL CDTI
         </span>
-        <span className="hidden text-xs text-ink-faint sm:block">Datos abiertos</span>
+        <span className="hidden text-xs text-ink-faint sm:block">— Datos abiertos</span>
       </div>
       {meta && (
         <p className="font-mono text-xs text-ink-soft">
