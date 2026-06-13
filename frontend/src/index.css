@@ -31,8 +31,12 @@
   --color-accent-soft: #eef2ff; /* selected backgrounds */
   --color-accent-line: #c7d2fe; /* selected borders */
 
-  /* Row hover / selection — celeste, a touch darker than accent-soft */
+  /* Row hover — celeste, a touch darker than accent-soft */
   --color-hover-row: #dbeafe;
+
+  /* List selection — light turquoise */
+  --color-select-soft: #ccfbf1;
+  --color-select-line: #5eead4;
 
   /* Data series (FASE 4): presupuesto vs aportación */
   --color-series-budget: #94a3b8;

@@ -7,7 +7,7 @@ import { buildWhere } from '../where.js';
 import { ITEM_COLUMNS } from './projects.js';
 
 const exportParamsSchema = z.object({
-  fmt: z.enum(['csv', 'json', 'xml']).default('csv'),
+  fmt: z.enum(['csv', 'json', 'xml', 'toon']).default('csv'),
 });
 
 /** CSV column order: header label + ProjectItem key. */
@@ -66,13 +66,67 @@ function toXml(rows: ProjectItem[]): string {
   return `<?xml version="1.0" encoding="UTF-8"?>\n<proyectos total="${rows.length}">\n${items.join('\n')}\n</proyectos>\n`;
 }
 
+// ── TOON (Token-Oriented Object Notation) — compact tabular encoding for LLMs.
+// Our rows are a flat array of uniform objects, which is exactly TOON's optimal
+// case: one header `[N]{fields}:` followed by one comma-delimited line per row.
+
+const TOON_FIELDS = CSV_COLUMNS.map(([, key]) => key);
+
+const toonEscape = (value: string): string =>
+  value.replace(/[\\"\n\r\t]/g, (char) => {
+    switch (char) {
+      case '\\':
+        return '\\\\';
+      case '"':
+        return '\\"';
+      case '\n':
+        return '\\n';
+      case '\r':
+        return '\\r';
+      default:
+        return '\\t';
+    }
+  });
+
+const hasControlChar = (text: string): boolean => {
+  for (let i = 0; i < text.length; i++) {
+    if (text.charCodeAt(i) < 0x20) return true;
+  }
+  return false;
+};
+
+/** Quote a string only when the TOON grammar requires it (spec §7.2). */
+const toonNeedsQuote = (text: string): boolean =>
+  text === '' ||
+  text !== text.trim() ||
+  text === 'true' ||
+  text === 'false' ||
+  text === 'null' ||
+  text.startsWith('-') ||
+  !Number.isNaN(Number(text)) || // numeric-looking strings stay strings (e.g. postal codes)
+  /[:"\\[\]{},]/.test(text) ||
+  hasControlChar(text);
+
+const toonScalar = (value: ProjectItem[keyof ProjectItem]): string => {
+  if (value === null || value === undefined) return 'null';
+  if (typeof value === 'boolean') return value ? 'true' : 'false';
+  if (typeof value === 'number') return String(value); // canonical for our integer/decimal ranges
+  return toonNeedsQuote(value) ? `"${toonEscape(value)}"` : value;
+};
+
+function toToon(rows: ProjectItem[]): string {
+  const header = `[${rows.length}]{${TOON_FIELDS.join(',')}}:`;
+  const lines = rows.map((row) => '  ' + TOON_FIELDS.map((key) => toonScalar(row[key])).join(','));
+  return [header, ...lines].join('\n') + '\n';
+}
+
 const send = (reply: FastifyReply, body: string, contentType: string, ext: string) =>
   reply
     .header('content-type', `${contentType}; charset=utf-8`)
     .header('content-disposition', `attachment; filename="proyectos-cdti.${ext}"`)
     .send(body);
 
-/** GET /api/projects/export?fmt=csv|json|xml — full filtered result set as a download. */
+/** GET /api/projects/export?fmt=csv|json|xml|toon — full filtered result set as a download. */
 export const exportRoutes: FastifyPluginAsync = async (app) => {
   app.get('/projects/export', async (request, reply) => {
     const filters = parseFilters(request.query);
@@ -89,6 +143,8 @@ export const exportRoutes: FastifyPluginAsync = async (app) => {
         return send(reply, JSON.stringify(rows, null, 1), 'application/json', 'json');
       case 'xml':
         return send(reply, toXml(rows), 'application/xml', 'xml');
+      case 'toon':
+        return send(reply, toToon(rows), 'text/plain', 'toon');
       default:
         return send(reply, toCsv(rows), 'text/csv', 'csv');
     }

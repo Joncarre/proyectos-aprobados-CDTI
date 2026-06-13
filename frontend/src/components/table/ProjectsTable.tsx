@@ -10,9 +10,10 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
 import { Skeleton } from '../ui/Skeleton';
 
 const EXPORT_FORMATS = [
-  { fmt: 'csv', label: 'Excel español', hint: '' },
+  { fmt: 'csv', label: 'CSV', hint: 'Excel español' },
   { fmt: 'json', label: 'JSON', hint: 'Datos estructurados' },
   { fmt: 'xml', label: 'XML', hint: 'Intercambio entre sistemas' },
+  { fmt: 'toon', label: 'TOON', hint: 'Compacto para IA / LLM' },
 ] as const;
 
 function ExportMenu() {
@@ -41,7 +42,7 @@ function ExportMenu() {
             className="block rounded-md px-2 py-1.5 transition-colors hover:bg-surface-2"
           >
             <span className="block text-xs font-medium">{label}</span>
-            {hint !== '' && <span className="block text-[0.65rem] text-ink-faint">{hint}</span>}
+            <span className="block text-[0.65rem] text-ink-faint">{hint}</span>
           </a>
         ))}
       </PopoverContent>

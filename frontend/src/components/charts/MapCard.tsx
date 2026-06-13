@@ -150,7 +150,7 @@ export function MapCard({ meta }: { meta: MetaResponse }) {
             <button
               type="button"
               onClick={() => setNivel('ccaa')}
-              className="flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1 text-[0.7rem] font-medium text-ink-soft transition duration-200 hover:border-accent-line hover:bg-accent-soft hover:text-accent-strong hover:shadow-card"
+              className="flex items-center gap-1.5 self-stretch rounded-lg border border-line bg-surface px-2.5 text-[0.7rem] font-medium text-ink-soft transition duration-200 hover:border-accent-line hover:bg-accent-soft hover:text-accent-strong hover:shadow-card"
             >
               <ArrowLeft className="size-3" />
               Atrás

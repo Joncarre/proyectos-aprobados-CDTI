@@ -162,7 +162,7 @@ export function TimeSeriesCard() {
         symbolSize: 5,
         showSymbol: true,
         connectNulls: false,
-        lineStyle: { width: 2 },
+        lineStyle: { width: 1.5 },
         itemStyle: { color: spec.color },
         emphasis: { focus: 'series' as const },
         areaStyle: agrupar === 'ninguno' && metrica === 'importes' ? { opacity: 0.06 } : undefined,

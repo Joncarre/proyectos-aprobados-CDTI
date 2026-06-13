@@ -71,8 +71,9 @@ persona verá exactamente la misma vista.
 ### Exportar
 
 El botón **Exportar** de la tabla descarga el conjunto filtrado completo (no solo la página
-visible) en tres formatos: **CSV** (se abre directamente en Excel en español), **JSON** y
-**XML**.
+visible) en cuatro formatos: **CSV** (se abre directamente en Excel en español), **JSON**,
+**XML** y **TOON** (un formato tabular muy compacto, pensado para pasar los datos a una IA
+gastando muchos menos tokens).
 
 ## Preguntas que puedes responder en segundos
 
