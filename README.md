@@ -24,7 +24,7 @@ datos) están en [docs/arquitectura.md](docs/arquitectura.md).
 
 ### Los filtros
 
-El panel izquierdo (se puede ocultar con el botón ☰ del encabezado) concentra todos los
+El panel izquierdo (se puede ocultar con la pestaña del borde izquierdo) concentra todos los
 filtros, **combinables entre sí**: periodo (años con barra deslizante, meses con atajos por
 trimestre T1–T4), rangos de presupuesto, de aportación CDTI y de % de aportación, comunidad
 autónoma y provincia (la lista de provincias se adapta a las comunidades elegidas),
@@ -38,8 +38,11 @@ presupuesto, aportación, % medio, % de PYMEs) se recalculan al instante con cad
 **La URL guarda siempre los filtros activos**: copia el enlace del navegador y cualquier
 persona verá exactamente la misma vista.
 
-### Las visualizaciones
+### Qué muestra cada panel
 
+- **Indicadores de cabecera (KPIs)** — las cinco cifras de arriba: nº de proyectos (y empresas
+  distintas), presupuesto total, aportación CDTI total, % medio de aportación y % de PYMEs.
+  Resumen del conjunto que tengas filtrado en cada momento.
 - **Mapa de España** — colorea comunidades por proyectos, aportación o % medio. Clic en una
   comunidad para bajar a sus provincias (aplica el filtro a toda la página); clic en una
   provincia para filtrar por ella. Las Canarias se muestran junto a la península (distancia
@@ -94,6 +97,27 @@ importes, fechas y categorías; el detalle de esa limpieza y las métricas de ca
 [docs/data-quality.md](docs/data-quality.md). Los registros sin dato en algún campo (p. ej.
 272 proyectos sin instrumento) se conservan y simplemente no aparecen al filtrar por ese
 campo.
+
+## Tecnologías
+
+A grandes rasgos, la herramienta se apoya en estas piezas (el detalle y el porqué de cada
+elección están en [docs/arquitectura.md](docs/arquitectura.md)):
+
+- **Interfaz:** [React](https://react.dev) + TypeScript sobre [Vite](https://vite.dev), con
+  estilos en [Tailwind CSS](https://tailwindcss.com). Las gráficas y el mapa usan
+  [ECharts](https://echarts.apache.org); las animaciones, [Motion](https://motion.dev). El
+  estado de los filtros se gestiona con [Zustand](https://zustand-demo.pmnd.rs) y la carga de
+  datos con [TanStack Query](https://tanstack.com/query). Tipografías Inter (texto) y
+  JetBrains Mono (cifras).
+- **Mapa:** atlas oficial de España (comunidades y provincias) del IGN en formato TopoJSON.
+- **Servidor / API:** [Node.js](https://nodejs.org) con [Fastify](https://fastify.dev) en
+  TypeScript. Es una API de **solo lectura**.
+- **Base de datos:** [DuckDB](https://duckdb.org), un motor analítico columnar y embebido (un
+  solo fichero, sin servidor) que resuelve los filtros combinados en milisegundos.
+- **Ingesta:** un script en TypeScript normaliza los JSON originales (importes, fechas,
+  categorías) y los carga en DuckDB.
+- **Calidad de código:** ESLint y Prettier; todo el proyecto es un monorepo con npm workspaces
+  y tipos compartidos entre servidor e interfaz.
 
 ## Documentación técnica
 
