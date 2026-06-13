@@ -97,8 +97,14 @@ function KpiCard({ label, value, format, delta, detail, dimmed }: KpiCardProps) 
 
 const CURRENT_YEAR = new Date().getFullYear();
 
-/** Header KPIs: live count-up, yearly sparkline, year-over-year delta, change pulse. */
-export function KpiStrip() {
+const container = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
+const item = {
+  hidden: { opacity: 0, y: 12 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const } },
+};
+
+/** Header KPIs: live count-up, year-over-year delta, change pulse; staggered reveal. */
+export function KpiStrip({ reveal }: { reveal: boolean }) {
   const { data, isPending, isPlaceholderData } = useStats();
   const { data: trends } = useKpiTrends();
 
@@ -183,10 +189,17 @@ export function KpiStrip() {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+    <motion.div
+      variants={container}
+      initial="hidden"
+      animate={reveal ? 'show' : 'hidden'}
+      className="grid grid-cols-2 gap-2 sm:grid-cols-5"
+    >
       {cards.map((card) => (
-        <KpiCard key={card.label} {...card} />
+        <motion.div key={card.label} variants={item} className="min-w-0">
+          <KpiCard {...card} />
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   );
 }

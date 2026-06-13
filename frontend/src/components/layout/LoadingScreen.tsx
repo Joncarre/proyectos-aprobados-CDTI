@@ -1,9 +1,14 @@
 import { motion } from 'motion/react';
 
+const RING_MASK =
+  'radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px))';
+const BAR_FEATHER =
+  'linear-gradient(to right, transparent 0%, #000 14%, #000 86%, transparent 100%)';
+
 /**
- * First-visit splash over the content area: a spinning ring around the brand
- * mark, a message and a progress bar that fills across the ~2s warm-up while
- * the panels load their data behind it. Fades out on dismiss.
+ * First-visit splash over the content area: a conic-gradient spinner, a message
+ * and a gradient progress bar with feathered edges that fills across the ~2s
+ * warm-up while the panels load their data behind it. Fades out on dismiss.
  */
 export function LoadingScreen() {
   return (
@@ -13,28 +18,34 @@ export function LoadingScreen() {
       transition={{ duration: 0.45, ease: 'easeInOut' }}
       className="absolute inset-0 z-30 bg-page"
     >
-      <div className="flex h-[calc(100vh-3.5rem)] flex-col items-center justify-center gap-5">
-        <div className="relative size-14">
-          <motion.span
-            className="absolute inset-0 rounded-full border-2 border-accent/15 border-t-accent"
+      <div className="flex h-[calc(100vh-3.5rem)] flex-col items-center justify-center gap-6">
+        {/* Premium conic spinner: faint track + rotating gradient comet with a soft glow */}
+        <div className="relative size-12">
+          <div className="absolute inset-0 rounded-full border-[3px] border-accent/10" />
+          <motion.div
+            className="absolute inset-0 rounded-full"
+            style={{
+              background:
+                'conic-gradient(from 0deg, transparent 0deg, #818cf8 110deg, #4f46e5 330deg)',
+              WebkitMask: RING_MASK,
+              mask: RING_MASK,
+              filter: 'drop-shadow(0 0 6px rgb(79 70 229 / 0.35))',
+            }}
             animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 0.9, ease: 'linear' }}
+            transition={{ repeat: Infinity, duration: 0.85, ease: 'linear' }}
           />
-          <motion.span
-            className="absolute inset-2.5 grid place-items-center rounded-xl bg-accent text-sm font-bold text-white"
-            animate={{ scale: [1, 1.08, 1] }}
-            transition={{ repeat: Infinity, duration: 1.3, ease: 'easeInOut' }}
-          >
-            C
-          </motion.span>
         </div>
 
         <p className="font-mono text-sm text-ink-soft">Procesando información…</p>
 
-        <div className="h-1 w-52 overflow-hidden rounded-full bg-line">
+        <div
+          className="relative h-1.5 w-72 overflow-hidden rounded-full"
+          style={{ maskImage: BAR_FEATHER, WebkitMaskImage: BAR_FEATHER }}
+        >
+          <div className="absolute inset-0 rounded-full bg-line/50" />
           <motion.div
-            className="h-full rounded-full bg-accent"
-            initial={{ width: '0%' }}
+            className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-[#818cf8] via-[#4f46e5] to-[#0d9488]"
+            initial={{ width: 0 }}
             animate={{ width: '100%' }}
             transition={{ duration: 1.9, ease: 'easeInOut' }}
           />

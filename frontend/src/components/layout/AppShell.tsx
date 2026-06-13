@@ -83,7 +83,7 @@ export function AppShell() {
 
         <main className="relative min-w-0 flex-1 space-y-4 p-5">
           <ActiveFilterChips />
-          <KpiStrip />
+          <KpiStrip reveal={ready} />
           {meta ? (
             <Suspense fallback={<DashboardSkeleton />}>
               <Dashboard meta={meta} reveal={ready} />
