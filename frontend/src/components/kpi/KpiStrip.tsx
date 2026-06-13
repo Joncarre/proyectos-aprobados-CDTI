@@ -97,10 +97,10 @@ function KpiCard({ label, value, format, delta, detail, dimmed }: KpiCardProps) 
 
 const CURRENT_YEAR = new Date().getFullYear();
 
-const container = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
+const container = { hidden: {}, show: { transition: { staggerChildren: 0.12 } } };
 const item = {
-  hidden: { opacity: 0, y: 12 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] as const } },
+  hidden: { opacity: 0, y: 14 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const } },
 };
 
 /** Header KPIs: live count-up, year-over-year delta, change pulse; staggered reveal. */
