@@ -1,20 +1,22 @@
 import { useMemo } from 'react';
 import type { TreemapRow } from '@cdti/shared';
 import { useTreemap } from '../../api/queries';
-import { baseTooltip, MONO_FONT, ttRow, ttTitle } from '../../lib/echarts';
+import { baseTooltip, MONO_FONT, TIMESERIES_PALETTE, ttRow, ttTitle } from '../../lib/echarts';
 import { formatInt, formatMoney } from '../../lib/format';
 import { Card } from '../ui/Card';
 import { EChart } from './EChart';
 
 const MAX_AREAS = 9;
-const MAX_INSTRUMENTS = 6;
+const MAX_INSTRUMENTS = 8;
 // Zero-width space appended to instrument node ids so they never collide with an
 // area that happens to share the same label (Sankey nodes are keyed by name).
 const ZWS = String.fromCharCode(0x200b);
 const ZWS_RE = new RegExp(ZWS, 'g');
 
-const AREA_RAMP: [string, string] = ['#c7d2fe', '#3730a3'];
-const INSTR_RAMP: [string, string] = ['#99f6e4', '#0f766e'];
+// Areas stay neutral (grey, darker with weight); instruments carry the colour,
+// matched by rank to the Evolución temporal palette so the same instrument
+// shares its colour across both panels.
+const AREA_RAMP: [string, string] = ['#c9cace', '#4b4c54'];
 const LABEL_COLOR = '#3f3f46';
 
 const truncate = (value: string, length: number): string =>
@@ -124,10 +126,6 @@ export function AreaSankeyCard() {
       topAreas.map((a) => areaTotals.get(a.name)?.aportacion ?? 0),
       AREA_RAMP,
     );
-    const instrColor = rampFor(
-      topInstr.map((i) => instrTotals.get(i.name + ZWS)?.aportacion ?? 0),
-      INSTR_RAMP,
-    );
 
     const sankeyNodes: SankeyNode[] = [
       ...topAreas.map((area) => {
@@ -140,14 +138,17 @@ export function AreaSankeyCard() {
           itemStyle: { color: areaColor(total.aportacion), borderWidth: 0 },
         };
       }),
-      ...topInstr.map((instr) => {
+      ...topInstr.map((instr, index) => {
         const total = instrTotals.get(instr.name + ZWS) ?? { aportacion: 0, proyectos: 0 };
         return {
           name: instr.name + ZWS,
           value: total.aportacion,
           proyectos: total.proyectos,
           depth: 1,
-          itemStyle: { color: instrColor(total.aportacion), borderWidth: 0 },
+          itemStyle: {
+            color: TIMESERIES_PALETTE[index % TIMESERIES_PALETTE.length]!,
+            borderWidth: 0,
+          },
         };
       }),
     ].filter((node) => node.value > 0);

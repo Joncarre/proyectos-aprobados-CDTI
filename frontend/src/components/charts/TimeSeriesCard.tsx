@@ -16,7 +16,7 @@ import { EChart } from './EChart';
 type Agrupar = 'ninguno' | 'ccaa' | 'area' | 'instrumento' | 'origen';
 type Metrica = 'importes' | 'pct';
 
-const MAX_GROUPS = 6;
+const MAX_GROUPS = 8;
 
 const GROUP_OPTIONS = [
   { value: 'ninguno', label: 'Total' },
