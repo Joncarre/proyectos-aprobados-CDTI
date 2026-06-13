@@ -41,7 +41,7 @@ export function CompaniesCard() {
                 className={cn(
                   'flex w-full items-center gap-3 rounded-lg border px-3 py-2 text-left transition-colors',
                   active
-                    ? 'border-accent-line bg-accent-soft'
+                    ? 'border-amber-line bg-amber-soft'
                     : 'border-transparent hover:bg-surface-2',
                 )}
               >

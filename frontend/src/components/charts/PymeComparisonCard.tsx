@@ -72,7 +72,7 @@ export function PymeComparisonCard() {
   return (
     <Card
       title="PYME vs. no PYME"
-      subtitle="¿Llega la ayuda a las pequeñas o se concentra en las grandes?"
+      subtitle="Distribución de ayudas entre grandes y pequeñas empresas"
       isPending={isPending}
       isUpdating={isPlaceholderData}
       bodyHeight="h-80"

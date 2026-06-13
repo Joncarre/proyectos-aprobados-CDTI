@@ -57,7 +57,7 @@ export function SeasonalityCard() {
           })),
           barWidth: '64%',
           itemStyle: { borderRadius: [4, 4, 0, 0] },
-          emphasis: { itemStyle: { color: '#4338ca' } },
+          emphasis: { itemStyle: { color: '#fbbf24' } },
         },
       ],
     };

@@ -103,7 +103,7 @@ export function CohortsCard() {
   return (
     <Card
       title="Nuevos beneficiarios vs. recurrentes"
-      subtitle="Empresas con su primera ayuda CDTI del histórico (desde 2014) frente a las que repiten"
+      subtitle="Empresas con su primera ayuda frente a las que repiten"
       isPending={isPending}
       isUpdating={isPlaceholderData}
       bodyHeight="h-80"

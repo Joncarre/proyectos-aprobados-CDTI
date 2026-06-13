@@ -155,17 +155,22 @@ export function ActiveFilterChips() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9 }}
               transition={{ type: 'spring', stiffness: 500, damping: 32 }}
-              className="shadow-card inline-flex items-center gap-2 rounded-full border border-line bg-surface py-1 pr-1 pl-3 text-xs"
+              className="group shadow-card inline-flex items-center gap-2 rounded-full border border-line bg-surface py-1 pr-1 pl-2.5 text-xs transition-colors hover:border-accent-line"
             >
-              <span className="font-medium">
-                {prefix !== null && <span className="text-ink-faint">{prefix}: </span>}
-                <span className="text-ink-strong">{value}</span>
+              <span className="size-1.5 shrink-0 rounded-full bg-accent" aria-hidden />
+              <span>
+                {prefix !== null && (
+                  <span className="text-[0.6rem] font-semibold tracking-wider text-ink-faint uppercase">
+                    {prefix}{' '}
+                  </span>
+                )}
+                <span className="font-semibold text-ink-strong">{value}</span>
               </span>
               <button
                 type="button"
                 onClick={chip.remove}
                 aria-label={`Quitar filtro ${chip.label}`}
-                className="grid size-4 place-items-center rounded-full text-ink-faint transition-colors hover:bg-accent-soft hover:text-accent-strong"
+                className="grid size-4 place-items-center rounded-full text-ink-faint transition-colors hover:bg-accent hover:text-white"
               >
                 <X className="size-3" />
               </button>

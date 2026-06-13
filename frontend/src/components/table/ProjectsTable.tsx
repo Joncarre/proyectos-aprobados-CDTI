@@ -10,7 +10,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../ui/Popover';
 import { Skeleton } from '../ui/Skeleton';
 
 const EXPORT_FORMATS = [
-  { fmt: 'csv', label: 'CSV', hint: 'Excel español (separador ;)' },
+  { fmt: 'csv', label: 'Excel español', hint: '' },
   { fmt: 'json', label: 'JSON', hint: 'Datos estructurados' },
   { fmt: 'xml', label: 'XML', hint: 'Intercambio entre sistemas' },
 ] as const;
@@ -25,9 +25,11 @@ function ExportMenu() {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink-soft transition-colors hover:border-line-strong hover:text-ink"
+          className="group shadow-card flex items-center gap-1.5 rounded-lg border border-accent-line bg-accent-soft px-2.5 py-1 text-xs font-medium text-accent-strong transition-all duration-200 hover:-translate-y-px hover:shadow-pop active:translate-y-0 active:scale-95"
         >
-          <Download className="size-3.5" /> Exportar <ChevronDown className="size-3" />
+          <Download className="size-3.5 transition-transform duration-200 group-hover:translate-y-0.5" />
+          Exportar
+          <ChevronDown className="size-3" />
         </button>
       </PopoverTrigger>
       <PopoverContent matchTriggerWidth={false}>
@@ -39,7 +41,7 @@ function ExportMenu() {
             className="block rounded-md px-2 py-1.5 transition-colors hover:bg-surface-2"
           >
             <span className="block text-xs font-medium">{label}</span>
-            <span className="block text-[0.65rem] text-ink-faint">{hint}</span>
+            {hint !== '' && <span className="block text-[0.65rem] text-ink-faint">{hint}</span>}
           </a>
         ))}
       </PopoverContent>

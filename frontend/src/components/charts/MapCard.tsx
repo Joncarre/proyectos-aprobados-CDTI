@@ -141,7 +141,7 @@ export function MapCard({ meta }: { meta: MetaResponse }) {
       title="Mapa de España"
       subtitle={
         nivel === 'ccaa'
-          ? 'Clic en una comunidad para bajar a sus provincias (aplica el filtro)'
+          ? 'Clic en una comunidad para bajar a sus provincias'
           : 'Clic en una provincia para filtrar por ella'
       }
       controls={
@@ -150,9 +150,10 @@ export function MapCard({ meta }: { meta: MetaResponse }) {
             <button
               type="button"
               onClick={() => setNivel('ccaa')}
-              className="flex items-center gap-1 rounded-lg border border-line bg-surface px-2 py-0.5 text-[0.7rem] font-medium text-ink-soft transition-colors hover:text-ink"
+              className="group shadow-card flex items-center gap-1.5 rounded-lg border border-accent-line bg-accent-soft px-2.5 py-1 text-[0.7rem] font-medium text-accent-strong transition-all duration-200 hover:-translate-y-px hover:shadow-pop active:translate-y-0 active:scale-95"
             >
-              <ArrowLeft className="size-3" /> CCAA
+              <ArrowLeft className="size-3 transition-transform duration-200 group-hover:-translate-x-0.5" />
+              Atrás
             </button>
           )}
           <ControlGroup

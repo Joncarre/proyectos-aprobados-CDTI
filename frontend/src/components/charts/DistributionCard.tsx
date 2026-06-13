@@ -94,7 +94,7 @@ export function DistributionCard() {
           symbol: 'circle',
           symbolSize: 7,
           showSymbol: false,
-          lineStyle: { width: 2.5, color },
+          lineStyle: { width: 1.75, color },
           itemStyle: { color, borderColor: '#ffffff', borderWidth: 2 },
           emphasis: { focus: 'series' as const, scale: 1.4 },
           areaStyle:
@@ -121,17 +121,13 @@ export function DistributionCard() {
               ? {
                   symbol: ['none', 'none'] as [string, string],
                   silent: true,
-                  lineStyle: { color: '#4338ca', type: 'dashed' as const, width: 1.5 },
+                  lineStyle: { color: '#a5b4fc', type: 'dashed' as const, width: 1 },
                   label: {
                     formatter: `Media ${formatPct(mean)}`,
                     position: 'end' as const,
-                    color: '#ffffff',
-                    backgroundColor: '#4338ca',
-                    padding: [3, 6] as [number, number],
-                    borderRadius: 4,
+                    color: '#6366f1',
                     fontFamily: MONO_FONT,
                     fontSize: 10,
-                    fontWeight: 'bold' as const,
                   },
                   data: [{ xAxis: mean }],
                 }
