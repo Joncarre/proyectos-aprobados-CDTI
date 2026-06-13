@@ -105,7 +105,7 @@ export function HeatmapCard() {
 
   return (
     <Card
-      title={`Heatmap año × ${dim === 'area' ? 'área sectorial' : 'CCAA'}`}
+      title={`Mapa de calor × ${dim === 'area' ? 'área' : 'CCAA'}`}
       subtitle={
         totalCategories > MAX_ROWS
           ? `Top ${MAX_ROWS} de ${totalCategories} categorías por ${metrica === 'aportacion' ? 'aportación' : 'nº de proyectos'}`

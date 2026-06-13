@@ -12,7 +12,6 @@ import { formatMoneyCompact, formatPct } from '../../lib/format';
 import { Card, ControlGroup } from '../ui/Card';
 import { EChart } from './EChart';
 
-type Granularidad = 'anio' | 'mes';
 type Agrupar = 'ninguno' | 'ccaa' | 'area' | 'instrumento' | 'origen';
 type Metrica = 'importes' | 'pct';
 
@@ -86,12 +85,11 @@ function buildSeries(
 }
 
 export function TimeSeriesCard() {
-  const [granularidad, setGranularidad] = useState<Granularidad>('anio');
   const [agrupar, setAgrupar] = useState<Agrupar>('ninguno');
   const [metrica, setMetrica] = useState<Metrica>('importes');
 
   const { data, isPending, isPlaceholderData } = useTimeseries(
-    granularidad,
+    'anio',
     agrupar === 'ninguno' ? undefined : agrupar,
   );
 
@@ -162,7 +160,7 @@ export function TimeSeriesCard() {
         smooth: 0.25,
         symbol: 'circle',
         symbolSize: 5,
-        showSymbol: granularidad === 'anio',
+        showSymbol: true,
         connectNulls: false,
         lineStyle: { width: 2 },
         itemStyle: { color: spec.color },
@@ -170,7 +168,7 @@ export function TimeSeriesCard() {
         areaStyle: agrupar === 'ninguno' && metrica === 'importes' ? { opacity: 0.06 } : undefined,
       })),
     };
-  }, [data, agrupar, metrica, granularidad]);
+  }, [data, agrupar, metrica]);
 
   return (
     <Card
@@ -182,15 +180,6 @@ export function TimeSeriesCard() {
       }
       controls={
         <>
-          <ControlGroup
-            options={[
-              { value: 'anio', label: 'Anual' },
-              { value: 'mes', label: 'Mensual' },
-            ]}
-            value={granularidad}
-            onChange={setGranularidad}
-            ariaLabel="Granularidad temporal"
-          />
           <ControlGroup
             options={GROUP_OPTIONS}
             value={agrupar}

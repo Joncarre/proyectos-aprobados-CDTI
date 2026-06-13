@@ -45,7 +45,7 @@ export function MultiSelectFilter({
           type="button"
           disabled={disabled}
           className={cn(
-            'flex w-full items-center justify-between gap-2 rounded-lg border border-line bg-surface px-3 py-2 text-left text-sm transition-colors',
+            'flex w-full items-center justify-between gap-2 rounded-lg border border-line bg-surface px-3 py-2 text-left text-xs transition-colors',
             disabled ? 'cursor-not-allowed opacity-50' : 'hover:border-line-strong',
           )}
         >
@@ -70,7 +70,7 @@ export function MultiSelectFilter({
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Buscar…"
               aria-label={`Buscar en ${label}`}
-              className="w-full bg-transparent py-1 text-sm outline-none placeholder:text-ink-faint"
+              className="w-full bg-transparent py-1 text-xs outline-none placeholder:text-ink-faint"
             />
           </div>
         )}
@@ -89,7 +89,7 @@ export function MultiSelectFilter({
               {group.options.map((option) => (
                 <label
                   key={option}
-                  className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-sm transition-colors hover:bg-surface-2"
+                  className="flex cursor-pointer items-center gap-2.5 rounded-md px-2 py-1.5 text-xs transition-colors hover:bg-surface-2"
                 >
                   <Checkbox
                     checked={selected.includes(option)}

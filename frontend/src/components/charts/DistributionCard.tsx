@@ -1,21 +1,22 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useDistribution, useStats } from '../../api/queries';
 import { AXIS_LABEL, baseTooltip, MONO_FONT, monoNum, SPLIT_LINE } from '../../lib/echarts';
 import { formatInt, formatPct } from '../../lib/format';
-import { Card, ControlGroup } from '../ui/Card';
+import { Card } from '../ui/Card';
 import { EChart } from './EChart';
 
+const ANCHO = 5;
+
 export function DistributionCard() {
-  const [ancho, setAncho] = useState<5 | 10>(5);
-  const { data, isPending, isPlaceholderData } = useDistribution(ancho);
+  const { data, isPending, isPlaceholderData } = useDistribution(ANCHO);
   const { data: stats } = useStats();
 
   const option = useMemo(() => {
     const bins = data ?? [];
     const mean = stats?.pctMedio ?? null;
-    // Fractional category index so the marker sits exactly on the mean, not on a bin edge
-    const meanIndex =
-      mean !== null && bins.length > 0 ? Math.min(mean / ancho, bins.length - 1) : null;
+    // Plot each bin at its center on a 0–100 value axis so the curve spans the
+    // full range and the axis closes at 100.
+    const points = bins.map((bin) => [bin.desde + ANCHO / 2, bin.proyectos]);
 
     return {
       tooltip: {
@@ -30,10 +31,11 @@ export function DistributionCard() {
       },
       grid: { left: 8, right: 16, top: 16, bottom: 4, containLabel: true },
       xAxis: {
-        type: 'category' as const,
-        data: bins.map((bin) => `${bin.desde}`),
-        boundaryGap: false,
-        axisLabel: { ...AXIS_LABEL, interval: ancho === 5 ? 1 : 0 },
+        type: 'value' as const,
+        min: 0,
+        max: 100,
+        interval: 10,
+        axisLabel: { ...AXIS_LABEL, formatter: (value: number) => `${value}` },
         axisTick: { show: false },
         axisLine: { lineStyle: { color: '#e8e8ea' } },
         name: '% de aportación',
@@ -49,7 +51,7 @@ export function DistributionCard() {
       series: [
         {
           type: 'line' as const,
-          data: bins.map((bin) => bin.proyectos),
+          data: points,
           smooth: 0.45,
           symbol: 'circle',
           symbolSize: 7,
@@ -71,7 +73,7 @@ export function DistributionCard() {
             },
           },
           markLine:
-            meanIndex !== null
+            mean !== null
               ? {
                   symbol: ['none', 'none'] as [string, string],
                   silent: true,
@@ -87,13 +89,13 @@ export function DistributionCard() {
                     fontSize: 10,
                     fontWeight: 'bold' as const,
                   },
-                  data: [{ xAxis: meanIndex }],
+                  data: [{ xAxis: mean }],
                 }
               : undefined,
         },
       ],
     };
-  }, [data, ancho, stats]);
+  }, [data, stats]);
 
   return (
     <Card
@@ -102,17 +104,6 @@ export function DistributionCard() {
         stats?.pctMedio != null
           ? `Media del conjunto filtrado: ${formatPct(stats.pctMedio)}`
           : undefined
-      }
-      controls={
-        <ControlGroup
-          options={[
-            { value: '5', label: 'Bins de 5' },
-            { value: '10', label: 'Bins de 10' },
-          ]}
-          value={String(ancho) as '5' | '10'}
-          onChange={(value) => setAncho(Number(value) as 5 | 10)}
-          ariaLabel="Ancho de los bins"
-        />
       }
       isPending={isPending}
       isUpdating={isPlaceholderData}

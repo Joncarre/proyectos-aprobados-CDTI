@@ -30,7 +30,7 @@ export function TextSearch() {
         onChange={(event) => setDraft(event.target.value)}
         placeholder="Buscar título o empresa…"
         aria-label="Buscar en título del proyecto o razón social"
-        className="w-full bg-transparent text-sm outline-none placeholder:text-ink-faint"
+        className="w-full bg-transparent text-xs outline-none placeholder:text-ink-faint"
       />
       {draft !== '' && (
         <button
