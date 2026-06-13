@@ -5,7 +5,6 @@ import { cn } from '../../lib/cn';
 import { formatInt, formatMoneyCompact, formatPct } from '../../lib/format';
 import { useCountUp } from '../../lib/useCountUp';
 import { Skeleton } from '../ui/Skeleton';
-import { Sparkline } from '../ui/Sparkline';
 
 interface Delta {
   dir: number;
@@ -43,13 +42,12 @@ interface KpiCardProps {
   label: string;
   value: number | null;
   format: (value: number) => string;
-  series: number[];
   delta: Delta | null;
   detail?: string;
   dimmed: boolean;
 }
 
-function KpiCard({ label, value, format, series, delta, detail, dimmed }: KpiCardProps) {
+function KpiCard({ label, value, format, delta, detail, dimmed }: KpiCardProps) {
   const animated = useCountUp(value ?? 0);
   const display = value === null ? '—' : format(animated);
 
@@ -69,17 +67,14 @@ function KpiCard({ label, value, format, series, delta, detail, dimmed }: KpiCar
       />
       <div className="relative">
         <p className="truncate text-[0.68rem] font-medium text-ink-soft">{label}</p>
-        <div className="mt-1 flex items-end justify-between gap-2">
-          <p
-            className={cn(
-              'truncate font-mono text-base font-semibold tracking-tight text-ink-strong transition-opacity lg:text-lg',
-              dimmed && 'opacity-60',
-            )}
-          >
-            {display}
-          </p>
-          {series.length >= 2 && <Sparkline values={series} className="mb-1 shrink-0" />}
-        </div>
+        <p
+          className={cn(
+            'mt-1 truncate font-mono text-base font-semibold tracking-tight text-ink-strong transition-opacity lg:text-lg',
+            dimmed && 'opacity-60',
+          )}
+        >
+          {display}
+        </p>
         <div className="mt-1 flex items-center justify-between gap-2 text-[0.65rem]">
           {delta ? (
             <span
@@ -124,18 +119,15 @@ export function KpiStrip() {
     );
   }
 
-  // Only complete years feed the sparkline and the delta
+  // Only complete years feed the delta
   const complete: KpiTrendPoint[] = (trends ?? []).filter((point) => point.anio < CURRENT_YEAR);
   const years = complete.map((point) => point.anio);
-  const seriesOf = (key: keyof KpiTrendPoint): number[] =>
-    complete.map((point) => point[key]).filter((value): value is number => value !== null);
 
   const cards: KpiCardProps[] = [
     {
       label: 'Proyectos',
       value: data.proyectos,
       format: formatInt,
-      series: seriesOf('proyectos'),
       delta: computeDelta(
         complete.map((p) => p.proyectos),
         years,
@@ -148,7 +140,6 @@ export function KpiStrip() {
       label: 'Presupuesto total',
       value: data.presupuestoTotal,
       format: formatMoneyCompact,
-      series: seriesOf('presupuesto'),
       delta: computeDelta(
         complete.map((p) => p.presupuesto),
         years,
@@ -160,7 +151,6 @@ export function KpiStrip() {
       label: 'Aportación CDTI',
       value: data.aportacionTotal,
       format: formatMoneyCompact,
-      series: seriesOf('aportacion'),
       delta: computeDelta(
         complete.map((p) => p.aportacion),
         years,
@@ -172,7 +162,6 @@ export function KpiStrip() {
       label: '% medio de aportación',
       value: data.pctMedio,
       format: formatPct,
-      series: seriesOf('pctMedio'),
       delta: computeDelta(
         complete.map((p) => p.pctMedio),
         years,
@@ -184,7 +173,6 @@ export function KpiStrip() {
       label: 'PYMEs',
       value: data.pctPymes,
       format: formatPct,
-      series: seriesOf('pctPymes'),
       delta: computeDelta(
         complete.map((p) => p.pctPymes),
         years,

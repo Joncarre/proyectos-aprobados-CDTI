@@ -30,7 +30,7 @@ export function Card({
   return (
     <section
       className={cn(
-        'shadow-card rounded-xl border border-line bg-surface p-4 transition-[transform,box-shadow,border-color] duration-200 hover:-translate-y-px hover:border-line-strong hover:shadow-[0_6px_20px_rgb(26_26_30/0.07)]',
+        'shadow-card rounded-xl border border-line bg-surface p-4 transition-shadow duration-200 hover:shadow-[0_6px_20px_rgb(26_26_30/0.08)]',
         className,
       )}
     >
