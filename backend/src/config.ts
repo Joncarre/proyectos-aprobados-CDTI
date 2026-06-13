@@ -7,7 +7,8 @@ loadEnv({ path: resolve(REPO_ROOT, '.env'), quiet: true });
 
 export const config = {
   host: process.env.API_HOST ?? '127.0.0.1',
-  port: Number(process.env.API_PORT ?? 3001),
+  // PaaS hosts (Render, Railway, Heroku…) inject the port to bind via PORT.
+  port: Number(process.env.PORT ?? process.env.API_PORT ?? 3001),
   corsOrigin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
   dbPath: resolve(REPO_ROOT, process.env.DUCKDB_PATH ?? './data/cdti.duckdb'),
   rateLimitMax: Number(process.env.RATE_LIMIT_MAX ?? 300),

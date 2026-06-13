@@ -1,0 +1,28 @@
+# Render Blueprint — CDTI read-only API (Fastify + DuckDB).
+#
+# Deploy: Render dashboard → New → Blueprint → pick this repo. After the first
+# deploy, set CORS_ORIGIN (in the service's Environment) to your Netlify URL.
+#
+# The API reads data/cdti.duckdb. That file is gitignored, so make it reachable
+# on Render in ONE of two ways (see docs/despliegue.md):
+#   A) commit the prebuilt DB once:  git add -f data/cdti.duckdb
+#   B) commit the raw sources and build it here: change buildCommand to
+#      "npm ci && npm run ingest" and run  git add -f data/raw/*.json
+services:
+  - type: web
+    name: cdti-api
+    runtime: node
+    plan: free
+    region: frankfurt # closest Render region to Spain
+    buildCommand: npm ci
+    startCommand: npm run start --workspace backend
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: '22'
+      - key: API_HOST
+        value: 0.0.0.0 # Render requires binding to 0.0.0.0; it injects PORT
+      - key: RATE_LIMIT_MAX
+        value: '300'
+      - key: CORS_ORIGIN
+        sync: false # set this in the dashboard to your Netlify site URL

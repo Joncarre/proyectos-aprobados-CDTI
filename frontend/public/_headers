@@ -3,11 +3,11 @@
 # the same headers (see docs/seguridad.md). These only apply to the deployed
 # site, never to the Vite dev server, so they don't interfere with HMR.
 #
-# connect-src assumes the API is reverse-proxied under the same origin (/api).
-# If the API is served from a different origin, append it to connect-src, e.g.
-#   connect-src 'self' https://api.tu-dominio.es
+# connect-src allows the SPA to call the API. With the API on Render it is
+# *.onrender.com; pin it to your exact host (e.g. https://cdti-api.onrender.com)
+# or, if you reverse-proxy the API under the same origin (/api), use just 'self'.
 /*
-  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://*.onrender.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin

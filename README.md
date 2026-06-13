@@ -131,7 +131,8 @@ elección están en [docs/arquitectura.md](docs/arquitectura.md)):
 | [docs/data-quality.md](docs/data-quality.md)   | Informe de calidad de datos               |
 | [docs/design-system.md](docs/design-system.md) | Sistema de diseño                         |
 | [docs/rendimiento.md](docs/rendimiento.md)     | Estrategia de rendimiento                 |
-| [docs/seguridad.md](docs/seguridad.md)         | Postura de seguridad y despliegue         |
+| [docs/seguridad.md](docs/seguridad.md)         | Postura de seguridad                      |
+| [docs/despliegue.md](docs/despliegue.md)       | Despliegue en Netlify + Render            |
 | [docs/accesibilidad.md](docs/accesibilidad.md) | Accesibilidad (AA básico)                 |
 | [docs/decisions.md](docs/decisions.md)         | Registro de decisiones técnicas           |
 

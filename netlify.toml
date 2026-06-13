@@ -1,0 +1,19 @@
+# Netlify config — CDTI SPA (monorepo: only the frontend workspace is built).
+#
+# Before the first build, set VITE_API_BASE_URL in the Netlify UI
+# (Site settings → Environment variables) to your Render API URL, e.g.
+#   VITE_API_BASE_URL = https://cdti-api.onrender.com
+# Vite inlines it at build time. Security headers live in frontend/public/_headers.
+
+[build]
+  command = "npm ci && npm run build --workspace frontend"
+  publish = "frontend/dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# SPA fallback: filters live in the query string, so there is a single HTML entry.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
