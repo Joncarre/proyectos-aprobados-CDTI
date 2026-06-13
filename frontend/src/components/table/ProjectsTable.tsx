@@ -115,8 +115,8 @@ export function ProjectsTable() {
       <div className="overflow-x-auto rounded-lg border border-line">
         <table className="w-full min-w-[60rem] border-collapse text-xs">
           <caption className="sr-only">
-            Detalle de proyectos aprobados por el CDTI con los filtros activos; columnas ordenables y
-            resultados paginados.
+            Detalle de proyectos aprobados por el CDTI con los filtros activos; columnas ordenables
+            y resultados paginados.
           </caption>
           <thead>
             <tr className="border-b border-line bg-surface-2/60 text-left">

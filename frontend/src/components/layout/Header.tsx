@@ -26,7 +26,7 @@ export function Header() {
         <span className="hidden text-xs text-ink-faint sm:block">— Datos abiertos</span>
       </div>
       {meta && (
-        <p className="font-mono text-xs text-ink-soft">
+        <p className="hidden font-mono text-xs text-ink-soft md:block">
           {formatInt(meta.ingest.nProjects)} proyectos · Última actualización el día{' '}
           {formatIngestDate(meta.ingest.ingestedAt)}
         </p>

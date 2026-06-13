@@ -15,6 +15,7 @@ const Dashboard = lazy(() => import('../Dashboard'));
 const PANEL_WIDTH = 320; // w-80
 const PANEL_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
 const WARMUP_MS = 2000; // first-visit splash duration
+const WIDE_QUERY = '(min-width: 1024px)'; // lg: push sidebar vs. overlay drawer
 
 function DashboardSkeleton() {
   return (
@@ -28,7 +29,22 @@ function DashboardSkeleton() {
 
 export function AppShell() {
   const { data: meta } = useMeta();
-  const [filtersOpen, setFiltersOpen] = useState(true);
+
+  // On wide screens the filter panel pushes content and is open by default; on
+  // tablet/phone it becomes an overlay drawer, closed by default so the
+  // dashboard gets the full width.
+  const [isWide, setIsWide] = useState(() => window.matchMedia(WIDE_QUERY).matches);
+  const [filtersOpen, setFiltersOpen] = useState(isWide);
+
+  useEffect(() => {
+    const mq = window.matchMedia(WIDE_QUERY);
+    const onChange = (event: MediaQueryListEvent): void => {
+      setIsWide(event.matches);
+      setFiltersOpen(event.matches); // open when going wide, collapse when narrowing
+    };
+    mq.addEventListener('change', onChange);
+    return () => mq.removeEventListener('change', onChange);
+  }, []);
 
   // First-visit warm-up: the content renders behind the splash so every panel
   // loads its data; the cards then reveal once the timer (and meta) are ready.
@@ -39,6 +55,8 @@ export function AppShell() {
   }, []);
   const ready = timerDone && !!meta;
 
+  const overlayOpen = filtersOpen && !isWide;
+
   return (
     <div className="min-h-screen">
       <Header />
@@ -48,8 +66,12 @@ export function AppShell() {
           aria-hidden={!filtersOpen}
           style={{ transitionTimingFunction: PANEL_EASE }}
           className={cn(
-            'sticky top-14 h-[calc(100vh-3.5rem)] shrink-0 overflow-hidden border-r border-line bg-surface font-mono transition-[width] duration-500',
-            filtersOpen ? 'w-80' : 'w-0 border-r-0',
+            'top-14 z-40 h-[calc(100vh-3.5rem)] overflow-hidden border-r border-line bg-surface font-mono',
+            // Narrow: fixed overlay drawer that slides in from the left
+            'fixed left-0 w-80 transition-transform duration-500',
+            // Wide (lg+): in-flow sticky sidebar whose width animates
+            'lg:sticky lg:w-80 lg:shrink-0 lg:translate-x-0 lg:transition-[width]',
+            filtersOpen ? 'translate-x-0' : '-translate-x-full lg:w-0 lg:border-r-0',
           )}
         >
           <div
@@ -62,6 +84,16 @@ export function AppShell() {
             <FilterPanel />
           </div>
         </aside>
+
+        {/* Backdrop: only on the overlay (narrow) layout, closes on tap */}
+        {overlayOpen && (
+          <button
+            type="button"
+            aria-label="Cerrar panel de filtros"
+            onClick={() => setFiltersOpen(false)}
+            className="fixed inset-x-0 top-14 bottom-0 z-30 bg-ink-strong/30 backdrop-blur-[1px] lg:hidden"
+          />
+        )}
 
         {/* Collapse/expand tab, vertically centered on the panel edge */}
         <button

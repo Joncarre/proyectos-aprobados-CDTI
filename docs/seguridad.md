@@ -13,17 +13,17 @@ ingesta solo corre por CLI en local.
 
 ## Backend (API Fastify)
 
-| Control | Implementación |
-| --- | --- |
-| SQL parametrizado | Toda entrada de usuario viaja en `params`; los nombres de columna están escritos a mano en [`where.ts`](../backend/src/where.ts). Cero concatenación. |
-| Validación de entrada | Esquemas **zod** por endpoint ([`validation.ts`](../backend/src/validation.ts)); los valores categóricos se contrastan contra **listas blancas** cargadas al arrancar desde las vistas `dim_*`. |
-| `LIKE` seguro | La búsqueda libre escapa `\ % _` y usa `ESCAPE '\'`. |
-| Solo lectura | DuckDB en `access_mode: READ_ONLY`; no existe ningún endpoint de escritura. |
-| CORS | Restringido al origen del frontend (`CORS_ORIGIN`), solo método `GET`. |
-| Rate limiting | `@fastify/rate-limit`, `RATE_LIMIT_MAX`/minuto por IP (300 por defecto). |
-| Cabeceras | `@fastify/helmet` (CSP por defecto, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, HSTS, etc.). Solo se relaja `Cross-Origin-Resource-Policy` a `cross-origin` para que la SPA pueda leer la API. |
-| Errores | Manejador central: los 5xx nunca filtran detalles internos (responden `Error interno`); los de validación devuelven 400 con el detalle del parámetro. |
-| Autenticación | Punto de extensión **desactivado** (`AUTH_ENABLED`): un hook `onRequest` listo para implementar verificación si el despliegue del CDTI lo exige. |
+| Control               | Implementación                                                                                                                                                                                                 |
+| --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| SQL parametrizado     | Toda entrada de usuario viaja en `params`; los nombres de columna están escritos a mano en [`where.ts`](../backend/src/where.ts). Cero concatenación.                                                          |
+| Validación de entrada | Esquemas **zod** por endpoint ([`validation.ts`](../backend/src/validation.ts)); los valores categóricos se contrastan contra **listas blancas** cargadas al arrancar desde las vistas `dim_*`.                |
+| `LIKE` seguro         | La búsqueda libre escapa `\ % _` y usa `ESCAPE '\'`.                                                                                                                                                           |
+| Solo lectura          | DuckDB en `access_mode: READ_ONLY`; no existe ningún endpoint de escritura.                                                                                                                                    |
+| CORS                  | Restringido al origen del frontend (`CORS_ORIGIN`), solo método `GET`.                                                                                                                                         |
+| Rate limiting         | `@fastify/rate-limit`, `RATE_LIMIT_MAX`/minuto por IP (300 por defecto).                                                                                                                                       |
+| Cabeceras             | `@fastify/helmet` (CSP por defecto, `X-Content-Type-Options: nosniff`, `X-Frame-Options: DENY`, HSTS, etc.). Solo se relaja `Cross-Origin-Resource-Policy` a `cross-origin` para que la SPA pueda leer la API. |
+| Errores               | Manejador central: los 5xx nunca filtran detalles internos (responden `Error interno`); los de validación devuelven 400 con el detalle del parámetro.                                                          |
+| Autenticación         | Punto de extensión **desactivado** (`AUTH_ENABLED`): un hook `onRequest` listo para implementar verificación si el despliegue del CDTI lo exige.                                                               |
 
 ## Frontend (SPA estática)
 
