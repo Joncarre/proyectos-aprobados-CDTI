@@ -1,7 +1,7 @@
 import { motion } from 'motion/react';
 
 const BAR_FEATHER =
-  'linear-gradient(to right, transparent 0%, #000 26%, #000 74%, transparent 100%)';
+  'linear-gradient(to right, transparent 0%, #000 34%, #000 66%, transparent 100%)';
 const BARS = [0, 1, 2, 3, 4];
 
 /**
@@ -39,7 +39,7 @@ export function LoadingScreen() {
         <p className="font-mono text-sm text-ink-soft">Procesando información…</p>
 
         <div
-          className="relative h-1.5 w-72 overflow-hidden rounded-full"
+          className="relative h-1.5 w-96 overflow-hidden rounded-full"
           style={{ maskImage: BAR_FEATHER, WebkitMaskImage: BAR_FEATHER }}
         >
           <div className="absolute inset-0 rounded-full bg-line/50" />

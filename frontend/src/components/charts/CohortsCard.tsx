@@ -107,9 +107,9 @@ export function CohortsCard() {
       subtitle="Empresas con su primera ayuda frente a las que repiten"
       isPending={isPending}
       isUpdating={isPlaceholderData}
-      bodyHeight="h-80"
+      bodyHeight="h-96"
     >
-      <EChart option={option} className="h-80 w-full" />
+      <EChart option={option} className="h-96 w-full" />
     </Card>
   );
 }
