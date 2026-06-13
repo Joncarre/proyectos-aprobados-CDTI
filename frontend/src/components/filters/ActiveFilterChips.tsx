@@ -127,52 +127,51 @@ function buildChips(
   return chips;
 }
 
+/** Splits "Prefix: value" so the prefix can be dimmed and the value emphasised. */
+function splitLabel(label: string): { prefix: string | null; value: string } {
+  const index = label.indexOf(': ');
+  return index === -1
+    ? { prefix: null, value: label }
+    : { prefix: label.slice(0, index), value: label.slice(index + 2) };
+}
+
 export function ActiveFilterChips() {
   const filters = useFiltersStore((state) => state.filters);
   const clearKey = useFiltersStore((state) => state.clearKey);
   const setRange = useFiltersStore((state) => state.setRange);
-  const clearAll = useFiltersStore((state) => state.clearAll);
 
   const chips = buildChips(filters, clearKey, setRange);
 
   return (
-    <div className="flex min-h-7 flex-wrap items-center gap-1.5" aria-live="polite">
+    <div className="flex min-h-7 flex-wrap items-center gap-2" aria-live="polite">
       <AnimatePresence initial={false}>
-        {chips.map((chip) => (
-          <motion.span
-            key={chip.id}
-            layout
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.92 }}
-            transition={{ duration: 0.15 }}
-            className="inline-flex items-center gap-1 rounded-full border border-accent-line bg-accent-soft py-1 pr-1.5 pl-2.5 text-xs font-medium text-accent-strong"
-          >
-            {chip.label}
-            <button
-              type="button"
-              onClick={chip.remove}
-              aria-label={`Quitar filtro ${chip.label}`}
-              className="rounded-full p-0.5 transition-colors hover:bg-accent-line/60"
+        {chips.map((chip) => {
+          const { prefix, value } = splitLabel(chip.label);
+          return (
+            <motion.span
+              key={chip.id}
+              layout
+              initial={{ opacity: 0, scale: 0.9, y: -2 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ type: 'spring', stiffness: 500, damping: 32 }}
+              className="shadow-card inline-flex items-center gap-2 rounded-full border border-line bg-surface py-1 pr-1 pl-3 text-xs"
             >
-              <X className="size-3" />
-            </button>
-          </motion.span>
-        ))}
-        {chips.length > 1 && (
-          <motion.button
-            key="_clear"
-            layout
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            type="button"
-            onClick={clearAll}
-            className="text-xs font-medium text-ink-soft transition-colors hover:text-ink"
-          >
-            Limpiar todo
-          </motion.button>
-        )}
+              <span className="font-medium">
+                {prefix !== null && <span className="text-ink-faint">{prefix}: </span>}
+                <span className="text-ink-strong">{value}</span>
+              </span>
+              <button
+                type="button"
+                onClick={chip.remove}
+                aria-label={`Quitar filtro ${chip.label}`}
+                className="grid size-4 place-items-center rounded-full text-ink-faint transition-colors hover:bg-accent-soft hover:text-accent-strong"
+              >
+                <X className="size-3" />
+              </button>
+            </motion.span>
+          );
+        })}
       </AnimatePresence>
       {chips.length === 0 && (
         <span className="text-xs text-ink-faint">

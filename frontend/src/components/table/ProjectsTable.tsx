@@ -158,7 +158,7 @@ export function ProjectsTable() {
               : (data?.items ?? []).map((item) => (
                   <tr
                     key={item.id}
-                    className="border-b border-line transition-[background-color] duration-500 hover:bg-accent-soft hover:duration-100"
+                    className="border-b border-line transition-[background-color] duration-1000 hover:bg-hover-row hover:duration-150"
                   >
                     <td className="px-3.5 py-2.5 font-mono whitespace-nowrap">
                       {formatDate(item.fechaAprobacion)}

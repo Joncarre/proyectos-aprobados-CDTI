@@ -87,7 +87,7 @@ export function TreemapCard() {
   return (
     <Card
       title="Áreas sectoriales → instrumentos"
-      subtitle="Tamaño = aportación CDTI · clic para entrar en un área, miga de pan para volver"
+      subtitle="El tamaño del nodo indica la aportación CDTI"
       isPending={isPending}
       isUpdating={isPlaceholderData}
       bodyHeight="h-96"

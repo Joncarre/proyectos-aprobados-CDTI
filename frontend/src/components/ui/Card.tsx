@@ -1,4 +1,5 @@
-import type { ReactNode } from 'react';
+import { useId, type ReactNode } from 'react';
+import { motion } from 'motion/react';
 import { cn } from '../../lib/cn';
 import { Skeleton } from './Skeleton';
 
@@ -48,7 +49,10 @@ export function Card({
   );
 }
 
-/** Small pill-button group for chart-level controls (metric/dimension switches). */
+/**
+ * Pill-button group for chart-level controls (metric/dimension switches).
+ * A shared layout indicator slides under the active option; pressing scales it.
+ */
 export function ControlGroup<T extends string>({
   options,
   value,
@@ -60,29 +64,42 @@ export function ControlGroup<T extends string>({
   onChange: (value: T) => void;
   ariaLabel: string;
 }) {
+  const layoutId = useId();
   return (
     <div
       role="radiogroup"
       aria-label={ariaLabel}
-      className="flex rounded-lg border border-line bg-surface-2 p-0.5"
+      className="flex rounded-lg border border-line bg-surface-2 p-0.5 font-mono"
     >
-      {options.map((option) => (
-        <button
-          key={option.value}
-          type="button"
-          role="radio"
-          aria-checked={value === option.value}
-          onClick={() => onChange(option.value)}
-          className={cn(
-            'rounded-md px-2 py-0.5 text-[0.7rem] font-medium whitespace-nowrap transition-colors',
-            value === option.value
-              ? 'shadow-card bg-surface text-ink'
-              : 'text-ink-soft hover:text-ink',
-          )}
-        >
-          {option.label}
-        </button>
-      ))}
+      {options.map((option) => {
+        const selected = value === option.value;
+        return (
+          <button
+            key={option.value}
+            type="button"
+            role="radio"
+            aria-checked={selected}
+            onClick={() => onChange(option.value)}
+            className="relative rounded-md px-2.5 py-1 text-[0.7rem] font-medium whitespace-nowrap transition-transform duration-150 active:scale-90"
+          >
+            {selected && (
+              <motion.span
+                layoutId={layoutId}
+                transition={{ type: 'spring', stiffness: 480, damping: 34 }}
+                className="shadow-card absolute inset-0 rounded-md bg-surface ring-1 ring-black/[0.03]"
+              />
+            )}
+            <span
+              className={cn(
+                'relative z-10 transition-colors',
+                selected ? 'text-accent-strong' : 'text-ink-soft hover:text-ink',
+              )}
+            >
+              {option.label}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }

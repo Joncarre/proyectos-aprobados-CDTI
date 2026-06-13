@@ -61,7 +61,7 @@ export function MultiSelectFilter({
         </button>
       </PopoverTrigger>
 
-      <PopoverContent>
+      <PopoverContent className="font-mono">
         {searchable && (
           <div className="mb-1 flex items-center gap-2 border-b border-line px-2 pb-2">
             <Search className="size-4 shrink-0 text-ink-faint" />

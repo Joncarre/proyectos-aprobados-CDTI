@@ -1,4 +1,5 @@
 import { useEffect, useMemo, type ReactNode } from 'react';
+import { Eraser } from 'lucide-react';
 import type { MetaResponse } from '@cdti/shared';
 import { useMeta } from '../../api/queries';
 import { countActiveFilters, useFiltersStore } from '../../state/filters';
@@ -61,8 +62,9 @@ export function FilterPanel() {
           <button
             type="button"
             onClick={clearAll}
-            className="text-xs font-medium text-ink-soft transition-colors hover:text-ink"
+            className="group shadow-card flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1 text-[0.7rem] font-medium text-ink-soft transition-all duration-200 hover:-translate-y-px hover:border-accent-line hover:bg-accent-soft hover:text-accent-strong hover:shadow-pop active:translate-y-0 active:scale-95"
           >
+            <Eraser className="size-3 transition-transform duration-200 group-hover:-rotate-12" />
             Limpiar todo
           </button>
         )}

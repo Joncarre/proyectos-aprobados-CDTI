@@ -20,7 +20,7 @@ export function CompaniesCard() {
   return (
     <Card
       title="Empresas recurrentes"
-      subtitle="Con 2+ proyectos en el conjunto filtrado · clic para fijar una empresa"
+      subtitle="Más de dos proyectos en el conjunto filtrado"
       isPending={isPending}
       isUpdating={isPlaceholderData}
       bodyHeight="h-96"
@@ -28,7 +28,7 @@ export function CompaniesCard() {
       <div className="h-96 space-y-1 overflow-y-auto pr-1">
         {(data ?? []).length === 0 && !isPending ? (
           <p className="py-10 text-center text-xs text-ink-faint">
-            Ninguna empresa con 2+ proyectos en el conjunto filtrado
+            Ninguna empresa con más de un proyecto en el conjunto filtrado
           </p>
         ) : (
           (data ?? []).map((company, index) => {
@@ -55,8 +55,8 @@ export function CompaniesCard() {
                     {formatPct(company.pctMedio)}
                   </span>
                 </span>
-                <span className="shrink-0 rounded-full bg-accent-soft px-2 py-0.5 font-mono text-[0.65rem] font-semibold text-accent-strong">
-                  {formatInt(company.proyectos)} proy.
+                <span className="w-24 shrink-0 rounded-full bg-accent-soft px-2 py-0.5 text-center font-mono text-[0.65rem] font-semibold text-accent-strong">
+                  {formatInt(company.proyectos)} Proyectos
                 </span>
                 <span className="w-16 shrink-0 text-right font-mono text-xs font-medium">
                   {formatMoneyCompact(company.aportacion)}
