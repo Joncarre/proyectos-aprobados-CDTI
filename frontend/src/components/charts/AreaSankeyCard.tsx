@@ -7,7 +7,7 @@ import { Card } from '../ui/Card';
 import { EChart } from './EChart';
 
 const MAX_AREAS = 9;
-const MAX_INSTRUMENTS = 7;
+const MAX_INSTRUMENTS = 6;
 // Zero-width space appended to instrument node ids so they never collide with an
 // area that happens to share the same label (Sankey nodes are keyed by name).
 const ZWS = String.fromCharCode(0x200b);
