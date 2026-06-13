@@ -68,7 +68,7 @@ export function TreemapCard() {
           label: {
             show: true,
             fontSize: 11,
-            fontFamily: "'Inter Variable', system-ui, sans-serif",
+            fontFamily: MONO_FONT,
             formatter: (params: { name: string; value: unknown }) =>
               `${params.name}\n{num|${formatMoneyCompact(Number(params.value))}}`,
             rich: { num: { fontFamily: MONO_FONT, fontSize: 10, color: 'inherit' } },

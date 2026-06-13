@@ -66,7 +66,7 @@ export function SeasonalityCard() {
   return (
     <Card
       title="Estacionalidad de las resoluciones"
-      subtitle="Aprobaciones por mes (todos los años); en color los cierres de trimestre"
+      subtitle="Aprobaciones por mes; en color los cierres de trimestre"
       controls={
         <ControlGroup
           options={[

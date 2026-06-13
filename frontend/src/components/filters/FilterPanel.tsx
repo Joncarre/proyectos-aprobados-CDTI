@@ -64,18 +64,13 @@ export function FilterPanel() {
           onClick={clearAll}
           disabled={activeCount === 0}
           className={cn(
-            'group flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[0.7rem] font-medium transition-all duration-200',
+            'flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-[0.7rem] font-medium transition duration-200',
             activeCount === 0
               ? 'cursor-not-allowed border-line bg-surface text-ink-faint opacity-60'
-              : 'shadow-card border-accent-line bg-accent-soft text-accent-strong hover:-translate-y-px hover:shadow-pop active:translate-y-0 active:scale-95',
+              : 'border-line bg-surface text-ink-soft hover:border-accent-line hover:bg-accent-soft hover:text-accent-strong hover:shadow-card',
           )}
         >
-          <Eraser
-            className={cn(
-              'size-3 transition-transform duration-200',
-              activeCount > 0 && 'group-hover:-rotate-12',
-            )}
-          />
+          <Eraser className="size-3" />
           Limpiar todo
         </button>
       </div>

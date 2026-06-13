@@ -31,13 +31,8 @@
   --color-accent-soft: #eef2ff; /* selected backgrounds */
   --color-accent-line: #c7d2fe; /* selected borders */
 
-  /* Row hover — celeste, a touch darker than accent-soft */
+  /* Row hover / selection — celeste, a touch darker than accent-soft */
   --color-hover-row: #dbeafe;
-
-  /* Amber — used for selection/hover highlights on the map and lists */
-  --color-amber: #fbbf24;
-  --color-amber-soft: #fef3c7;
-  --color-amber-line: #fcd34d;
 
   /* Data series (FASE 4): presupuesto vs aportación */
   --color-series-budget: #94a3b8;
@@ -67,8 +62,7 @@
   }
 
   body {
-    @apply bg-page text-ink font-sans text-[0.875rem] leading-normal;
-    font-feature-settings: 'cv11'; /* Inter: single-storey a alternates off, keep defaults legible */
+    @apply bg-page text-ink font-mono text-[0.875rem] leading-normal;
   }
 
   /* Keyboard-visible focus ring, consistent everywhere */

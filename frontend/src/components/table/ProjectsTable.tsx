@@ -25,9 +25,9 @@ function ExportMenu() {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="group shadow-card flex items-center gap-1.5 rounded-lg border border-accent-line bg-accent-soft px-2.5 py-1 text-xs font-medium text-accent-strong transition-all duration-200 hover:-translate-y-px hover:shadow-pop active:translate-y-0 active:scale-95"
+          className="flex items-center gap-1.5 rounded-lg border border-line bg-surface px-2.5 py-1 text-xs font-medium text-ink-soft transition duration-200 hover:border-accent-line hover:bg-accent-soft hover:text-accent-strong hover:shadow-card"
         >
-          <Download className="size-3.5 transition-transform duration-200 group-hover:translate-y-0.5" />
+          <Download className="size-3.5" />
           Exportar
           <ChevronDown className="size-3" />
         </button>

@@ -176,7 +176,7 @@ export function TimeSeriesCard() {
       subtitle={
         agrupar === 'ninguno'
           ? 'Presupuesto frente a aportación CDTI'
-          : `Top ${MAX_GROUPS} grupos por aportación — ${metrica === 'pct' ? '% medio' : 'aportación'}`
+          : `Top ${MAX_GROUPS} grupos por aportación`
       }
       controls={
         <>

@@ -52,7 +52,7 @@ export function MultiSelectFilter({
           <span className={cn('truncate', selected.length === 0 && 'text-ink-soft')}>{label}</span>
           <span className="flex shrink-0 items-center gap-1.5">
             {selected.length > 0 && (
-              <span className="rounded-full bg-accent-soft px-1.5 py-0.5 font-mono text-xs font-semibold text-accent-strong">
+              <span className="grid min-w-3.5 place-items-center rounded-full bg-accent-soft px-1 py-px font-mono text-[0.6rem] font-semibold text-accent-strong">
                 {selected.length}
               </span>
             )}

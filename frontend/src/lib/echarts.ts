@@ -55,11 +55,12 @@ export const TIMESERIES_PALETTE = [
 /** Sequential ramp for choropleth/heatmap intensity (accent family). */
 export const SEQUENTIAL_RAMP = ['#eef2ff', '#c7d2fe', '#818cf8', '#4f46e5', '#312e81'];
 
-export const CHART_FONT = {
-  fontFamily: "'Inter Variable', system-ui, sans-serif",
-};
-
 export const MONO_FONT = "'JetBrains Mono Variable', ui-monospace, monospace";
+
+// All chart text (titles, tooltips, treemap labels) renders in the mono font too
+export const CHART_FONT = {
+  fontFamily: MONO_FONT,
+};
 
 /** Numeric values inside HTML tooltips render in the mono font. */
 export const monoNum = (value: string): string =>
