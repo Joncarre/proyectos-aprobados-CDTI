@@ -48,7 +48,7 @@ actualizarse. Tamaño base 14 px (densidad de herramienta interna).
 | `components/kpi`     | `KpiStrip`                                                                                                                      |
 
 **FASE 4** añade `components/charts` (`EChart` como wrapper fino, `MapCard`, `TimeSeriesCard`,
-`HeatmapCard`, `RankingsCard`, `DistributionCard`, `TreemapCard`, `CompaniesCard`),
+`HeatmapCard`, `RankingsCard`, `DistributionCard`, `AreaGraphCard`, `CompaniesCard`),
 `components/table` (`ProjectsTable`) y el chrome común `Card` + `ControlGroup`. Las gráficas
 comparten estilo vía `lib/echarts.ts`: paleta categórica contenida (8 colores, acento primero),
 rampa secuencial índigo para intensidad (mapa y heatmap), tooltips blancos con sombra

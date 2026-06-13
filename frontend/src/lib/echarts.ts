@@ -1,7 +1,7 @@
 // Tree-shaken ECharts setup: only the charts/components we actually use.
 import * as echarts from 'echarts/core';
 import { CanvasRenderer } from 'echarts/renderers';
-import { BarChart, HeatmapChart, LineChart, MapChart, TreemapChart } from 'echarts/charts';
+import { BarChart, GraphChart, HeatmapChart, LineChart, MapChart } from 'echarts/charts';
 import {
   DataZoomComponent,
   GridComponent,
@@ -17,7 +17,7 @@ echarts.use([
   BarChart,
   HeatmapChart,
   MapChart,
-  TreemapChart,
+  GraphChart,
   GridComponent,
   TooltipComponent,
   LegendComponent,

@@ -7,7 +7,7 @@ import { HeatmapCard } from './charts/HeatmapCard';
 import { RankingsCard } from './charts/RankingsCard';
 import { DistributionCard } from './charts/DistributionCard';
 import { PymeComparisonCard } from './charts/PymeComparisonCard';
-import { TreemapCard } from './charts/TreemapCard';
+import { AreaGraphCard } from './charts/AreaGraphCard';
 import { CompaniesCard } from './charts/CompaniesCard';
 import { ProjectsTable } from './table/ProjectsTable';
 
@@ -20,15 +20,15 @@ export default function Dashboard({ meta }: { meta: MetaResponse }) {
       </div>
       <TimeSeriesCard />
       <SeasonalityCard />
-      <div className="min-[1700px]:col-span-2">
-        <CohortsCard />
-      </div>
+      <CohortsCard />
+      <AreaGraphCard />
       <HeatmapCard />
       <RankingsCard />
       <DistributionCard />
       <PymeComparisonCard />
-      <TreemapCard />
-      <CompaniesCard />
+      <div className="min-[1700px]:col-span-2">
+        <CompaniesCard />
+      </div>
       <div className="min-[1700px]:col-span-2">
         <ProjectsTable />
       </div>

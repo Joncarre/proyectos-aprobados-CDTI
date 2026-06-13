@@ -62,8 +62,9 @@ persona verá exactamente la misma vista.
   las ayudas reembolsables rondan el 75-85 %, las subvenciones bastante menos).
 - **PYME vs. no PYME** — reparto de proyectos y de dinero entre pequeñas y grandes empresas,
   con el ticket medio y el % medio de cada grupo.
-- **Áreas → instrumentos** — treemap: clic en un área para ver con qué instrumentos se
-  financia; vuelve con la miga de pan inferior.
+- **Áreas → instrumentos** — grafo de nodos interactivo: cada área es un nodo cuyo tamaño
+  indica su aportación; pulsa un área para desplegar el grafo con sus instrumentos (los nodos
+  se pueden arrastrar y el grafo hacer zoom; vuelve con «Atrás»).
 - **Empresas recurrentes** — quiénes repiten más. Clic en una empresa para ver **solo sus
   proyectos** en toda la página; vuelve a hacer clic para soltarla.
 - **Tabla de detalle** — todos los proyectos del filtro activo, ordenable y paginada.
