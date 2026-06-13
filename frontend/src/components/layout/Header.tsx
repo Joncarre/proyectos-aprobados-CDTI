@@ -11,7 +11,7 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-line bg-surface/85 px-5 backdrop-blur">
-      <div className="flex items-baseline gap-2.5">
+      <div className="flex items-center gap-2.5">
         <span className="flex items-center gap-2 text-sm font-semibold tracking-tight text-ink-strong">
           <svg viewBox="0 0 32 32" fill="none" aria-hidden className="size-6 text-accent">
             <path
