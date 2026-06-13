@@ -41,7 +41,7 @@ export function Segmented<T extends string>({
               <motion.span
                 layoutId={layoutId}
                 transition={{ type: 'tween', duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
-                className="shadow-card absolute inset-0 rounded-lg bg-surface ring-1 ring-black/[0.03]"
+                className="shadow-card absolute inset-0 rounded-lg bg-[#2b2d38] ring-1 ring-white/[0.06]"
               />
             )}
             <span

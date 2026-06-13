@@ -74,7 +74,7 @@ export function MapCard({ meta }: { meta: MetaResponse }) {
           if (!region)
             return (
               ttTitle(params.name) +
-              `<div style="font-size:10px;color:#71717a">Sin proyectos con los filtros activos</div>`
+              `<div style="font-size:10px;color:#9698a2">Sin proyectos con los filtros activos</div>`
             );
           return (
             ttTitle(region.name) +
@@ -102,7 +102,7 @@ export function MapCard({ meta }: { meta: MetaResponse }) {
             : metric === 'aportacion'
               ? `${Math.round(value / 1e6)} M€`
               : formatInt(Math.round(value)),
-        textStyle: { color: '#55555e', fontSize: 10, fontFamily: MONO_FONT },
+        textStyle: { color: '#8a8c96', fontSize: 10, fontFamily: MONO_FONT },
       },
       series: [
         {
@@ -113,10 +113,10 @@ export function MapCard({ meta }: { meta: MetaResponse }) {
           // Tween region colours when the metric changes
           animationDurationUpdate: 700,
           animationEasingUpdate: 'cubicInOut' as const,
-          itemStyle: { areaColor: '#f4f4f5', borderColor: '#d9d9dc', borderWidth: 0.6 },
+          itemStyle: { areaColor: '#1c1e25', borderColor: '#3a3d47', borderWidth: 0.6 },
           emphasis: {
             label: { show: false },
-            itemStyle: { areaColor: '#fbbf24', borderColor: '#d97706' },
+            itemStyle: { areaColor: '#fbbf24', borderColor: '#f59e0b' },
           },
           label: { show: false },
           data: regions.map((region) => ({

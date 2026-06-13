@@ -38,7 +38,7 @@ export function DistributionCard() {
       tooltip: {
         ...baseTooltip,
         trigger: 'axis' as const,
-        axisPointer: { type: 'line' as const, lineStyle: { color: '#c7d2fe' } },
+        axisPointer: { type: 'line' as const, lineStyle: { color: '#4d52c0' } },
         formatter: (items: Array<{ seriesName?: string; value?: number[]; color?: string }>) => {
           const list = Array.isArray(items) ? items : [items];
           const x = list[0]?.value?.[0];
@@ -75,12 +75,12 @@ export function DistributionCard() {
         interval: 10,
         axisLabel: { ...AXIS_LABEL, formatter: (value: number) => `${value}` },
         axisTick: { show: false },
-        axisLine: { lineStyle: { color: '#e8e8ea' } },
+        axisLine: { lineStyle: { color: '#2e3039' } },
         // Hidden when a legend occupies the bottom (decomposed mode)
         name: aggregate ? '% de aportación' : '',
         nameLocation: 'middle' as const,
         nameGap: 30,
-        nameTextStyle: { color: '#a1a1aa', fontSize: 10, fontFamily: MONO_FONT },
+        nameTextStyle: { color: '#8a8c96', fontSize: 10, fontFamily: MONO_FONT },
       },
       yAxis: {
         type: 'value' as const,
@@ -88,7 +88,7 @@ export function DistributionCard() {
         splitLine: SPLIT_LINE,
       },
       series: series.map((spec, index) => {
-        const color = aggregate ? '#4f46e5' : SERIES_PALETTE[index % SERIES_PALETTE.length];
+        const color = aggregate ? '#818cf8' : SERIES_PALETTE[index % SERIES_PALETTE.length];
         return {
           name: aggregate ? 'Proyectos' : truncate(spec.categoria, 32),
           type: 'line' as const,
@@ -98,7 +98,7 @@ export function DistributionCard() {
           symbolSize: 7,
           showSymbol: false,
           lineStyle: { width: 1.75, color },
-          itemStyle: { color, borderColor: '#ffffff', borderWidth: 2 },
+          itemStyle: { color, borderColor: '#141519', borderWidth: 2 },
           emphasis: { focus: 'series' as const, scale: 1.4 },
           areaStyle:
             aggregate || series.length <= 2
@@ -112,8 +112,8 @@ export function DistributionCard() {
                         x2: 0,
                         y2: 1,
                         colorStops: [
-                          { offset: 0, color: 'rgba(79, 70, 229, 0.32)' },
-                          { offset: 1, color: 'rgba(79, 70, 229, 0.02)' },
+                          { offset: 0, color: 'rgba(129, 140, 248, 0.30)' },
+                          { offset: 1, color: 'rgba(129, 140, 248, 0.02)' },
                         ],
                       }
                     : color,
@@ -124,11 +124,11 @@ export function DistributionCard() {
               ? {
                   symbol: ['none', 'none'] as [string, string],
                   silent: true,
-                  lineStyle: { color: '#a5b4fc', type: 'dashed' as const, width: 1 },
+                  lineStyle: { color: '#6366f1', type: 'dashed' as const, width: 1 },
                   label: {
                     formatter: `Media ${formatPct(mean)}`,
                     position: 'end' as const,
-                    color: '#6366f1',
+                    color: '#a5b4fc',
                     fontFamily: MONO_FONT,
                     fontSize: 10,
                   },

@@ -30,7 +30,7 @@ export function Card({
   return (
     <section
       className={cn(
-        'shadow-card rounded-xl border border-line bg-surface p-4 transition-shadow duration-200 hover:shadow-[0_6px_20px_rgb(26_26_30/0.08)]',
+        'shadow-card rounded-xl border border-line bg-surface p-4 transition-[box-shadow,border-color] duration-200 hover:border-line-strong hover:shadow-[0_10px_30px_rgb(0_0_0/0.5)]',
         className,
       )}
     >
@@ -91,7 +91,7 @@ export function ControlGroup<T extends string>({
               <motion.span
                 layoutId={layoutId}
                 transition={{ type: 'spring', stiffness: 480, damping: 34 }}
-                className="shadow-card absolute inset-0 rounded-md bg-surface ring-1 ring-black/[0.03]"
+                className="shadow-card absolute inset-0 rounded-md bg-[#2b2d38] ring-1 ring-white/[0.06]"
               />
             )}
             <span

@@ -5,9 +5,9 @@ import { formatInt } from '../../lib/format';
 import { Card } from '../ui/Card';
 import { EChart } from './EChart';
 
-const COLOR_NEW = '#4f46e5';
-const COLOR_RETURN = '#94a3b8';
-const COLOR_RATE = '#0d9488';
+const COLOR_NEW = '#6366f1';
+const COLOR_RETURN = '#8a94a6';
+const COLOR_RATE = '#2dd4bf';
 
 /** New vs returning beneficiaries per year + the renewal rate (% new). */
 export function CohortsCard() {
@@ -53,7 +53,7 @@ export function CohortsCard() {
         data: years,
         axisLabel: AXIS_LABEL,
         axisTick: { show: false },
-        axisLine: { lineStyle: { color: '#e8e8ea' } },
+        axisLine: { lineStyle: { color: '#2e3039' } },
       },
       yAxis: [
         {

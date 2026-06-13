@@ -3,8 +3,8 @@ import { formatInt, formatMoney, formatMoneyCompact, formatPct } from '../../lib
 import { Card } from '../ui/Card';
 import { Skeleton } from '../ui/Skeleton';
 
-const COLOR_PYME = '#4f46e5';
-const COLOR_BIG = '#94a3b8';
+const COLOR_PYME = '#6366f1';
+const COLOR_BIG = '#5b6373';
 
 interface ShareBarProps {
   label: string;
