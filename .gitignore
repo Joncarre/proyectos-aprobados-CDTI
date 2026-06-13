@@ -6,10 +6,12 @@ dist/
 build/
 *.tsbuildinfo
 
-# Data: raw JSONs and generated DuckDB database stay local
+# Data: raw JSONs stay local; the built DuckDB is committed so Render can read
+# it (regenerate with `npm run ingest` after editing the sources, then commit).
 data/raw/*
 !data/raw/.gitkeep
 data/*.duckdb
+!data/cdti.duckdb
 data/*.duckdb.wal
 data/*.duckdb.tmp
 

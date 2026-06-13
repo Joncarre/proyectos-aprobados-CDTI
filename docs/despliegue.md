@@ -17,26 +17,22 @@ Archivos ya preparados en el repo: [`render.yaml`](../render.yaml),
 
 ---
 
-## 1. Llevar los datos a producción
+## 1. Publicar la base de datos
 
-`data/cdti.duckdb` (8,6 MB) está **gitignored**, así que no llega a Render por
-git. Elige una vía y haz **commit**:
+`data/cdti.duckdb` (8,6 MB) ahora **se versiona** en git (ver `.gitignore`), de
+modo que Render la lee tal cual. Constrúyela y súbela:
 
-- **A) Subir la base ya construida** (lo más simple, `render.yaml` ya lo asume):
-  ```bash
-  git add -f data/cdti.duckdb
-  git commit -m "chore: publish DuckDB snapshot for deploy"
-  ```
-- **B) Subir los JSON crudos y construirla en Render** (sin binario en git):
-  ```bash
-  git add -f data/raw/*.json
-  git commit -m "chore: publish raw sources for deploy"
-  ```
-  y en `render.yaml` cambia `buildCommand` a `npm ci && npm run ingest`.
+```bash
+npm run ingest                 # reconstruye data/cdti.duckdb desde data/raw/*
+git add data/cdti.duckdb
+git commit -m "chore: publish DuckDB snapshot"
+git push
+```
 
-Para **actualizar datos** más adelante: regenera con `npm run ingest` y vuelve a
-hacer commit (vía A), o reemplaza los JSON y haz commit (vía B). Render
-redesplegará solo.
+> Los JSON crudos siguen siendo **locales** (no se suben): la fuente de verdad en
+> el repo es la BD construida. Alternativa sin binario en git: subir los JSON con
+> `git add -f data/raw/*.json` y cambiar el `buildCommand` de `render.yaml` a
+> `npm ci && npm run ingest`.
 
 ## 2. API en Render
 
@@ -83,13 +79,40 @@ redesplegará solo.
 - Exportar (CSV/JSON/XML/TOON) descarga el fichero.
 - Comprobar cabeceras del sitio en <https://securityheaders.com>.
 
+## 6. Mantener la API despierta (gratis)
+
+El sitio de **Netlify está siempre disponible**; lo único que se suspende es la
+API de Render free tras ~15 min sin peticiones (la primera visita tras dormir
+tarda ~30-60 s en cargar **datos**, la página carga al instante). Para evitarlo
+sin pagar, un servicio gratuito hace «ping» periódico a `/health`:
+
+1. Crea una cuenta gratis en <https://cron-job.org> (o UptimeRobot).
+2. Nuevo cron job: URL `https://cdti-api.onrender.com/health`, método `GET`,
+   cada **10 minutos**.
+3. Con eso la API no llega a dormirse y responde siempre rápido.
+
+> El plan free de Render tiene un tope de horas/mes; mantenerlo despierto 24/7
+> consume casi todas. Si algún mes se agotan, volverá a dormir hasta el
+> siguiente (la web seguirá disponible, solo con el cold start puntual).
+
+## 7. Actualizar los datos
+
+Cuando cambien los JSON en `data/raw/`:
+
+```bash
+npm run ingest                 # reconstruye data/cdti.duckdb
+git add data/cdti.duckdb
+git commit -m "data: actualiza el dataset"
+git push                       # Render redesplega solo con la BD nueva
+```
+
+La SPA de Netlify no necesita reconstruirse: los datos vienen de la API.
+
 ## Notas
 
 - **Mismo dominio (opcional, más limpio):** si en el futuro sirves la API bajo el
   mismo dominio que la SPA (p. ej. proxy `/api/*` → Render), pon
   `VITE_API_BASE_URL` vacío y `connect-src 'self'`, y CORS deja de hacer falta.
-- **Costes:** Netlify (free) y Render (free) bastan para una demo. Para evitar el
-  cold start de Render, su plan de pago mantiene el servicio activo.
 - **Railway** en vez de Render: el procedimiento es análogo (build `npm ci`,
   start `npm run start --workspace backend`, variables `CORS_ORIGIN`,
   `API_HOST=0.0.0.0`); ajusta `connect-src` al dominio `*.up.railway.app`.
