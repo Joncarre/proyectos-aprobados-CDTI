@@ -21,14 +21,14 @@ export default function Dashboard({ meta }: { meta: MetaResponse }) {
       <TimeSeriesCard />
       <SeasonalityCard />
       <CohortsCard />
-      <AreaGraphCard />
+      <CompaniesCard />
+      <div className="min-[1700px]:col-span-2">
+        <AreaGraphCard />
+      </div>
       <HeatmapCard />
       <RankingsCard />
       <DistributionCard />
       <PymeComparisonCard />
-      <div className="min-[1700px]:col-span-2">
-        <CompaniesCard />
-      </div>
       <div className="min-[1700px]:col-span-2">
         <ProjectsTable />
       </div>
