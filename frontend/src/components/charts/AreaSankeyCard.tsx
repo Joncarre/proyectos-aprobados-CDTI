@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
+import type { ECharts } from 'echarts/core';
 import type { TreemapRow } from '@cdti/shared';
 import { useTreemap } from '../../api/queries';
 import { baseTooltip, MONO_FONT, TIMESERIES_PALETTE, ttRow, ttTitle } from '../../lib/echarts';
 import { formatInt, formatMoney } from '../../lib/format';
 import { Card } from '../ui/Card';
-import { EChart } from './EChart';
+import { EChart, type EChartHoverParams } from './EChart';
 
 const MAX_AREAS = 9;
 const MAX_INSTRUMENTS = 8;
@@ -203,19 +204,14 @@ export function AreaSankeyCard() {
             { depth: 0, label: { position: 'left' as const } },
             { depth: 1, label: { position: 'right' as const } },
           ],
-          // Ribbons rest fairly lit so that hovering a node — whose connected
-          // ribbons stay in the normal (non-emphasis) state — lights them just
-          // as strongly as hovering a single ribbon. The blur state then fades
-          // everything else away for the focus contrast.
-          lineStyle: { color: 'gradient' as const, opacity: 0.82, curveness: 0.5 },
+          lineStyle: { color: 'gradient' as const, opacity: 0.18, curveness: 0.5 },
           emphasis: {
-            // Hovering a single ribbon (or node) keeps its own flow path lit
             focus: 'trajectory' as const,
-            lineStyle: { opacity: 0.92 },
+            lineStyle: { opacity: 0.9 },
             label: { color: '#18181b', fontWeight: 'bold' as const },
           },
           blur: {
-            lineStyle: { opacity: 0.07 },
+            lineStyle: { opacity: 0.06 },
             itemStyle: { opacity: 0.22 },
             label: { opacity: 0.3 },
           },
@@ -227,6 +223,24 @@ export function AreaSankeyCard() {
     [nodes, links],
   );
 
+  // A single ribbon emphasises itself natively, but hovering a node leaves its
+  // ribbons in the normal (transparent) state — so on node hover we manually
+  // highlight its connected ribbons so they light up just as strongly.
+  const handleMouseOver = (params: EChartHoverParams, chart: ECharts): void => {
+    if (params.dataType !== 'node') return;
+    const dataIndex = links.reduce<number[]>((acc, link, index) => {
+      if (link.source === params.name || link.target === params.name) acc.push(index);
+      return acc;
+    }, []);
+    if (dataIndex.length > 0) {
+      chart.dispatchAction({ type: 'highlight', seriesIndex: 0, dataType: 'edge', dataIndex });
+    }
+  };
+
+  const handleMouseOut = (_params: EChartHoverParams, chart: ECharts): void => {
+    chart.dispatchAction({ type: 'downplay', seriesIndex: 0 });
+  };
+
   return (
     <Card
       title="Áreas sectoriales → instrumentos"
@@ -235,7 +249,12 @@ export function AreaSankeyCard() {
       isUpdating={isPlaceholderData}
       bodyHeight="h-[34rem]"
     >
-      <EChart option={option} className="h-[34rem] w-full" />
+      <EChart
+        option={option}
+        className="h-[34rem] w-full"
+        onMouseOver={handleMouseOver}
+        onMouseOut={handleMouseOut}
+      />
     </Card>
   );
 }
