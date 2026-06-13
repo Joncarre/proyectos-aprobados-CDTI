@@ -165,7 +165,7 @@ export function AreaGraphCard() {
           roam: true,
           draggable: true,
           scaleLimit: { min: 0.5, max: 3 },
-          force: { repulsion: 320, edgeLength: 130, gravity: 0.09, friction: 0.16 },
+          force: { repulsion: 600, edgeLength: 230, gravity: 0.06, friction: 0.16 },
           nodes: graph.nodes,
           links: graph.links,
           labelLayout: { hideOverlap: true },
@@ -210,9 +210,9 @@ export function AreaGraphCard() {
       }
       isPending={isPending}
       isUpdating={isPlaceholderData}
-      bodyHeight="h-96"
+      bodyHeight="h-[54rem]"
     >
-      <EChart option={option} className="h-96 w-full" onClick={handleClick} />
+      <EChart option={option} className="h-[54rem] w-full" onClick={handleClick} />
     </Card>
   );
 }

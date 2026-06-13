@@ -62,9 +62,6 @@ export default function Dashboard({ meta, reveal }: { meta: MetaResponse; reveal
       <Cell>
         <CompaniesCard />
       </Cell>
-      <Cell wide>
-        <AreaGraphCard />
-      </Cell>
       <Cell>
         <HeatmapCard />
       </Cell>
@@ -76,6 +73,9 @@ export default function Dashboard({ meta, reveal }: { meta: MetaResponse; reveal
       </Cell>
       <Cell>
         <PymeComparisonCard />
+      </Cell>
+      <Cell wide>
+        <AreaGraphCard />
       </Cell>
       <Cell wide>
         <ProjectsTable />
