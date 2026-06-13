@@ -17,12 +17,12 @@ import { ProjectsTable } from './table/ProjectsTable';
 const container = {
   hidden: {},
   // Starts after the KPI strip has rolled in, then cascades the cards top-to-bottom
-  show: { transition: { staggerChildren: 0.22, delayChildren: 1 } },
+  show: { transition: { staggerChildren: 0.18, delayChildren: 0.8 } },
 };
 
 const item = {
   hidden: { opacity: 0, y: 18 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.85, ease: [0.22, 1, 0.36, 1] as const } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] as const } },
 };
 
 /** Grid cell that fades and slides up in sequence on first render. */
