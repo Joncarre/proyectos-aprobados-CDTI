@@ -41,7 +41,7 @@ default-src 'self';
 script-src 'self';                 # la build no genera scripts inline
 style-src 'self' 'unsafe-inline';  # estilos inline de Motion
 img-src 'self' data:;
-font-src 'self';                   # fuentes empaquetadas
+font-src 'self' data:;             # fuentes empaquetadas; Vite incrusta subsets pequeños como data:
 connect-src 'self';                # la API se sirve bajo el mismo origen (/api)
 object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self';
 upgrade-insecure-requests
@@ -52,7 +52,7 @@ para otros hosts:
 
 ```nginx
 # nginx
-add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests" always;
+add_header Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests" always;
 add_header X-Content-Type-Options "nosniff" always;
 add_header X-Frame-Options "DENY" always;
 add_header Referrer-Policy "strict-origin-when-cross-origin" always;
