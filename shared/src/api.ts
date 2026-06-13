@@ -77,10 +77,39 @@ export interface RankingRow {
   pctMedio: number | null;
 }
 
-export interface DistributionBin {
-  desde: number; // inclusive
-  hasta: number; // exclusive (last bin includes 100)
+/** Histogram of porcentaje_aportacion, optionally decomposed by a category.
+ *  `bins` holds project counts per 5-point bucket (length 20: 0-5 … 95-100). */
+export interface DistributionSeries {
+  categoria: string; // "Total" when not decomposed
+  total: number;
+  pctMedio: number | null;
+  bins: number[];
+}
+
+export interface DistributionResponse {
+  binWidth: number;
+  series: DistributionSeries[];
+}
+
+export interface CohortRow {
+  anio: number;
+  nuevas: number; // companies receiving CDTI aid for the first time ever this year
+  recurrentes: number; // companies that had a prior CDTI project
+}
+
+export interface SeasonalityRow {
+  mes: number; // 1-12
   proyectos: number;
+  aportacion: number;
+}
+
+export interface PymeGroup {
+  grupo: 'pyme' | 'no';
+  proyectos: number;
+  presupuesto: number;
+  aportacion: number;
+  pctMedio: number | null;
+  ticketMedio: number; // aportacion / proyectos
 }
 
 export interface CompanyRow {

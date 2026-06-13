@@ -47,11 +47,18 @@ persona verá exactamente la misma vista.
 - **Evolución temporal** — presupuesto frente a aportación CDTI, por años o por meses. Puedes
   desglosar la serie por CCAA, área, instrumento u origen para **comparar evoluciones**, en
   euros o en % medio de aportación.
+- **Nuevos vs. recurrentes** — cada año, cuántas empresas reciben ayuda del CDTI por primera
+  vez frente a las que repiten, con la tasa de renovación de la cartera.
+- **Estacionalidad** — en qué meses se concentran las aprobaciones (hay un fuerte pico en
+  diciembre y agosto casi vacío).
 - **Heatmap** — intensidad por año × área sectorial (o año × CCAA): de un vistazo, qué
   sectores concentran la ayuda y cómo se mueve en el tiempo.
 - **Ranking** — top de instrumentos, áreas, orígenes de fondos o tipos de ayuda.
-- **Distribución del % de aportación** — histograma del peso real de la ayuda CDTI en los
-  proyectos (la mayoría de proyectos recibe entre el 60 % y el 85 %).
+- **Distribución del % de aportación** — curva del peso real de la ayuda CDTI en los proyectos,
+  que se puede **desglosar por tipo de ayuda o instrumento** (explica por qué hay dos modas:
+  las ayudas reembolsables rondan el 75-85 %, las subvenciones bastante menos).
+- **PYME vs. no PYME** — reparto de proyectos y de dinero entre pequeñas y grandes empresas,
+  con el ticket medio y el % medio de cada grupo.
 - **Áreas → instrumentos** — treemap: clic en un área para ver con qué instrumentos se
   financia; vuelve con la miga de pan inferior.
 - **Empresas recurrentes** — quiénes repiten más. Clic en una empresa para ver **solo sus

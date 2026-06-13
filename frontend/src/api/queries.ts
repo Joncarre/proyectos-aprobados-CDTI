@@ -1,13 +1,16 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import type {
   Aggregates,
+  CohortRow,
   CompanyRow,
-  DistributionBin,
+  DistributionResponse,
   GeoRow,
   HeatmapCell,
   MetaResponse,
   ProjectsResponse,
+  PymeGroup,
   RankingRow,
+  SeasonalityRow,
   TimeseriesPoint,
   TreemapRow,
 } from '@cdti/shared';
@@ -56,13 +59,19 @@ export const useHeatmap = (dim: 'area' | 'ccaa') =>
 export const useRankings = (por: string, limit: number) =>
   useApiQuery<RankingRow[]>('/api/rankings', { por, limit });
 
-export const useDistribution = (ancho: number) =>
-  useApiQuery<DistributionBin[]>('/api/distribution', { ancho });
+export const useDistribution = (desglose: 'ninguno' | 'tipoAyuda' | 'instrumento') =>
+  useApiQuery<DistributionResponse>('/api/distribution', { desglose });
 
 export const useCompanies = (minProyectos: number, limit: number) =>
   useApiQuery<CompanyRow[]>('/api/companies', { minProyectos, limit });
 
 export const useTreemap = () => useApiQuery<TreemapRow[]>('/api/treemap');
+
+export const useCohorts = () => useApiQuery<CohortRow[]>('/api/cohorts');
+
+export const useSeasonality = () => useApiQuery<SeasonalityRow[]>('/api/seasonality');
+
+export const usePymeComparison = () => useApiQuery<PymeGroup[]>('/api/pyme-comparison');
 
 export const useProjects = (page: number, pageSize: number, sort: string, order: 'asc' | 'desc') =>
   useApiQuery<ProjectsResponse>('/api/projects', { page, pageSize, sort, order });

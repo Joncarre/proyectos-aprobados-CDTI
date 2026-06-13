@@ -1,35 +1,70 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useDistribution, useStats } from '../../api/queries';
-import { AXIS_LABEL, baseTooltip, MONO_FONT, monoNum, SPLIT_LINE } from '../../lib/echarts';
+import {
+  AXIS_LABEL,
+  baseTooltip,
+  MONO_FONT,
+  monoNum,
+  SERIES_PALETTE,
+  SPLIT_LINE,
+} from '../../lib/echarts';
 import { formatInt, formatPct } from '../../lib/format';
-import { Card } from '../ui/Card';
+import { Card, ControlGroup } from '../ui/Card';
 import { EChart } from './EChart';
 
-const ANCHO = 5;
+type Desglose = 'ninguno' | 'tipoAyuda' | 'instrumento';
+
+const BIN_WIDTH = 5;
+
+const truncate = (value: string, length: number): string =>
+  value.length > length ? `${value.slice(0, length - 1)}…` : value;
 
 export function DistributionCard() {
-  const { data, isPending, isPlaceholderData } = useDistribution(ANCHO);
+  const [desglose, setDesglose] = useState<Desglose>('ninguno');
+  const { data, isPending, isPlaceholderData } = useDistribution(desglose);
   const { data: stats } = useStats();
 
   const option = useMemo(() => {
-    const bins = data ?? [];
+    const series = data?.series ?? [];
+    const aggregate = desglose === 'ninguno';
     const mean = stats?.pctMedio ?? null;
-    // Plot each bin at its center on a 0–100 value axis so the curve spans the
-    // full range and the axis closes at 100.
-    const points = bins.map((bin) => [bin.desde + ANCHO / 2, bin.proyectos]);
+
+    const toPoints = (bins: number[]): number[][] =>
+      bins.map((count, index) => [index * BIN_WIDTH + BIN_WIDTH / 2, count]);
 
     return {
+      color: SERIES_PALETTE,
       tooltip: {
         ...baseTooltip,
         trigger: 'axis' as const,
         axisPointer: { type: 'line' as const, lineStyle: { color: '#c7d2fe' } },
-        formatter: (items: Array<{ dataIndex: number }>) => {
-          const bin = bins[items[0]?.dataIndex ?? -1];
-          if (!bin) return '';
-          return `Aportación del <b>${monoNum(`${bin.desde}–${bin.hasta} %`)}</b><br/>Proyectos: <b>${monoNum(formatInt(bin.proyectos))}</b>`;
+        formatter: (items: Array<{ seriesName?: string; value?: number[]; color?: string }>) => {
+          const list = Array.isArray(items) ? items : [items];
+          const x = list[0]?.value?.[0];
+          if (typeof x !== 'number') return '';
+          const desde = x - BIN_WIDTH / 2;
+          const header = `<b>${monoNum(`${desde}–${desde + BIN_WIDTH} %`)}</b>`;
+          const lines = list.map((item) => {
+            const count = item.value?.[1] ?? 0;
+            const dot = `<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${item.color};margin-right:5px"></span>`;
+            return aggregate
+              ? `Proyectos: <b>${monoNum(formatInt(count))}</b>`
+              : `${dot}${item.seriesName}: ${monoNum(formatInt(count))}`;
+          });
+          return [header, ...lines].join('<br/>');
         },
       },
-      grid: { left: 8, right: 16, top: 16, bottom: 4, containLabel: true },
+      legend: aggregate
+        ? undefined
+        : {
+            type: 'scroll' as const,
+            bottom: 0,
+            textStyle: { ...AXIS_LABEL, fontSize: 10 },
+            icon: 'roundRect',
+            itemWidth: 9,
+            itemHeight: 9,
+          },
+      grid: { left: 8, right: 16, top: 16, bottom: aggregate ? 4 : 28, containLabel: true },
       xAxis: {
         type: 'value' as const,
         min: 0,
@@ -38,7 +73,8 @@ export function DistributionCard() {
         axisLabel: { ...AXIS_LABEL, formatter: (value: number) => `${value}` },
         axisTick: { show: false },
         axisLine: { lineStyle: { color: '#e8e8ea' } },
-        name: '% de aportación',
+        // Hidden when a legend occupies the bottom (decomposed mode)
+        name: aggregate ? '% de aportación' : '',
         nameLocation: 'middle' as const,
         nameGap: 30,
         nameTextStyle: { color: '#a1a1aa', fontSize: 10, fontFamily: MONO_FONT },
@@ -48,32 +84,40 @@ export function DistributionCard() {
         axisLabel: { ...AXIS_LABEL, formatter: (value: number) => formatInt(value) },
         splitLine: SPLIT_LINE,
       },
-      series: [
-        {
+      series: series.map((spec, index) => {
+        const color = aggregate ? '#4f46e5' : SERIES_PALETTE[index % SERIES_PALETTE.length];
+        return {
+          name: aggregate ? 'Proyectos' : truncate(spec.categoria, 32),
           type: 'line' as const,
-          data: points,
+          data: toPoints(spec.bins),
           smooth: 0.45,
           symbol: 'circle',
           symbolSize: 7,
           showSymbol: false,
-          lineStyle: { width: 2.5, color: '#4f46e5' },
-          itemStyle: { color: '#4f46e5', borderColor: '#ffffff', borderWidth: 2 },
+          lineStyle: { width: 2.5, color },
+          itemStyle: { color, borderColor: '#ffffff', borderWidth: 2 },
           emphasis: { focus: 'series' as const, scale: 1.4 },
-          areaStyle: {
-            color: {
-              type: 'linear' as const,
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [
-                { offset: 0, color: 'rgba(79, 70, 229, 0.32)' },
-                { offset: 1, color: 'rgba(79, 70, 229, 0.02)' },
-              ],
-            },
-          },
+          areaStyle:
+            aggregate || series.length <= 2
+              ? {
+                  opacity: aggregate ? 1 : 0.12,
+                  color: aggregate
+                    ? {
+                        type: 'linear' as const,
+                        x: 0,
+                        y: 0,
+                        x2: 0,
+                        y2: 1,
+                        colorStops: [
+                          { offset: 0, color: 'rgba(79, 70, 229, 0.32)' },
+                          { offset: 1, color: 'rgba(79, 70, 229, 0.02)' },
+                        ],
+                      }
+                    : color,
+                }
+              : undefined,
           markLine:
-            mean !== null
+            aggregate && mean !== null
               ? {
                   symbol: ['none', 'none'] as [string, string],
                   silent: true,
@@ -92,18 +136,42 @@ export function DistributionCard() {
                   data: [{ xAxis: mean }],
                 }
               : undefined,
-        },
-      ],
+        };
+      }),
     };
-  }, [data, stats]);
+  }, [data, desglose, stats]);
+
+  const subtitle = useMemo(() => {
+    if (desglose === 'ninguno') {
+      return stats?.pctMedio != null
+        ? `Media del conjunto filtrado: ${formatPct(stats.pctMedio)}`
+        : undefined;
+    }
+    if (desglose === 'instrumento') {
+      return 'Intensidad de la ayuda por instrumento (top 6)';
+    }
+    // tipoAyuda: only two series, their means fit on one line
+    const means = (data?.series ?? [])
+      .filter((serie) => serie.pctMedio !== null)
+      .map((serie) => `${truncate(serie.categoria, 28)} ~${serie.pctMedio} %`);
+    return means.join(' · ') || undefined;
+  }, [desglose, data, stats]);
 
   return (
     <Card
       title="Distribución del % de aportación"
-      subtitle={
-        stats?.pctMedio != null
-          ? `Media del conjunto filtrado: ${formatPct(stats.pctMedio)}`
-          : undefined
+      subtitle={subtitle}
+      controls={
+        <ControlGroup
+          options={[
+            { value: 'ninguno', label: 'Total' },
+            { value: 'tipoAyuda', label: 'Tipo de ayuda' },
+            { value: 'instrumento', label: 'Instrumento' },
+          ]}
+          value={desglose}
+          onChange={setDesglose}
+          ariaLabel="Desglose de la distribución"
+        />
       }
       isPending={isPending}
       isUpdating={isPlaceholderData}

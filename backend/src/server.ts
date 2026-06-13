@@ -22,6 +22,9 @@ import { distributionRoutes } from './routes/distribution.js';
 import { companiesRoutes } from './routes/companies.js';
 import { treemapRoutes } from './routes/treemap.js';
 import { exportRoutes } from './routes/export.js';
+import { cohortsRoutes } from './routes/cohorts.js';
+import { seasonalityRoutes } from './routes/seasonality.js';
+import { pymeRoutes } from './routes/pyme.js';
 
 const app = Fastify({ logger: true });
 
@@ -72,6 +75,9 @@ await app.register(
     await api.register(companiesRoutes);
     await api.register(treemapRoutes);
     await api.register(exportRoutes);
+    await api.register(cohortsRoutes);
+    await api.register(seasonalityRoutes);
+    await api.register(pymeRoutes);
   },
   { prefix: '/api' },
 );

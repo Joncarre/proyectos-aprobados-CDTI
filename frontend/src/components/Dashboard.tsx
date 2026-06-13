@@ -1,9 +1,12 @@
 import type { MetaResponse } from '@cdti/shared';
 import { MapCard } from './charts/MapCard';
 import { TimeSeriesCard } from './charts/TimeSeriesCard';
+import { SeasonalityCard } from './charts/SeasonalityCard';
+import { CohortsCard } from './charts/CohortsCard';
 import { HeatmapCard } from './charts/HeatmapCard';
 import { RankingsCard } from './charts/RankingsCard';
 import { DistributionCard } from './charts/DistributionCard';
+import { PymeComparisonCard } from './charts/PymeComparisonCard';
 import { TreemapCard } from './charts/TreemapCard';
 import { CompaniesCard } from './charts/CompaniesCard';
 import { ProjectsTable } from './table/ProjectsTable';
@@ -16,9 +19,14 @@ export default function Dashboard({ meta }: { meta: MetaResponse }) {
         <MapCard meta={meta} />
       </div>
       <TimeSeriesCard />
+      <SeasonalityCard />
+      <div className="min-[1700px]:col-span-2">
+        <CohortsCard />
+      </div>
       <HeatmapCard />
       <RankingsCard />
       <DistributionCard />
+      <PymeComparisonCard />
       <TreemapCard />
       <CompaniesCard />
       <div className="min-[1700px]:col-span-2">

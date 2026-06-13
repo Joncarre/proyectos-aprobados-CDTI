@@ -118,16 +118,9 @@ export const rankingParamsSchema = z.object({
 });
 export type RankingParams = z.infer<typeof rankingParamsSchema>;
 
-/** Bin widths for the porcentaje_aportacion histogram; must divide 100. */
-export const DISTRIBUTION_BIN_WIDTHS = [1, 2, 5, 10, 20, 25] as const;
-
+/** Histogram fixed at 5-point bins; optionally decomposed by a category. */
 export const distributionParamsSchema = z.object({
-  ancho: z.coerce
-    .number()
-    .refine((w): w is (typeof DISTRIBUTION_BIN_WIDTHS)[number] =>
-      DISTRIBUTION_BIN_WIDTHS.includes(w as (typeof DISTRIBUTION_BIN_WIDTHS)[number]),
-    )
-    .default(5),
+  desglose: z.enum(['ninguno', 'tipoAyuda', 'instrumento']).default('ninguno'),
 });
 export type DistributionParams = z.infer<typeof distributionParamsSchema>;
 
