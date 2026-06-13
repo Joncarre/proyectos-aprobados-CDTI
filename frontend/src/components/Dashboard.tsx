@@ -33,13 +33,17 @@ function Cell({ children, wide = false }: { children: ReactNode; wide?: boolean 
   );
 }
 
-/** Lazy-loaded: pulls ECharts + the geo atlas only when the dashboard mounts. */
-export default function Dashboard({ meta }: { meta: MetaResponse }) {
+/**
+ * Lazy-loaded: pulls ECharts + the geo atlas only when the dashboard mounts.
+ * Renders immediately so data loads behind the splash, but the staggered
+ * entrance is held back until `reveal` flips true.
+ */
+export default function Dashboard({ meta, reveal }: { meta: MetaResponse; reveal: boolean }) {
   return (
     <motion.div
       variants={container}
       initial="hidden"
-      animate="show"
+      animate={reveal ? 'show' : 'hidden'}
       className="grid grid-cols-1 gap-3 min-[1700px]:grid-cols-2"
     >
       <Cell wide>

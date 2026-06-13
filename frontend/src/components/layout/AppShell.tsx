@@ -1,4 +1,5 @@
-import { lazy, Suspense, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
+import { AnimatePresence } from 'motion/react';
 import { ChevronLeft } from 'lucide-react';
 import { useMeta } from '../../api/queries';
 import { cn } from '../../lib/cn';
@@ -7,11 +8,13 @@ import { FilterPanel } from '../filters/FilterPanel';
 import { KpiStrip } from '../kpi/KpiStrip';
 import { Skeleton } from '../ui/Skeleton';
 import { Header } from './Header';
+import { LoadingScreen } from './LoadingScreen';
 
 const Dashboard = lazy(() => import('../Dashboard'));
 
 const PANEL_WIDTH = 320; // w-80
 const PANEL_EASE = 'cubic-bezier(0.22, 1, 0.36, 1)';
+const WARMUP_MS = 2000; // first-visit splash duration
 
 function DashboardSkeleton() {
   return (
@@ -26,6 +29,15 @@ function DashboardSkeleton() {
 export function AppShell() {
   const { data: meta } = useMeta();
   const [filtersOpen, setFiltersOpen] = useState(true);
+
+  // First-visit warm-up: the content renders behind the splash so every panel
+  // loads its data; the cards then reveal once the timer (and meta) are ready.
+  const [timerDone, setTimerDone] = useState(false);
+  useEffect(() => {
+    const timer = setTimeout(() => setTimerDone(true), WARMUP_MS);
+    return () => clearTimeout(timer);
+  }, []);
+  const ready = timerDone && !!meta;
 
   return (
     <div className="min-h-screen">
@@ -69,16 +81,18 @@ export function AppShell() {
           />
         </button>
 
-        <main className="min-w-0 flex-1 space-y-4 p-5">
+        <main className="relative min-w-0 flex-1 space-y-4 p-5">
           <ActiveFilterChips />
           <KpiStrip />
           {meta ? (
             <Suspense fallback={<DashboardSkeleton />}>
-              <Dashboard meta={meta} />
+              <Dashboard meta={meta} reveal={ready} />
             </Suspense>
           ) : (
             <DashboardSkeleton />
           )}
+
+          <AnimatePresence>{!ready && <LoadingScreen key="loading" />}</AnimatePresence>
         </main>
       </div>
     </div>
