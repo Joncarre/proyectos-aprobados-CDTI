@@ -10,7 +10,7 @@ import { HeatmapCard } from './charts/HeatmapCard';
 import { RankingsCard } from './charts/RankingsCard';
 import { DistributionCard } from './charts/DistributionCard';
 import { PymeComparisonCard } from './charts/PymeComparisonCard';
-import { AreaGraphCard } from './charts/AreaGraphCard';
+import { AreaSankeyCard } from './charts/AreaSankeyCard';
 import { CompaniesCard } from './charts/CompaniesCard';
 import { ProjectsTable } from './table/ProjectsTable';
 
@@ -75,7 +75,7 @@ export default function Dashboard({ meta, reveal }: { meta: MetaResponse; reveal
         <PymeComparisonCard />
       </Cell>
       <Cell wide>
-        <AreaGraphCard />
+        <AreaSankeyCard />
       </Cell>
       <Cell wide>
         <ProjectsTable />
