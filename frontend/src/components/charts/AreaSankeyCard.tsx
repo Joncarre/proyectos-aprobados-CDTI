@@ -13,9 +13,9 @@ const MAX_INSTRUMENTS = 7;
 const ZWS = String.fromCharCode(0x200b);
 const ZWS_RE = new RegExp(ZWS, 'g');
 
-const AREA_RAMP: [string, string] = ['#3f4392', '#aab4fc'];
-const INSTR_RAMP: [string, string] = ['#1e6e64', '#5eead4'];
-const LABEL_COLOR = '#b4b6bf';
+const AREA_RAMP: [string, string] = ['#c7d2fe', '#3730a3'];
+const INSTR_RAMP: [string, string] = ['#99f6e4', '#0f766e'];
+const LABEL_COLOR = '#3f3f46';
 
 const truncate = (value: string, length: number): string =>
   value.length > length ? `${value.slice(0, length - 1)}…` : value;
@@ -207,7 +207,7 @@ export function AreaSankeyCard() {
             // Hovering a single ribbon (or node) lights only its own flow path
             focus: 'trajectory' as const,
             lineStyle: { opacity: 0.85 },
-            label: { color: '#f4f5f7', fontWeight: 'bold' as const },
+            label: { color: '#18181b', fontWeight: 'bold' as const },
           },
           blur: {
             lineStyle: { opacity: 0.1 },

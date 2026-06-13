@@ -96,14 +96,14 @@ export function HeatmapCard() {
           itemHeight: 300,
           formatter: (value: number) =>
             metrica === 'aportacion' ? formatMoneyCompact(value) : formatInt(Math.round(value)),
-          textStyle: { color: '#8a8c96', fontSize: 9, fontFamily: MONO_FONT },
+          textStyle: { color: '#71717a', fontSize: 9, fontFamily: MONO_FONT },
         },
         series: [
           {
             type: 'heatmap' as const,
             data: points,
-            itemStyle: { borderColor: '#141519', borderWidth: 1.5, borderRadius: 3 },
-            emphasis: { itemStyle: { shadowBlur: 10, shadowColor: 'rgba(129, 140, 248, 0.45)' } },
+            itemStyle: { borderColor: '#ffffff', borderWidth: 1.5, borderRadius: 3 },
+            emphasis: { itemStyle: { shadowBlur: 6, shadowColor: 'rgb(26 26 30 / 0.3)' } },
           },
         ],
       },

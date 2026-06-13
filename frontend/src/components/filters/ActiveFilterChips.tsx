@@ -155,7 +155,7 @@ export function ActiveFilterChips() {
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.92 }}
               transition={{ type: 'spring', stiffness: 500, damping: 32 }}
-              className="shadow-card inline-flex h-7 items-stretch overflow-hidden rounded-lg border border-line bg-surface text-[0.7rem] transition-[border-color,box-shadow] duration-200 hover:border-accent-line hover:shadow-[0_3px_12px_rgb(0_0_0/0.45)]"
+              className="shadow-card inline-flex h-7 items-stretch overflow-hidden rounded-lg border border-line bg-surface text-[0.7rem] transition-[border-color,box-shadow] duration-200 hover:border-[#a5b4fc] hover:shadow-[0_3px_10px_rgb(26_26_30/0.10)]"
             >
               {prefix !== null && (
                 <span className="flex items-center bg-accent-soft px-2 text-[0.55rem] font-medium tracking-wider text-accent-strong uppercase">

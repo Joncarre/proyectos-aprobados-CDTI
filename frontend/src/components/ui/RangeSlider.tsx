@@ -14,7 +14,7 @@ interface RangeSliderProps {
 // Premium thumb: white disc with an accent core, soft ring that blooms on
 // hover/drag, grip-like inner dot. Built from nested spans via ::before.
 const thumbClass =
-  'group/thumb relative block size-4 rounded-full border border-accent-line bg-[#f4f5f7] shadow-[0_1px_4px_rgb(0_0_0/0.6)] ' +
+  'group/thumb relative block size-4 rounded-full border border-accent-line bg-surface shadow-[0_1px_3px_rgb(26_26_30/0.18)] ' +
   'ring-4 ring-accent/0 transition-[transform,box-shadow] duration-150 ' +
   'before:absolute before:inset-1/2 before:size-1.5 before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full before:bg-accent before:transition-transform ' +
   'hover:scale-110 hover:ring-accent/15 hover:before:scale-125 ' +

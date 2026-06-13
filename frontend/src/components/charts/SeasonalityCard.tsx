@@ -37,7 +37,7 @@ export function SeasonalityCard() {
         data: rows.map((row) => MONTH_LABELS[row.mes - 1]),
         axisLabel: AXIS_LABEL,
         axisTick: { show: false },
-        axisLine: { lineStyle: { color: '#2e3039' } },
+        axisLine: { lineStyle: { color: '#e8e8ea' } },
       },
       yAxis: {
         type: 'value' as const,
@@ -53,7 +53,7 @@ export function SeasonalityCard() {
           type: 'bar' as const,
           data: rows.map((row) => ({
             value: metrica === 'aportacion' ? row.aportacion : row.proyectos,
-            itemStyle: { color: QUARTER_END.has(row.mes) ? '#818cf8' : '#3f4488' },
+            itemStyle: { color: QUARTER_END.has(row.mes) ? '#4f46e5' : '#c7d2fe' },
           })),
           barWidth: '64%',
           itemStyle: { borderRadius: [4, 4, 0, 0] },

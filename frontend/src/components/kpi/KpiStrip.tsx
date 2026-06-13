@@ -52,7 +52,7 @@ function KpiCard({ label, value, format, delta, detail, dimmed }: KpiCardProps) 
   const display = value === null ? '—' : format(animated);
 
   const deltaColor =
-    delta && delta.dir > 0 ? '#2dd4bf' : delta && delta.dir < 0 ? '#fb7185' : '#8a8c96';
+    delta && delta.dir > 0 ? '#0d9488' : delta && delta.dir < 0 ? '#e11d48' : '#a1a1aa';
 
   return (
     <div className="shadow-card relative min-w-0 overflow-hidden rounded-xl border border-line bg-surface px-3 py-2.5">

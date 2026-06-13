@@ -53,7 +53,7 @@ function buildSeries(
     return metrica === 'pct'
       ? [{ name: '% medio de aportación', data: pct, color: TIMESERIES_PALETTE[0] }]
       : [
-          { name: 'Presupuesto', data: presupuesto, color: '#8a94a6' },
+          { name: 'Presupuesto', data: presupuesto, color: '#94a3b8' },
           { name: 'Aportación CDTI', data: aportacion, color: TIMESERIES_PALETTE[0] },
         ];
   }
@@ -141,7 +141,7 @@ export function TimeSeriesCard() {
         type: 'category' as const,
         data: periods,
         axisLabel: AXIS_LABEL,
-        axisLine: { lineStyle: { color: '#2e3039' } },
+        axisLine: { lineStyle: { color: '#e8e8ea' } },
         axisTick: { show: false },
       },
       yAxis: {

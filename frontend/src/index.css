@@ -3,50 +3,50 @@
 @import 'tailwindcss';
 
 /*
- * Design tokens — dark palette.
+ * Design tokens — light palette.
  * Semantic names (page/surface/line/ink/accent) so components never hardcode
- * raw colors; switching themes only remaps these variables.
+ * raw colors; a future dark mode only needs to remap these variables.
  */
 @theme {
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
   /* All numeric data (KPIs, table cells, filter values, chart axes) renders in mono */
   --font-mono: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Code', monospace;
 
-  /* Neutral layers — deep, slightly cool (premium dark, Linear/Vercel-like) */
-  --color-page: #0a0b0e; /* app background */
-  --color-surface: #141519; /* cards, panels, popovers */
-  --color-surface-2: #1c1e25; /* hover, nested surfaces */
-  --color-line: #282a32; /* default borders */
-  --color-line-strong: #3a3d47; /* interactive borders */
+  /* Neutral layers (slightly warm, Linear-like) */
+  --color-page: #f7f7f8; /* app background */
+  --color-surface: #ffffff; /* cards, panels, popovers */
+  --color-surface-2: #f4f4f5; /* hover, nested surfaces */
+  --color-line: #e8e8ea; /* default borders */
+  --color-line-strong: #d9d9dc; /* interactive borders */
 
-  /* Text: light grey by default; near-white reserved for titles and key data */
-  --color-ink-strong: #f4f5f7; /* titles, highlighted values */
-  --color-ink: #d6d7dd; /* primary body text */
-  --color-ink-soft: #9698a2; /* secondary */
-  --color-ink-faint: #696b75; /* placeholders, disabled */
+  /* Text: dark grey by default; near-black reserved for titles and key data */
+  --color-ink-strong: #18181b; /* titles, highlighted values */
+  --color-ink: #3f3f46; /* primary body text */
+  --color-ink-soft: #71717a; /* secondary */
+  --color-ink-faint: #a1a1aa; /* placeholders, disabled */
 
-  /* Accent — single indigo family, brightened so it sings on dark (no rainbow) */
-  --color-accent: #6366f1;
-  --color-accent-strong: #818cf8; /* emphasized text/hover on dark surfaces */
-  --color-accent-soft: #20213f; /* selected / tinted dark backgrounds */
-  --color-accent-line: #4145a3; /* selected borders */
+  /* Accent — single indigo family, used with intent (no rainbow) */
+  --color-accent: #4f46e5;
+  --color-accent-strong: #4338ca;
+  --color-accent-soft: #eef2ff; /* selected backgrounds */
+  --color-accent-line: #c7d2fe; /* selected borders */
 
-  /* Row hover — cool blue-tinted dark */
-  --color-hover-row: #182233;
+  /* Row hover — celeste, a touch darker than accent-soft */
+  --color-hover-row: #dbeafe;
 
-  /* List selection — turquoise on dark */
-  --color-select-soft: #0f2b33;
-  --color-select-line: #225f6b;
-  --color-select-strong: #2dd4bf; /* bright turquoise text */
+  /* List selection — light, slightly blue turquoise */
+  --color-select-soft: #d8f6fa;
+  --color-select-line: #a3e4ee;
+  --color-select-strong: #0e7490; /* darker turquoise text */
 
   /* Data series (FASE 4): presupuesto vs aportación */
-  --color-series-budget: #8a94a6;
-  --color-series-grant: #6366f1;
+  --color-series-budget: #94a3b8;
+  --color-series-grant: #4f46e5;
 
-  /* Elevation: black drops, stronger so depth still reads on dark */
-  --shadow-card: 0 1px 2px rgb(0 0 0 / 0.4), 0 2px 8px rgb(0 0 0 / 0.3);
+  /* Elevation: layered, low-opacity (premium feel, no harsh drops) */
+  --shadow-card: 0 1px 2px rgb(26 26 30 / 0.04), 0 2px 6px rgb(26 26 30 / 0.04);
   --shadow-pop:
-    0 0 0 1px rgb(0 0 0 / 0.6), 0 8px 24px rgb(0 0 0 / 0.5), 0 16px 40px rgb(0 0 0 / 0.5);
+    0 0 0 1px rgb(26 26 30 / 0.05), 0 4px 12px rgb(26 26 30 / 0.08), 0 12px 32px rgb(26 26 30 / 0.1);
 
   --animate-shimmer: shimmer 1.8s ease-in-out infinite;
 
@@ -64,30 +64,10 @@
 @layer base {
   html {
     @apply antialiased;
-    color-scheme: dark;
   }
 
   body {
     @apply bg-page text-ink font-mono text-[0.875rem] leading-normal;
-  }
-
-  /* Subtle dark scrollbars (premium, unobtrusive) */
-  ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
-  }
-  ::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  ::-webkit-scrollbar-thumb {
-    background: #2c2e37;
-    border: 2px solid transparent;
-    border-radius: 7px;
-    background-clip: content-box;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: #3a3d47;
-    background-clip: content-box;
   }
 
   /* Keyboard-visible focus ring, consistent everywhere */
