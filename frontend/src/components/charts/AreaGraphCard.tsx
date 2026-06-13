@@ -201,9 +201,9 @@ export function AreaGraphCard() {
           <button
             type="button"
             onClick={() => setArea(null)}
-            className="flex items-center gap-1.5 self-stretch rounded-lg border border-line bg-surface px-2.5 text-[0.7rem] font-medium text-ink-soft transition duration-200 hover:border-accent-line hover:bg-accent-soft hover:text-accent-strong hover:shadow-card"
+            className="flex items-center gap-2 rounded-lg border border-line bg-surface px-3 py-1.5 text-xs font-medium text-ink-soft transition duration-200 hover:border-accent-line hover:bg-accent-soft hover:text-accent-strong hover:shadow-card"
           >
-            <ArrowLeft className="size-3" />
+            <ArrowLeft className="size-3.5" />
             Atrás
           </button>
         ) : undefined
