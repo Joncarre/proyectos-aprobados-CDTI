@@ -114,11 +114,25 @@ export function ProjectsTable() {
     >
       <div className="overflow-x-auto rounded-lg border border-line">
         <table className="w-full min-w-[60rem] border-collapse text-xs">
+          <caption className="sr-only">
+            Detalle de proyectos aprobados por el CDTI con los filtros activos; columnas ordenables y
+            resultados paginados.
+          </caption>
           <thead>
             <tr className="border-b border-line bg-surface-2/60 text-left">
               {COLUMNS.map((column) => (
                 <th
                   key={column.key}
+                  scope="col"
+                  aria-sort={
+                    column.sort
+                      ? sort === column.sort
+                        ? order === 'asc'
+                          ? 'ascending'
+                          : 'descending'
+                        : 'none'
+                      : undefined
+                  }
                   className={cn(
                     'px-3.5 py-2.5 font-medium text-ink-soft select-none',
                     column.width,
@@ -129,6 +143,7 @@ export function ProjectsTable() {
                     <button
                       type="button"
                       onClick={() => toggleSort(column.sort!)}
+                      aria-label={`Ordenar por ${column.label}`}
                       className={cn(
                         'inline-flex items-center gap-1 transition-colors hover:text-ink',
                         sort === column.sort && 'text-ink',

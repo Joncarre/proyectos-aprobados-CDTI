@@ -44,6 +44,9 @@ export function MultiSelectFilter({
         <button
           type="button"
           disabled={disabled}
+          aria-label={
+            selected.length > 0 ? `${label}: ${selected.length} seleccionados` : label
+          }
           className={cn(
             'flex w-full items-center justify-between gap-2 rounded-lg border border-line bg-surface px-3 py-2 text-left text-xs transition-colors',
             disabled ? 'cursor-not-allowed opacity-50' : 'hover:border-line-strong',
