@@ -58,13 +58,10 @@ export function AppShell() {
           aria-label={filtersOpen ? 'Ocultar panel de filtros' : 'Mostrar panel de filtros'}
           aria-expanded={filtersOpen}
           style={{ left: filtersOpen ? PANEL_WIDTH : 0, transitionTimingFunction: PANEL_EASE }}
-          className="group shadow-card fixed top-1/2 z-50 flex h-11 w-4 -translate-y-1/2 items-center justify-center rounded-r-md border border-l-0 border-line bg-surface text-accent transition-[left,width,background-color] duration-500 hover:w-5 hover:bg-accent hover:text-white"
+          className="shadow-card fixed top-1/2 z-50 flex h-11 w-4 -translate-y-1/2 items-center justify-center rounded-r-md border border-l-0 border-line bg-surface text-accent transition-[left,background-color,color] duration-500 hover:bg-accent hover:text-white"
         >
           <ChevronLeft
-            className={cn(
-              'size-3.5 transition-transform duration-500 group-active:scale-90',
-              !filtersOpen && 'rotate-180',
-            )}
+            className={cn('size-3.5 transition-transform duration-500', !filtersOpen && 'rotate-180')}
             style={{ transitionTimingFunction: PANEL_EASE }}
           />
         </button>
