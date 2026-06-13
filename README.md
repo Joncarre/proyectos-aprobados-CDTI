@@ -128,7 +128,11 @@ elección están en [docs/arquitectura.md](docs/arquitectura.md)):
 | [docs/arquitectura.md](docs/arquitectura.md)   | Arquitectura, stack, estructura y scripts |
 | [docs/api.md](docs/api.md)                     | Endpoints y filtros de la API             |
 | [docs/database.md](docs/database.md)           | Modelo de datos (DuckDB)                  |
+| [docs/data-quality.md](docs/data-quality.md)   | Informe de calidad de datos               |
 | [docs/design-system.md](docs/design-system.md) | Sistema de diseño                         |
+| [docs/rendimiento.md](docs/rendimiento.md)     | Estrategia de rendimiento                 |
+| [docs/seguridad.md](docs/seguridad.md)         | Postura de seguridad y despliegue         |
+| [docs/accesibilidad.md](docs/accesibilidad.md) | Accesibilidad (AA básico)                 |
 | [docs/decisions.md](docs/decisions.md)         | Registro de decisiones técnicas           |
 
 | Fase   | Contenido                             | Estado |
@@ -138,4 +142,4 @@ elección están en [docs/arquitectura.md](docs/arquitectura.md)):
 | FASE 2 | API de consulta                       | ✅     |
 | FASE 3 | Layout, sistema de diseño y filtros   | ✅     |
 | FASE 4 | Visualizaciones (+ ajustes de diseño) | ✅     |
-| FASE 5 | Pulido, rendimiento y seguridad       | ⏳     |
+| FASE 5 | Pulido, rendimiento y seguridad       | ✅     |
