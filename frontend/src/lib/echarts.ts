@@ -62,18 +62,32 @@ export const CHART_FONT = {
   fontFamily: MONO_FONT,
 };
 
-/** Numeric values inside HTML tooltips render in the mono font. */
-export const monoNum = (value: string): string =>
-  `<span style="font-family: ${MONO_FONT}; font-size: 11px">${value}</span>`;
+/**
+ * Premium tooltip building blocks. Only the title is bold; value rows are a
+ * dim label on the left and the figure on the right, in a tight column.
+ */
+export const ttTitle = (text: string): string =>
+  `<div style="margin-bottom:6px;font-size:10.5px;font-weight:600;color:#18181b">${text}</div>`;
+
+export const ttRow = (label: string, value: string, dotColor?: string): string => {
+  const dot = dotColor
+    ? `<span style="display:inline-block;width:7px;height:7px;border-radius:2px;background:${dotColor};margin-right:6px;vertical-align:middle"></span>`
+    : '';
+  return (
+    `<div style="display:flex;align-items:center;justify-content:space-between;gap:18px;font-size:10px;line-height:1.65;color:#71717a">` +
+    `<span>${dot}${label}</span><span style="color:#27272a">${value}</span></div>`
+  );
+};
 
 /** Base tooltip style shared by all charts. */
 export const baseTooltip = {
-  backgroundColor: '#ffffff',
-  borderColor: '#e8e8ea',
+  backgroundColor: 'rgba(255, 255, 255, 0.92)',
+  borderColor: '#ececee',
   borderWidth: 1,
-  padding: [8, 12] as [number, number],
-  textStyle: { color: '#1a1a1e', fontSize: 12, ...CHART_FONT },
-  extraCssText: 'box-shadow: 0 4px 12px rgb(26 26 30 / 0.08); border-radius: 8px;',
+  padding: [10, 12] as [number, number],
+  textStyle: { color: '#27272a', fontSize: 10, ...CHART_FONT },
+  extraCssText:
+    'border-radius:12px; backdrop-filter: blur(8px); box-shadow: 0 2px 6px rgb(26 26 30 / 0.05), 0 12px 32px rgb(26 26 30 / 0.13);',
 };
 
 export const AXIS_LABEL = { color: '#55555e', fontSize: 10, fontFamily: MONO_FONT };

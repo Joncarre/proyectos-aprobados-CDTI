@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useCohorts } from '../../api/queries';
-import { AXIS_LABEL, baseTooltip, monoNum, SPLIT_LINE } from '../../lib/echarts';
+import { AXIS_LABEL, baseTooltip, SPLIT_LINE, ttRow, ttTitle } from '../../lib/echarts';
 import { formatInt } from '../../lib/format';
 import { Card } from '../ui/Card';
 import { EChart } from './EChart';
@@ -30,12 +30,13 @@ export function CohortsCard() {
           const row = rows[items[0]?.dataIndex ?? -1];
           if (!row) return '';
           const total = row.nuevas + row.recurrentes;
-          return [
-            `<b>${row.anio}</b>`,
-            `<span style="color:${COLOR_NEW}">●</span> Nuevas: <b>${monoNum(formatInt(row.nuevas))}</b>`,
-            `<span style="color:${COLOR_RETURN}">●</span> Recurrentes: <b>${monoNum(formatInt(row.recurrentes))}</b>`,
-            `Renovación: ${monoNum(`${total > 0 ? Math.round((row.nuevas / total) * 100) : 0} %`)}`,
-          ].join('<br/>');
+          const pct = total > 0 ? Math.round((row.nuevas / total) * 100) : 0;
+          return (
+            ttTitle(String(row.anio)) +
+            ttRow('Nuevas', formatInt(row.nuevas), COLOR_NEW) +
+            ttRow('Recurrentes', formatInt(row.recurrentes), COLOR_RETURN) +
+            ttRow('Renovación', `${pct} %`)
+          );
         },
       },
       legend: {

@@ -4,9 +4,10 @@ import { useTimeseries } from '../../api/queries';
 import {
   AXIS_LABEL,
   baseTooltip,
-  monoNum,
   SPLIT_LINE,
   TIMESERIES_PALETTE,
+  ttRow,
+  ttTitle,
 } from '../../lib/echarts';
 import { formatMoneyCompact, formatPct } from '../../lib/format';
 import { Card, ControlGroup } from '../ui/Card';
@@ -107,7 +108,7 @@ export function TimeSeriesCard() {
 
     interface AxisItem {
       axisValueLabel?: string;
-      marker?: string;
+      color?: string;
       seriesName?: string;
       value?: unknown;
     }
@@ -119,12 +120,12 @@ export function TimeSeriesCard() {
         trigger: 'axis' as const,
         formatter: (items: AxisItem[]) => {
           const list = Array.isArray(items) ? items : [items];
-          const header = `<b>${list[0]?.axisValueLabel ?? ''}</b>`;
-          const lines = list.map(
-            (item) =>
-              `${item.marker ?? ''} ${item.seriesName}: ${monoNum(formatValue(item.value))}`,
+          return (
+            ttTitle(list[0]?.axisValueLabel ?? '') +
+            list
+              .map((item) => ttRow(item.seriesName ?? '', formatValue(item.value), item.color))
+              .join('')
           );
-          return [header, ...lines].join('<br/>');
         },
       },
       legend: {

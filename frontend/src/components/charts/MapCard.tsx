@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import type { GeoRow, MetaResponse } from '@cdti/shared';
 import { useGeo } from '../../api/queries';
-import { baseTooltip, MONO_FONT, monoNum, SEQUENTIAL_RAMP } from '../../lib/echarts';
+import { baseTooltip, MONO_FONT, SEQUENTIAL_RAMP, ttRow, ttTitle } from '../../lib/echarts';
 import { CCAA_MAP, PROVINCIAS_MAP, registerSpainMaps } from '../../lib/geo';
 import { formatInt, formatMoney, formatPct } from '../../lib/format';
 import { useFiltersStore } from '../../state/filters';
@@ -71,14 +71,18 @@ export function MapCard({ meta }: { meta: MetaResponse }) {
         ...baseTooltip,
         formatter: (params: { name: string; data?: { region?: Region } }) => {
           const region = params.data?.region;
-          if (!region) return `<b>${params.name}</b><br/>Sin proyectos con los filtros activos`;
-          return [
-            `<b>${region.name}</b>`,
-            `Proyectos: <b>${monoNum(formatInt(region.proyectos))}</b>`,
-            `Presupuesto: ${monoNum(formatMoney(region.presupuesto))}`,
-            `Aportación CDTI: ${monoNum(formatMoney(region.aportacion))}`,
-            `% medio de aportación: ${monoNum(formatPct(region.pctMedio))}`,
-          ].join('<br/>');
+          if (!region)
+            return (
+              ttTitle(params.name) +
+              `<div style="font-size:10px;color:#71717a">Sin proyectos con los filtros activos</div>`
+            );
+          return (
+            ttTitle(region.name) +
+            ttRow('Proyectos', formatInt(region.proyectos)) +
+            ttRow('Presupuesto', formatMoney(region.presupuesto)) +
+            ttRow('Aportación CDTI', formatMoney(region.aportacion)) +
+            ttRow('% medio', formatPct(region.pctMedio))
+          );
         },
       },
       visualMap: {

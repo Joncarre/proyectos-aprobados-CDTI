@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useSeasonality } from '../../api/queries';
-import { AXIS_LABEL, baseTooltip, monoNum, SPLIT_LINE } from '../../lib/echarts';
+import { AXIS_LABEL, baseTooltip, SPLIT_LINE, ttRow, ttTitle } from '../../lib/echarts';
 import { formatInt, formatMoney, formatMoneyCompact, MONTH_LABELS } from '../../lib/format';
 import { Card, ControlGroup } from '../ui/Card';
 import { EChart } from './EChart';
@@ -24,11 +24,11 @@ export function SeasonalityCard() {
         formatter: (items: Array<{ dataIndex: number }>) => {
           const row = rows[items[0]?.dataIndex ?? -1];
           if (!row) return '';
-          return [
-            `<b>${MONTH_LABELS[row.mes - 1]}</b>`,
-            `Proyectos: <b>${monoNum(formatInt(row.proyectos))}</b>`,
-            `Aportación: ${monoNum(formatMoney(row.aportacion))}`,
-          ].join('<br/>');
+          return (
+            ttTitle(MONTH_LABELS[row.mes - 1] ?? '') +
+            ttRow('Proyectos', formatInt(row.proyectos)) +
+            ttRow('Aportación', formatMoney(row.aportacion))
+          );
         },
       },
       grid: { left: 8, right: 12, top: 16, bottom: 4, containLabel: true },

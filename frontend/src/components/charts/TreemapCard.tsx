@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTreemap } from '../../api/queries';
-import { baseTooltip, MONO_FONT, monoNum, SERIES_PALETTE } from '../../lib/echarts';
+import { baseTooltip, MONO_FONT, SERIES_PALETTE, ttRow, ttTitle } from '../../lib/echarts';
 import { formatInt, formatMoney, formatMoneyCompact } from '../../lib/format';
 import { Card } from '../ui/Card';
 import { EChart } from './EChart';
@@ -41,13 +41,11 @@ export function TreemapCard() {
         ...baseTooltip,
         formatter: (params: { name: string; value: unknown; data?: { proyectos?: number } }) => {
           const proyectos = params.data?.proyectos;
-          return [
-            `<b>${params.name}</b>`,
-            `Aportación CDTI: <b>${monoNum(formatMoney(Number(params.value)))}</b>`,
-            proyectos !== undefined ? `Proyectos: ${monoNum(formatInt(proyectos))}` : null,
-          ]
-            .filter(Boolean)
-            .join('<br/>');
+          return (
+            ttTitle(params.name) +
+            ttRow('Aportación CDTI', formatMoney(Number(params.value))) +
+            (proyectos !== undefined ? ttRow('Proyectos', formatInt(proyectos)) : '')
+          );
         },
       },
       series: [

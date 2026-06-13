@@ -4,9 +4,10 @@ import {
   AXIS_LABEL,
   baseTooltip,
   MONO_FONT,
-  monoNum,
   SERIES_PALETTE,
   SPLIT_LINE,
+  ttRow,
+  ttTitle,
 } from '../../lib/echarts';
 import { formatInt, formatPct } from '../../lib/format';
 import { Card, ControlGroup } from '../ui/Card';
@@ -43,15 +44,17 @@ export function DistributionCard() {
           const x = list[0]?.value?.[0];
           if (typeof x !== 'number') return '';
           const desde = x - BIN_WIDTH / 2;
-          const header = `<b>${monoNum(`${desde}–${desde + BIN_WIDTH} %`)}</b>`;
-          const lines = list.map((item) => {
-            const count = item.value?.[1] ?? 0;
-            const dot = `<span style="display:inline-block;width:8px;height:8px;border-radius:2px;background:${item.color};margin-right:5px"></span>`;
-            return aggregate
-              ? `Proyectos: <b>${monoNum(formatInt(count))}</b>`
-              : `${dot}${item.seriesName}: ${monoNum(formatInt(count))}`;
-          });
-          return [header, ...lines].join('<br/>');
+          return (
+            ttTitle(`${desde}–${desde + BIN_WIDTH} %`) +
+            list
+              .map((item) => {
+                const count = item.value?.[1] ?? 0;
+                return aggregate
+                  ? ttRow('Proyectos', formatInt(count))
+                  : ttRow(item.seriesName ?? '', formatInt(count), item.color);
+              })
+              .join('')
+          );
         },
       },
       legend: aggregate

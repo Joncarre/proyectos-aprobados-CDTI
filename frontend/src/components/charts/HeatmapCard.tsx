@@ -1,6 +1,13 @@
 import { useMemo, useState } from 'react';
 import { useHeatmap } from '../../api/queries';
-import { AXIS_LABEL, baseTooltip, MONO_FONT, monoNum, SEQUENTIAL_RAMP } from '../../lib/echarts';
+import {
+  AXIS_LABEL,
+  baseTooltip,
+  MONO_FONT,
+  SEQUENTIAL_RAMP,
+  ttRow,
+  ttTitle,
+} from '../../lib/echarts';
 import { formatInt, formatMoney, formatMoneyCompact, formatPct } from '../../lib/format';
 import { Card, ControlGroup } from '../ui/Card';
 import { EChart } from './EChart';
@@ -46,12 +53,12 @@ export function HeatmapCard() {
           formatter: (params: { data?: { cell?: (typeof cells)[number] } }) => {
             const cell = params.data?.cell;
             if (!cell) return '';
-            return [
-              `<b>${cell.categoria}</b> · ${cell.anio}`,
-              `Proyectos: <b>${monoNum(formatInt(cell.proyectos))}</b>`,
-              `Aportación CDTI: ${monoNum(formatMoney(cell.aportacion))}`,
-              `% medio: ${monoNum(formatPct(cell.pctMedio))}`,
-            ].join('<br/>');
+            return (
+              ttTitle(`${cell.categoria} · ${cell.anio}`) +
+              ttRow('Proyectos', formatInt(cell.proyectos)) +
+              ttRow('Aportación CDTI', formatMoney(cell.aportacion)) +
+              ttRow('% medio', formatPct(cell.pctMedio))
+            );
           },
         },
         // Fixed margins (no containLabel): the plot and axis areas keep exactly

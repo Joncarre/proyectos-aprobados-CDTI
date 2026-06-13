@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useRankings } from '../../api/queries';
-import { AXIS_LABEL, baseTooltip, MONO_FONT, monoNum, SPLIT_LINE } from '../../lib/echarts';
+import { AXIS_LABEL, baseTooltip, MONO_FONT, SPLIT_LINE, ttRow, ttTitle } from '../../lib/echarts';
 import { formatInt, formatMoney, formatMoneyCompact, formatPct } from '../../lib/format';
 import { Card, ControlGroup } from '../ui/Card';
 import { EChart } from './EChart';
@@ -30,12 +30,12 @@ export function RankingsCard() {
         formatter: (params: { dataIndex: number }) => {
           const row = rows[params.dataIndex];
           if (!row) return '';
-          return [
-            `<b>${row.categoria}</b>`,
-            `Aportación CDTI: <b>${monoNum(formatMoney(row.aportacion))}</b>`,
-            `Proyectos: ${monoNum(formatInt(row.proyectos))}`,
-            `% medio: ${monoNum(formatPct(row.pctMedio))}`,
-          ].join('<br/>');
+          return (
+            ttTitle(row.categoria) +
+            ttRow('Aportación CDTI', formatMoney(row.aportacion)) +
+            ttRow('Proyectos', formatInt(row.proyectos)) +
+            ttRow('% medio', formatPct(row.pctMedio))
+          );
         },
       },
       grid: { left: 8, right: 48, top: 4, bottom: 4, containLabel: true },
