@@ -25,7 +25,7 @@ export function CompaniesCard() {
       isUpdating={isPlaceholderData}
       bodyHeight="h-96"
     >
-      <div className="h-96 space-y-1 overflow-y-auto pr-1">
+      <div className="h-96 space-y-1 overflow-y-auto pr-1 [scrollbar-gutter:stable]">
         {(data ?? []).length === 0 && !isPending ? (
           <p className="py-10 text-center text-xs text-ink-faint">
             Ninguna empresa con más de un proyecto en el conjunto filtrado
