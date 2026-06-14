@@ -34,9 +34,10 @@ export function Header() {
           href="https://jonathancarrero.es/"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-sm font-semibold tracking-tight text-[#5b9df5] underline-offset-4 transition-colors hover:text-[#7cb6f5] hover:underline"
+          className="group relative text-sm font-semibold tracking-tight text-[#5b9df5] transition-colors duration-300 hover:text-[#7cb6f5]"
         >
           Jonathan Carrero
+          <span className="absolute -bottom-px left-0 h-[1.5px] w-full origin-left scale-x-0 rounded-full bg-gradient-to-r from-[#7cb6f5] to-[#3b62d6] transition-transform duration-300 ease-out group-hover:scale-x-100" />
         </a>
       </p>
     </header>
