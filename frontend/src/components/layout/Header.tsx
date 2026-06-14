@@ -1,5 +1,4 @@
 import { useMeta } from '../../api/queries';
-import { formatInt } from '../../lib/format';
 
 const formatIngestDate = (timestamp: string): string => {
   const date = timestamp.slice(0, 10).split('-');
@@ -23,14 +22,23 @@ export function Header() {
           </svg>
           PROYECTOS APROBADOS POR EL CDTI
         </span>
-        <span className="hidden text-xs text-ink-faint sm:block">— Datos abiertos</span>
+        <span className="hidden text-xs text-ink-faint md:block">
+          — Datos abiertos
+          {meta ? `, actualizado el día ${formatIngestDate(meta.ingest.ingestedAt)}` : ''}
+        </span>
       </div>
-      {meta && (
-        <p className="hidden font-mono text-xs text-ink-soft md:block">
-          {formatInt(meta.ingest.nProjects)} proyectos · Última actualización el día{' '}
-          {formatIngestDate(meta.ingest.ingestedAt)}
-        </p>
-      )}
+
+      <p className="hidden font-sans text-xs tracking-wide text-ink-soft md:block">
+        Desarrollado por{' '}
+        <a
+          href="https://jonathancarrero.es/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-medium text-ink-strong underline-offset-2 transition-colors hover:text-accent hover:underline"
+        >
+          Jonathan Carrero
+        </a>
+      </p>
     </header>
   );
 }

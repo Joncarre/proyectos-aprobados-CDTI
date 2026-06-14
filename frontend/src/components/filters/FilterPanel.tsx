@@ -160,6 +160,21 @@ export function FilterPanel() {
       <Section title="Empresa">
         <PymeFilter />
       </Section>
+
+      <footer className="border-t border-line pt-4 text-center">
+        <p className="inline-flex items-center gap-2 font-sans text-[0.78rem] tracking-wide text-ink-soft">
+          Repositorio de proyecto
+          <a
+            href="https://github.com/Joncarre/proyectos-aprobados-CDTI"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="shadow-card inline-flex items-center gap-1.5 rounded-full border border-line bg-surface px-2.5 py-1 font-sans text-[0.82rem] font-medium text-ink-strong transition duration-200 hover:-translate-y-px hover:border-ink-strong hover:shadow-[0_3px_10px_rgb(26_26_30/0.12)]"
+          >
+            <img src="/github.svg" alt="" aria-hidden className="size-4 opacity-90" />
+            <span>Joncarre</span>
+          </a>
+        </p>
+      </footer>
     </div>
   );
 }
