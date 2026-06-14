@@ -1,6 +1,5 @@
 import { motion } from 'motion/react';
-import type { KpiTrendPoint } from '@cdti/shared';
-import { useKpiTrends, useStats } from '../../api/queries';
+import { useKpiWindow, useStats } from '../../api/queries';
 import { cn } from '../../lib/cn';
 import { formatInt, formatMoneyCompact, formatPct } from '../../lib/format';
 import { useCountUp } from '../../lib/useCountUp';
@@ -9,32 +8,30 @@ import { Skeleton } from '../ui/Skeleton';
 interface Delta {
   dir: number;
   text: string;
-  year: number;
 }
 
-/** Year-over-year delta from the last two complete years (excludes the in-progress year). */
-function computeDelta(series: Array<number | null>, years: number[], isPct: boolean): Delta | null {
-  const pairs = years
-    .map((anio, index) => ({ anio, value: series[index] }))
-    .filter((p): p is { anio: number; value: number } => p.value !== null && p.value !== undefined);
-  if (pairs.length < 2) return null;
-  const last = pairs[pairs.length - 1]!;
-  const prev = pairs[pairs.length - 2]!;
-
+/**
+ * Delta between the trailing 12 months and the prior 12 months. Counts/amounts
+ * use a relative %; percentages use the difference in points (pp).
+ */
+function windowDelta(
+  current: number | null | undefined,
+  previous: number | null | undefined,
+  isPct: boolean,
+): Delta | null {
+  if (current == null || previous == null) return null;
   if (isPct) {
-    const diff = last.value - prev.value;
+    const diff = current - previous;
     return {
       dir: Math.sign(diff),
       text: `${diff >= 0 ? '+' : ''}${diff.toLocaleString('es-ES', { maximumFractionDigits: 1 })} pp`,
-      year: prev.anio,
     };
   }
-  if (prev.value === 0) return null;
-  const rel = ((last.value - prev.value) / prev.value) * 100;
+  if (previous === 0) return null;
+  const rel = ((current - previous) / previous) * 100;
   return {
     dir: Math.sign(rel),
     text: `${rel >= 0 ? '+' : ''}${rel.toLocaleString('es-ES', { maximumFractionDigits: 0 })} %`,
-    year: prev.anio,
   };
 }
 
@@ -43,11 +40,12 @@ interface KpiCardProps {
   value: number | null;
   format: (value: number) => string;
   delta: Delta | null;
+  deltaTitle?: string;
   detail?: string;
   dimmed: boolean;
 }
 
-function KpiCard({ label, value, format, delta, detail, dimmed }: KpiCardProps) {
+function KpiCard({ label, value, format, delta, deltaTitle, detail, dimmed }: KpiCardProps) {
   const animated = useCountUp(value ?? 0);
   const display = value === null ? '—' : format(animated);
 
@@ -80,10 +78,10 @@ function KpiCard({ label, value, format, delta, detail, dimmed }: KpiCardProps) 
             <span
               className="font-mono whitespace-nowrap"
               style={{ color: deltaColor }}
-              title={`frente a ${delta.year}`}
+              title={deltaTitle}
             >
               {delta.dir > 0 ? '▲' : delta.dir < 0 ? '▼' : '–'} {delta.text}{' '}
-              <span className="text-ink-faint">vs {delta.year}</span>
+              <span className="text-ink-faint">vs año anterior</span>
             </span>
           ) : (
             <span />
@@ -95,7 +93,11 @@ function KpiCard({ label, value, format, delta, detail, dimmed }: KpiCardProps) 
   );
 }
 
-const CURRENT_YEAR = new Date().getFullYear();
+/** YYYY-MM-DD → DD/MM/YYYY. */
+const formatRefDate = (iso: string): string => {
+  const [year, month, day] = iso.split('-');
+  return `${day}/${month}/${year}`;
+};
 
 const container = { hidden: {}, show: { transition: { staggerChildren: 0.18 } } };
 const item = {
@@ -103,10 +105,10 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] as const } },
 };
 
-/** Header KPIs: live count-up, year-over-year delta, change pulse; staggered reveal. */
+/** Header KPIs: live count-up, trailing-12-months delta, change pulse; staggered reveal. */
 export function KpiStrip({ reveal }: { reveal: boolean }) {
   const { data, isPending, isPlaceholderData } = useStats();
-  const { data: trends } = useKpiTrends();
+  const { data: kpiWindow } = useKpiWindow();
 
   if (isPending || !data) {
     return (
@@ -125,20 +127,19 @@ export function KpiStrip({ reveal }: { reveal: boolean }) {
     );
   }
 
-  // Only complete years feed the delta
-  const complete: KpiTrendPoint[] = (trends ?? []).filter((point) => point.anio < CURRENT_YEAR);
-  const years = complete.map((point) => point.anio);
+  const cur = kpiWindow?.current;
+  const prev = kpiWindow?.previous;
+  const deltaTitle = kpiWindow
+    ? `Últimos 12 meses (hasta ${formatRefDate(kpiWindow.refDate)}) frente a los 12 anteriores`
+    : undefined;
 
   const cards: KpiCardProps[] = [
     {
       label: 'Proyectos',
       value: data.proyectos,
       format: formatInt,
-      delta: computeDelta(
-        complete.map((p) => p.proyectos),
-        years,
-        false,
-      ),
+      delta: windowDelta(cur?.proyectos, prev?.proyectos, false),
+      deltaTitle,
       detail: `${formatInt(data.empresas)} empresas`,
       dimmed: isPlaceholderData,
     },
@@ -146,44 +147,32 @@ export function KpiStrip({ reveal }: { reveal: boolean }) {
       label: 'Presupuesto total',
       value: data.presupuestoTotal,
       format: formatMoneyCompact,
-      delta: computeDelta(
-        complete.map((p) => p.presupuesto),
-        years,
-        false,
-      ),
+      delta: windowDelta(cur?.presupuesto, prev?.presupuesto, false),
+      deltaTitle,
       dimmed: isPlaceholderData,
     },
     {
       label: 'Aportación CDTI',
       value: data.aportacionTotal,
       format: formatMoneyCompact,
-      delta: computeDelta(
-        complete.map((p) => p.aportacion),
-        years,
-        false,
-      ),
+      delta: windowDelta(cur?.aportacion, prev?.aportacion, false),
+      deltaTitle,
       dimmed: isPlaceholderData,
     },
     {
       label: '% medio de aportación',
       value: data.pctMedio,
       format: formatPct,
-      delta: computeDelta(
-        complete.map((p) => p.pctMedio),
-        years,
-        true,
-      ),
+      delta: windowDelta(cur?.pctMedio, prev?.pctMedio, true),
+      deltaTitle,
       dimmed: isPlaceholderData,
     },
     {
       label: 'PYMEs',
       value: data.pctPymes,
       format: formatPct,
-      delta: computeDelta(
-        complete.map((p) => p.pctPymes),
-        years,
-        true,
-      ),
+      delta: windowDelta(cur?.pctPymes, prev?.pctPymes, true),
+      deltaTitle,
       dimmed: isPlaceholderData,
     },
   ];

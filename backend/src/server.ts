@@ -26,6 +26,7 @@ import { cohortsRoutes } from './routes/cohorts.js';
 import { seasonalityRoutes } from './routes/seasonality.js';
 import { pymeRoutes } from './routes/pyme.js';
 import { kpiTrendsRoutes } from './routes/kpiTrends.js';
+import { kpiWindowRoutes } from './routes/kpiWindow.js';
 
 const app = Fastify({ logger: true });
 
@@ -80,6 +81,7 @@ await app.register(
     await api.register(seasonalityRoutes);
     await api.register(pymeRoutes);
     await api.register(kpiTrendsRoutes);
+    await api.register(kpiWindowRoutes);
   },
   { prefix: '/api' },
 );

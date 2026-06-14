@@ -101,6 +101,25 @@ export interface KpiTrendPoint {
   pctPymes: number | null;
 }
 
+/** Header KPI metrics aggregated over a single date window. */
+export interface KpiWindowMetrics {
+  proyectos: number;
+  presupuesto: number;
+  aportacion: number;
+  pctMedio: number | null;
+  pctPymes: number | null;
+}
+
+/**
+ * Trailing-12-months comparison for the header deltas: `current` is the year
+ * ending on the last-update date (`refDate`); `previous` is the year before it.
+ */
+export interface KpiWindowResponse {
+  refDate: string; // YYYY-MM-DD (ingest / last-update date)
+  current: KpiWindowMetrics;
+  previous: KpiWindowMetrics;
+}
+
 export interface CohortRow {
   anio: number;
   nuevas: number; // companies receiving CDTI aid for the first time ever this year

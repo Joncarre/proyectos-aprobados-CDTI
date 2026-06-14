@@ -7,6 +7,7 @@ import type {
   GeoRow,
   HeatmapCell,
   KpiTrendPoint,
+  KpiWindowResponse,
   MetaResponse,
   ProjectsResponse,
   PymeGroup,
@@ -60,6 +61,21 @@ export function useKpiTrends() {
   return useQuery({
     queryKey: ['kpi-trends', params.toString()],
     queryFn: () => getJson<KpiTrendPoint[]>('/api/kpi-trends', params),
+    placeholderData: keepPreviousData,
+  });
+}
+
+/**
+ * Trailing-12-months vs. the prior 12 months (ending on the last-update date)
+ * for the header deltas. Year/month filters are stripped — the window itself is
+ * the time frame; the rest of the filters still apply.
+ */
+export function useKpiWindow() {
+  const filters = useFiltersStore((state) => state.filters);
+  const params = filtersToSearchParams({ ...filters, anios: undefined, meses: undefined });
+  return useQuery({
+    queryKey: ['kpi-window', params.toString()],
+    queryFn: () => getJson<KpiWindowResponse>('/api/kpi-window', params),
     placeholderData: keepPreviousData,
   });
 }
