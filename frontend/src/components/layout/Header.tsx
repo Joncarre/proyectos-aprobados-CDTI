@@ -34,10 +34,18 @@ export function Header() {
           href="https://jonathancarrero.es/"
           target="_blank"
           rel="noopener noreferrer"
-          className="group relative text-sm font-semibold tracking-tight text-[#5b9df5] transition-colors duration-300 hover:text-[#7cb6f5]"
+          className="group relative bg-gradient-to-r from-[#6cb2f5] to-[#3b62d6] bg-clip-text text-sm font-semibold tracking-tight text-transparent"
         >
           Jonathan Carrero
-          <span className="absolute -bottom-px left-0 h-[1.5px] w-full origin-left scale-x-0 rounded-full bg-gradient-to-r from-[#7cb6f5] to-[#3b62d6] transition-transform duration-300 ease-out group-hover:scale-x-100" />
+          <span
+            aria-hidden
+            className="pointer-events-none absolute -bottom-1 left-0 h-[1.5px] w-full origin-center scale-x-0 bg-gradient-to-r from-[#6cb2f5] to-[#3b62d6] transition-transform duration-[600ms] ease-out group-hover:scale-x-100"
+            style={{
+              maskImage: 'linear-gradient(to right, transparent, #000 30%, #000 70%, transparent)',
+              WebkitMaskImage:
+                'linear-gradient(to right, transparent, #000 30%, #000 70%, transparent)',
+            }}
+          />
         </a>
       </p>
     </header>
