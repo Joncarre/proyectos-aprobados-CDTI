@@ -59,9 +59,40 @@ export function RankingsCard() {
         {
           type: 'bar' as const,
           data: rows.map((row) => row.aportacion),
-          barWidth: '62%',
-          itemStyle: { color: '#4f46e5', borderRadius: [0, 4, 4, 0] },
-          emphasis: { itemStyle: { color: '#4338ca' } },
+          barWidth: '60%',
+          itemStyle: {
+            borderRadius: [0, 6, 6, 0],
+            color: {
+              type: 'linear' as const,
+              x: 0,
+              y: 0,
+              x2: 1,
+              y2: 0,
+              colorStops: [
+                { offset: 0, color: '#d8e9fb' },
+                { offset: 1, color: '#a9cdf3' },
+              ],
+            },
+          },
+          showBackground: true,
+          backgroundStyle: { color: 'rgba(169, 205, 243, 0.12)', borderRadius: [0, 6, 6, 0] },
+          emphasis: {
+            itemStyle: {
+              color: {
+                type: 'linear' as const,
+                x: 0,
+                y: 0,
+                x2: 1,
+                y2: 0,
+                colorStops: [
+                  { offset: 0, color: '#bcdcf9' },
+                  { offset: 1, color: '#86b6ef' },
+                ],
+              },
+              shadowBlur: 12,
+              shadowColor: 'rgba(134, 182, 239, 0.55)',
+            },
+          },
           label: {
             show: true,
             position: 'right' as const,

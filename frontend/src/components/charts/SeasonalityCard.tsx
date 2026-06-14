@@ -17,7 +17,11 @@ export function SeasonalityCard() {
       tooltip: {
         ...baseTooltip,
         trigger: 'axis' as const,
-        axisPointer: { type: 'shadow' as const },
+        // Barely-there hover band (the default shadow is too dark)
+        axisPointer: {
+          type: 'shadow' as const,
+          shadowStyle: { color: 'rgba(100, 116, 139, 0.07)' },
+        },
         formatter: (items: Array<{ dataIndex: number }>) => {
           const row = rows[items[0]?.dataIndex ?? -1];
           if (!row) return '';
