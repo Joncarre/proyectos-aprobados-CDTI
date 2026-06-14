@@ -1,5 +1,6 @@
 @import '@fontsource-variable/inter';
 @import '@fontsource-variable/jetbrains-mono';
+@import '@fontsource/instrument-serif/400.css';
 @import 'tailwindcss';
 
 /*
@@ -11,6 +12,8 @@
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
   /* All numeric data (KPIs, table cells, filter values, chart axes) renders in mono */
   --font-mono: 'JetBrains Mono Variable', ui-monospace, 'Cascadia Code', monospace;
+  /* Elegant serif, reserved for the author credit */
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
 
   /* Neutral layers (slightly warm, Linear-like) */
   --color-page: #f7f7f8; /* app background */

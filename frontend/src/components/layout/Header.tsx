@@ -34,7 +34,7 @@ export function Header() {
           href="https://jonathancarrero.es/"
           target="_blank"
           rel="noopener noreferrer"
-          className="group relative bg-gradient-to-r from-[#6cb2f5] to-[#3b62d6] bg-clip-text text-sm font-semibold tracking-tight text-transparent"
+          className="group relative bg-gradient-to-r from-[#6cb2f5] to-[#3b62d6] bg-clip-text font-serif text-[0.82rem] text-transparent"
         >
           Jonathan Carrero
           <span
