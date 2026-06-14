@@ -69,9 +69,10 @@ export function AppShell() {
             'top-14 z-40 h-[calc(100vh-3.5rem)] overflow-hidden border-r border-line bg-surface font-mono',
             // Narrow: fixed overlay drawer that slides in from the left
             'fixed left-0 w-80 transition-transform duration-500',
-            // Wide (lg+): in-flow sticky sidebar whose width animates
-            'lg:sticky lg:w-80 lg:shrink-0 lg:translate-x-0 lg:transition-[width]',
-            filtersOpen ? 'translate-x-0' : '-translate-x-full lg:w-0 lg:border-r-0',
+            // Wide (lg+): in-flow sticky sidebar whose width animates (the width
+            // lives only in the open/closed states to avoid a class conflict)
+            'lg:sticky lg:shrink-0 lg:translate-x-0 lg:transition-[width]',
+            filtersOpen ? 'translate-x-0 lg:w-80' : '-translate-x-full lg:w-0 lg:border-r-0',
           )}
         >
           <div

@@ -7,9 +7,6 @@ import { EChart } from './EChart';
 
 type Metrica = 'proyectos' | 'aportacion';
 
-// Quarter-end months get a stronger color to surface end-of-period clustering
-const QUARTER_END = new Set([3, 6, 9, 12]);
-
 export function SeasonalityCard() {
   const [metrica, setMetrica] = useState<Metrica>('proyectos');
   const { data, isPending, isPlaceholderData } = useSeasonality();
@@ -51,13 +48,10 @@ export function SeasonalityCard() {
       series: [
         {
           type: 'bar' as const,
-          data: rows.map((row) => ({
-            value: metrica === 'aportacion' ? row.aportacion : row.proyectos,
-            itemStyle: { color: QUARTER_END.has(row.mes) ? '#4f46e5' : '#c7d2fe' },
-          })),
+          data: rows.map((row) => (metrica === 'aportacion' ? row.aportacion : row.proyectos)),
           barWidth: '64%',
-          itemStyle: { borderRadius: [4, 4, 0, 0] },
-          emphasis: { itemStyle: { color: '#fbbf24' } },
+          itemStyle: { color: '#4f46e5', borderRadius: [4, 4, 0, 0] },
+          emphasis: { itemStyle: { color: '#4338ca' } },
         },
       ],
     };
@@ -66,7 +60,7 @@ export function SeasonalityCard() {
   return (
     <Card
       title="Estacionalidad de las resoluciones"
-      subtitle="Aprobaciones por mes; en color los cierres de trimestre"
+      subtitle="Aprobaciones por mes"
       controls={
         <ControlGroup
           options={[
