@@ -46,7 +46,7 @@ export function CohortsCard() {
         trigger: 'axis' as const,
         axisPointer: {
           type: 'shadow' as const,
-          shadowStyle: { color: 'rgba(100, 116, 139, 0.07)' },
+          shadowStyle: { color: 'rgba(226, 232, 240, 0.45)' },
         },
         formatter: (items: Array<{ dataIndex: number }>) => {
           const row = rows[items[0]?.dataIndex ?? -1];
@@ -118,17 +118,6 @@ export function CohortsCard() {
       bodyHeight="h-96"
     >
       <div className="relative">
-        {/* Legend */}
-        <div className="pointer-events-none absolute top-0 left-0 z-10 flex gap-3 text-[0.7rem] text-ink-soft">
-          <span className="flex items-center gap-1.5">
-            <span className="size-2.5 rounded-sm" style={{ backgroundColor: COLOR_NEW }} /> Nuevas
-          </span>
-          <span className="flex items-center gap-1.5">
-            <span className="size-2.5 rounded-sm" style={{ backgroundColor: COLOR_RETURN }} />{' '}
-            Recurrentes
-          </span>
-        </div>
-
         {/* Signed renewal balance */}
         {total > 0 && (
           <div className="pointer-events-none absolute top-0 right-1 z-10 text-right">

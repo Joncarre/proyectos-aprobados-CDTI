@@ -43,7 +43,7 @@ export function RangeSlider({
       minStepsBetweenThumbs={0}
     >
       <SliderPrimitive.Track className="relative h-1.5 grow overflow-hidden rounded-full bg-line">
-        <SliderPrimitive.Range className="absolute h-full rounded-full bg-gradient-to-r from-accent to-accent-strong" />
+        <SliderPrimitive.Range className="absolute h-full rounded-full bg-gradient-to-r from-[#6cb2f5] to-[#3b62d6]" />
       </SliderPrimitive.Track>
       <SliderPrimitive.Thumb className={thumbClass} aria-label={ariaLabelMin} />
       <SliderPrimitive.Thumb className={thumbClass} aria-label={ariaLabelMax} />
