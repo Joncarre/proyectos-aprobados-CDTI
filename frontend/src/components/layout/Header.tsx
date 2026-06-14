@@ -28,18 +28,15 @@ export function Header() {
         </span>
       </div>
 
-      <p className="hidden items-center gap-2 font-sans text-xs tracking-wide text-ink-soft md:flex">
+      <p className="hidden items-baseline gap-1.5 font-sans text-xs tracking-wide text-ink-soft md:flex">
         Desarrollado por
         <a
           href="https://jonathancarrero.es/"
           target="_blank"
           rel="noopener noreferrer"
-          className="group shadow-card inline-flex items-center gap-2 rounded-full border border-line bg-surface py-0.5 pr-3 pl-0.5 text-[0.78rem] font-medium text-ink-strong transition duration-200 hover:-translate-y-px hover:border-accent-line hover:shadow-[0_4px_12px_rgb(26_26_30/0.14)]"
+          className="text-sm font-semibold tracking-tight text-[#5b9df5] underline-offset-4 transition-colors hover:text-[#7cb6f5] hover:underline"
         >
-          <span className="grid size-6 place-items-center rounded-full bg-gradient-to-br from-accent to-accent-strong text-[0.58rem] font-bold text-white shadow-[0_1px_3px_rgb(79_70_229/0.45)]">
-            JC
-          </span>
-          <span className="transition-colors group-hover:text-accent-strong">Jonathan Carrero</span>
+          Jonathan Carrero
         </a>
       </p>
     </header>
