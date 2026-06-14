@@ -140,7 +140,6 @@ export function KpiStrip({ reveal }: { reveal: boolean }) {
       format: formatInt,
       delta: windowDelta(cur?.proyectos, prev?.proyectos, false),
       deltaTitle,
-      detail: `${formatInt(data.empresas)} empresas`,
       dimmed: isPlaceholderData,
     },
     {

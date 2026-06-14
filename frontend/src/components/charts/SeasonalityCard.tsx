@@ -49,9 +49,40 @@ export function SeasonalityCard() {
         {
           type: 'bar' as const,
           data: rows.map((row) => (metrica === 'aportacion' ? row.aportacion : row.proyectos)),
-          barWidth: '64%',
-          itemStyle: { color: '#4f46e5', borderRadius: [4, 4, 0, 0] },
-          emphasis: { itemStyle: { color: '#4338ca' } },
+          barWidth: '56%',
+          itemStyle: {
+            borderRadius: [6, 6, 0, 0],
+            color: {
+              type: 'linear' as const,
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [
+                { offset: 0, color: '#a9cdf3' },
+                { offset: 1, color: '#d8e9fb' },
+              ],
+            },
+          },
+          showBackground: true,
+          backgroundStyle: { color: 'rgba(169, 205, 243, 0.12)', borderRadius: [6, 6, 0, 0] },
+          emphasis: {
+            itemStyle: {
+              color: {
+                type: 'linear' as const,
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  { offset: 0, color: '#86b6ef' },
+                  { offset: 1, color: '#bcdcf9' },
+                ],
+              },
+              shadowBlur: 12,
+              shadowColor: 'rgba(134, 182, 239, 0.55)',
+            },
+          },
         },
       ],
     };
