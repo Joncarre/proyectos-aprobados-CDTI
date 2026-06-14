@@ -9,7 +9,7 @@ export function Header() {
   const { data: meta } = useMeta();
 
   return (
-    <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-line bg-surface/85 px-5 backdrop-blur">
+    <header className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-line bg-surface/70 px-5 backdrop-blur">
       <div className="flex items-center gap-2.5">
         <span className="flex items-center gap-2 text-sm font-semibold tracking-tight text-ink-strong">
           <svg viewBox="0 0 32 32" fill="none" aria-hidden className="size-6 text-accent">
@@ -39,7 +39,7 @@ export function Header() {
           Jonathan Carrero
           <span
             aria-hidden
-            className="pointer-events-none absolute -bottom-1 left-1/2 h-[2px] w-0 -translate-x-1/2 bg-gradient-to-r from-[#3f7ce0] to-[#2a4cb8] transition-[width] duration-[600ms] ease-out group-hover:w-full"
+            className="pointer-events-none absolute -bottom-1 left-1/2 h-[2px] w-0 -translate-x-1/2 bg-gradient-to-r from-[#3f7ce0] to-[#2a4cb8] blur-[1px] transition-[width] duration-[600ms] ease-out group-hover:w-full"
             style={{
               maskImage: 'linear-gradient(to right, transparent, #000 50%, transparent)',
               WebkitMaskImage: 'linear-gradient(to right, transparent, #000 50%, transparent)',
