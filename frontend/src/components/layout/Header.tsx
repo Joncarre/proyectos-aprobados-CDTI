@@ -41,9 +41,8 @@ export function Header() {
             aria-hidden
             className="pointer-events-none absolute -bottom-1 left-1/2 h-[2px] w-0 -translate-x-1/2 bg-gradient-to-r from-[#3f7ce0] to-[#2a4cb8] transition-[width] duration-[600ms] ease-out group-hover:w-full"
             style={{
-              maskImage: 'linear-gradient(to right, transparent, #000 42%, #000 58%, transparent)',
-              WebkitMaskImage:
-                'linear-gradient(to right, transparent, #000 42%, #000 58%, transparent)',
+              maskImage: 'linear-gradient(to right, transparent, #000 50%, transparent)',
+              WebkitMaskImage: 'linear-gradient(to right, transparent, #000 50%, transparent)',
             }}
           />
         </a>
