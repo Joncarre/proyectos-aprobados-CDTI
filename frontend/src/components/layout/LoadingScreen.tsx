@@ -36,7 +36,9 @@ export function LoadingScreen() {
           ))}
         </div>
 
-        <p className="font-mono text-sm text-ink-soft">Procesando información…</p>
+        <p className="font-mono text-sm text-ink-soft">
+          Procesando información, esto podría tardar unos segundos…
+        </p>
 
         <div
           className="relative h-1 w-96 overflow-hidden rounded-full"
