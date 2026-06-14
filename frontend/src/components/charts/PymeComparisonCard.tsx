@@ -3,8 +3,17 @@ import { formatInt, formatMoney, formatMoneyCompact, formatPct } from '../../lib
 import { Card } from '../ui/Card';
 import { Skeleton } from '../ui/Skeleton';
 
-const COLOR_PYME = '#4f46e5';
-const COLOR_BIG = '#94a3b8';
+const GRAD_PYME = 'linear-gradient(180deg, #8b91f5, #6e74ee)';
+const GRAD_BIG = 'linear-gradient(180deg, #c6cdd7, #aab4c2)';
+
+function LegendChip({ grad, label }: { grad: string; label: string }) {
+  return (
+    <span className="inline-flex items-center gap-2 rounded-full border border-line bg-surface-2/70 py-1 pr-3 pl-1.5 text-[0.72rem] font-medium text-ink">
+      <span className="size-4 rounded-full" style={{ background: grad }} />
+      {label}
+    </span>
+  );
+}
 
 interface ShareBarProps {
   label: string;
@@ -13,7 +22,7 @@ interface ShareBarProps {
   format: (value: number) => string;
 }
 
-/** Horizontal split bar showing the PYME / non-PYME share of a magnitude. */
+/** Premium split capsule showing the PYME / non-PYME share of a magnitude. */
 function ShareBar({ label, pyme, big, format }: ShareBarProps) {
   const total = pyme + big;
   const pymePct = total > 0 ? (pyme / total) * 100 : 0;
@@ -25,20 +34,20 @@ function ShareBar({ label, pyme, big, format }: ShareBarProps) {
         <span className="text-xs font-medium text-ink-strong">{label}</span>
         <span className="font-mono text-[0.7rem] text-ink-faint">{format(total)} total</span>
       </div>
-      <div className="flex h-8 overflow-hidden rounded-lg">
+      <div className="flex h-9 overflow-hidden rounded-full ring-1 ring-black/[0.04]">
         <div
-          className="flex items-center justify-start px-2"
-          style={{ width: `${pymePct}%`, backgroundColor: COLOR_PYME }}
+          className="flex items-center justify-start px-3"
+          style={{ width: `${pymePct}%`, background: GRAD_PYME }}
         >
-          <span className="font-mono text-[0.7rem] font-semibold whitespace-nowrap text-white">
+          <span className="font-mono text-[0.72rem] font-semibold whitespace-nowrap text-white">
             {Math.round(pymePct)}%
           </span>
         </div>
         <div
-          className="flex items-center justify-end px-2"
-          style={{ width: `${bigPct}%`, backgroundColor: COLOR_BIG }}
+          className="flex items-center justify-end px-3"
+          style={{ width: `${bigPct}%`, background: GRAD_BIG }}
         >
-          <span className="font-mono text-[0.7rem] font-semibold whitespace-nowrap text-white">
+          <span className="font-mono text-[0.72rem] font-semibold whitespace-nowrap text-[#334155]">
             {Math.round(bigPct)}%
           </span>
         </div>
@@ -85,15 +94,9 @@ export function PymeComparisonCard() {
         </div>
       ) : (
         <div className="flex h-80 flex-col justify-center gap-4">
-          <div className="flex items-center justify-center gap-5 text-[0.7rem] font-medium">
-            <span className="flex items-center gap-1.5">
-              <span className="size-2.5 rounded-sm" style={{ backgroundColor: COLOR_PYME }} />
-              PYME
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="size-2.5 rounded-sm" style={{ backgroundColor: COLOR_BIG }} />
-              No PYME
-            </span>
+          <div className="flex items-center justify-center gap-3">
+            <LegendChip grad={GRAD_PYME} label="PYME" />
+            <LegendChip grad={GRAD_BIG} label="No PYME" />
           </div>
 
           <ShareBar

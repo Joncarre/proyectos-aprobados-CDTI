@@ -51,10 +51,10 @@ export default function Dashboard({ meta, reveal }: { meta: MetaResponse; reveal
         <MapCard meta={meta} />
       </Cell>
       <Cell>
-        <TimeSeriesCard />
+        <SeasonalityCard />
       </Cell>
       <Cell>
-        <SeasonalityCard />
+        <TimeSeriesCard />
       </Cell>
       <Cell>
         <CohortsCard />
