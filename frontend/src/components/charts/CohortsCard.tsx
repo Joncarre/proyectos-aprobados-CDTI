@@ -1,47 +1,113 @@
-import type { CohortRow } from '@cdti/shared';
+import { useMemo } from 'react';
 import { useCohorts } from '../../api/queries';
+import { AXIS_LABEL, baseTooltip, SPLIT_LINE, ttRow, ttTitle } from '../../lib/echarts';
 import { formatInt } from '../../lib/format';
-import { useCountUp } from '../../lib/useCountUp';
 import { Card } from '../ui/Card';
+import { EChart } from './EChart';
 
-const COLOR_NEW = '#4f46e5';
+const COLOR_NEW = '#6e74ee';
 const COLOR_RETURN = '#94a3b8';
+const GREEN = '#43c094'; // soft pastel green — new beneficiaries dominate
+const RED = '#ec8a8a'; // soft pastel red — returning ones dominate
 
-/** % of beneficiaries that are first-timers. */
-const renewal = (row: CohortRow): number => {
-  const total = row.nuevas + row.recurrentes;
-  return total > 0 ? (row.nuevas / total) * 100 : 0;
-};
-
-function Total({ color, value, label }: { color: string; value: number; label: string }) {
-  return (
-    <div>
-      <p className="font-mono text-lg font-semibold text-ink-strong tabular-nums">
-        {formatInt(value)}
-      </p>
-      <p className="flex items-center justify-end gap-1.5 text-[0.62rem] tracking-wider text-ink-soft uppercase">
-        <span className="size-2 rounded-full" style={{ backgroundColor: color }} />
-        {label}
-      </p>
-    </div>
-  );
-}
+/** Vertical gradient (saturated tip → light base), matching the other bars. */
+const grad = (top: string, bottom: string) => ({
+  type: 'linear' as const,
+  x: 0,
+  y: 0,
+  x2: 0,
+  y2: 1,
+  colorStops: [
+    { offset: 0, color: top },
+    { offset: 1, color: bottom },
+  ],
+});
 
 /**
- * Hero stat card: the average renewal rate (first-time share of beneficiaries
- * over the filtered period) as the focal figure, a sparkline of how it has
- * evolved, and the total new/returning companies on the right of the chart.
+ * Stacked bars of new vs returning beneficiaries per year (with a value axis and
+ * a floating tooltip), plus a signed renewal balance top-right: positive/green
+ * when first-timers dominate, negative/red when repeats do.
  */
 export function CohortsCard() {
   const { data, isPending, isPlaceholderData } = useCohorts();
-  const rows = data ?? [];
+  const rows = useMemo(() => data ?? [], [data]);
 
   const totalNuevas = rows.reduce((sum, row) => sum + row.nuevas, 0);
   const totalRecurrentes = rows.reduce((sum, row) => sum + row.recurrentes, 0);
-  const denom = totalNuevas + totalRecurrentes;
-  const avgRate = denom > 0 ? (totalNuevas / denom) * 100 : 0;
-  const animated = useCountUp(avgRate); // hook must run every render
-  const maxRate = Math.max(1, ...rows.map(renewal));
+  const total = totalNuevas + totalRecurrentes;
+  const newDominates = totalNuevas >= totalRecurrentes;
+  const magnitude =
+    total > 0 ? Math.round(((newDominates ? totalNuevas : totalRecurrentes) / total) * 100) : 0;
+
+  const option = useMemo(() => {
+    return {
+      tooltip: {
+        ...baseTooltip,
+        trigger: 'axis' as const,
+        axisPointer: {
+          type: 'shadow' as const,
+          shadowStyle: { color: 'rgba(100, 116, 139, 0.07)' },
+        },
+        formatter: (items: Array<{ dataIndex: number }>) => {
+          const row = rows[items[0]?.dataIndex ?? -1];
+          if (!row) return '';
+          const totalAnio = row.nuevas + row.recurrentes;
+          const pct = totalAnio > 0 ? Math.round((row.nuevas / totalAnio) * 100) : 0;
+          return (
+            ttTitle(String(row.anio)) +
+            ttRow('Nuevas', formatInt(row.nuevas), COLOR_NEW) +
+            ttRow('Recurrentes', formatInt(row.recurrentes), COLOR_RETURN) +
+            ttRow('Total', formatInt(totalAnio)) +
+            ttRow('Renovación', `${pct} %`)
+          );
+        },
+      },
+      grid: { left: 8, right: 12, top: 50, bottom: 24, containLabel: true },
+      xAxis: {
+        type: 'category' as const,
+        data: rows.map((row) => String(row.anio)),
+        axisLabel: AXIS_LABEL,
+        axisTick: { show: false },
+        axisLine: { lineStyle: { color: '#e8e8ea' } },
+      },
+      yAxis: {
+        type: 'value' as const,
+        axisLabel: { ...AXIS_LABEL, formatter: (value: number) => formatInt(value) },
+        splitLine: SPLIT_LINE,
+      },
+      series: [
+        {
+          name: 'Nuevas',
+          type: 'bar' as const,
+          stack: 'cohortes',
+          barWidth: '58%',
+          data: rows.map((row) => row.nuevas),
+          itemStyle: { color: grad('#7c83f3', '#aab0f6'), borderRadius: [3, 3, 0, 0] },
+          emphasis: {
+            itemStyle: {
+              color: grad('#5b63ee', '#9aa0f4'),
+              shadowBlur: 12,
+              shadowColor: 'rgba(110, 116, 238, 0.5)',
+            },
+          },
+        },
+        {
+          name: 'Recurrentes',
+          type: 'bar' as const,
+          stack: 'cohortes',
+          data: rows.map((row) => row.recurrentes),
+          itemStyle: { color: grad('#94a3b8', '#c2cad4'), borderRadius: [3, 3, 0, 0] },
+          emphasis: {
+            itemStyle: {
+              color: grad('#7c8ba3', '#aeb8c5'),
+              shadowBlur: 12,
+              shadowColor: 'rgba(148, 163, 184, 0.5)',
+            },
+          },
+        },
+      ],
+    };
+  }, [rows]);
 
   return (
     <Card
@@ -51,54 +117,36 @@ export function CohortsCard() {
       isUpdating={isPlaceholderData}
       bodyHeight="h-96"
     >
-      {rows.length === 0 ? (
-        <div className="grid h-96 place-items-center text-xs text-ink-faint">
-          Sin datos con los filtros activos
-        </div>
-      ) : (
-        <div className="flex h-96 flex-col">
-          {/* Hero */}
-          <p className="text-xs text-ink-soft">Tasa media de renovación</p>
-          <span className="mt-1 font-mono text-6xl leading-none font-semibold tracking-tighter text-ink-strong tabular-nums">
-            {Math.round(animated)}
-            <span className="align-top text-2xl text-ink-soft">%</span>
+      <div className="relative">
+        {/* Legend */}
+        <div className="pointer-events-none absolute top-0 left-0 z-10 flex gap-3 text-[0.7rem] text-ink-soft">
+          <span className="flex items-center gap-1.5">
+            <span className="size-2.5 rounded-sm" style={{ backgroundColor: COLOR_NEW }} /> Nuevas
           </span>
-          <p className="mt-2 text-xs text-ink-soft">promedio del periodo filtrado</p>
-
-          {/* Evolution + totals */}
-          <div className="mt-auto">
-            <p className="mb-2 text-[0.7rem] font-medium text-ink-faint">
-              Evolución de la renovación
-            </p>
-            <div className="flex items-center gap-6">
-              <div className="min-w-0 flex-1">
-                <div className="flex h-24 items-end gap-1.5">
-                  {rows.map((row) => (
-                    <div
-                      key={row.anio}
-                      className="flex-1"
-                      title={`${row.anio}: ${Math.round(renewal(row))}% renovación`}
-                    >
-                      <div
-                        className="w-full rounded-t-[3px] bg-[#a9cdf3] transition-all duration-150 hover:bg-[#86b6ef] hover:shadow-[0_2px_8px_rgba(134,182,239,0.55)]"
-                        style={{ height: `${(renewal(row) / maxRate) * 96}px` }}
-                      />
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-1 flex justify-between font-mono text-[0.6rem] text-ink-faint">
-                  <span>{rows[0]?.anio}</span>
-                  <span>{rows.at(-1)?.anio}</span>
-                </div>
-              </div>
-              <div className="flex shrink-0 flex-col gap-3 pb-4 text-right">
-                <Total color={COLOR_NEW} value={totalNuevas} label="Nuevas" />
-                <Total color={COLOR_RETURN} value={totalRecurrentes} label="Recurrentes" />
-              </div>
-            </div>
-          </div>
+          <span className="flex items-center gap-1.5">
+            <span className="size-2.5 rounded-sm" style={{ backgroundColor: COLOR_RETURN }} />{' '}
+            Recurrentes
+          </span>
         </div>
-      )}
+
+        {/* Signed renewal balance */}
+        {total > 0 && (
+          <div className="pointer-events-none absolute top-0 right-1 z-10 text-right">
+            <span
+              className="font-mono text-3xl leading-none font-semibold tabular-nums"
+              style={{ color: newDominates ? GREEN : RED }}
+            >
+              {newDominates ? '+' : '−'}
+              {magnitude}%
+            </span>
+            <p className="mt-0.5 text-[0.62rem] tracking-wide text-ink-soft">
+              {newDominates ? 'más nuevos' : 'más recurrentes'}
+            </p>
+          </div>
+        )}
+
+        <EChart option={option} className="h-96 w-full" />
+      </div>
     </Card>
   );
 }
